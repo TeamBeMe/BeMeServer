@@ -1,9 +1,7 @@
-const { sequelize } = require(".");
-
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Answer', {
 
-        isCommentBlocked: { // 댓글막기여부
+        comment_blocked_flag: { // 댓글막기여부
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
@@ -11,11 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT(),
             allowNull: true,
         },
-        isPublic: { // 답변 공개 여부
+        public_flag : { // 답변 공개 여부
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-        answer_idx: { // 연속출석 count
+        answer_idx: { // 
             type: DataTypes.INTEGER,
             allowNull: true,
         }

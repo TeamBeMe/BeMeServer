@@ -1,9 +1,7 @@
-const { sequelize } = require(".");
-
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('User', {
 
-        userNickname: { // 유저 닉네임
+        nickname: { // 유저 닉네임
             type: DataTypes.STRING(20),
             unique: true,
             allowNull: false,
@@ -21,15 +19,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(200),
             allowNull: false,
         },
-        profileImgUrl: { // 프로필 이미지
+        profile_img: { // 프로필 이미지
             type: DataTypes.STRING(100),
             allowNull: true,
         },
-        lastVisit: { // 최근앱방문일 (연속출석에 사용)
+        last_visit: { // 최근앱방문일 (연속출석에 사용)
             type: DataTypes.DATEONLY,
             allowNull: true,
         },
-        continueVisit: { // 연속출석 count
+        continued_visit: { // 연속출석 count
             type: DataTypes.INTEGER,
             allowNull: true,
         }

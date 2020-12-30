@@ -1,4 +1,4 @@
-const { sequelize } = require(".");
+const { User, Answer } = require('./index');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT(),
             allowNull: false,
         },
-        isPublic: { // 공개여부
+        public_flag : { // 공개여부
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
