@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             reference: {
                 model: User,
                 key: 'id',
-            }
+            } 
         },
         searched_id: {
             type: DataTypes.INTEGER,

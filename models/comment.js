@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-        parent_id: { // 대댓글
+        parent_id: { // 대댓글 
             type: DataTypes.INTEGER,
             allowNull: true
         },
