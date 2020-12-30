@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
                 key: 'id',
             }
         },
-        search_id: {
+        searched_id: {
             type: DataTypes.INTEGER,
             reference: {
                 model: User,

@@ -43,16 +43,16 @@ db.User.belongsToMany(db.Answer, { through: 'Comment', as: 'Commented', foreignK
 db.Answer.belongsToMany(db.User, { through: 'Comment', as: 'Commenter', foreignKey : 'answer_id'});
 
 /* M : N User : User => block */
-db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocked'});
-db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocker'});
+db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocked', foreignKey : 'blocked_id'});
+db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocker', foreignKey : 'user_id'});
 
 /* M : N User : User => follow */
-db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followed'});
-db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower'});
+db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followed', foreignKey : 'followed_id'});
+db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower', foreignKey : 'follower_id'});
 
 /* M : N User : User => recentSearch */
-db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched'});
-db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher' });
+db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched', foreignKey: 'searched_id'});
+db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher', foreignKey : 'user_id' });
 
 
 
