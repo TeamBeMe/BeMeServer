@@ -3,6 +3,11 @@ const { User, Answer } = require('./index');
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
 
+        comment_id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            allowNull: false, 
+        },
         content: { // 질문 제목
             type: DataTypes.TEXT(),
             allowNull: false,
@@ -11,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-        parent_id: { // 대댓글
+        parent_id: { // 대댓글 
             type: DataTypes.INTEGER,
             allowNull: true
         },

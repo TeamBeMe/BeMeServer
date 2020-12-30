@@ -5,15 +5,15 @@ module.exports = (sequelize, DataTypes) => {
 
         recentSearch_id: {
             type: DataTypes.INTEGER,
-            allowNull: false,
             primaryKey: true,
+            allowNull: false,
         },
         user_id: {
             type: DataTypes.INTEGER,
             reference: {
                 model: User,
                 key: 'id',
-            }
+            } 
         },
         searched_id: {
             type: DataTypes.INTEGER,
