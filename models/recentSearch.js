@@ -1,4 +1,4 @@
-const { sequelize } = require(".");
+const { User } = require("./index");
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('RecentSearch', {
