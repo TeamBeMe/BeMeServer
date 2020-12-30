@@ -34,6 +34,7 @@ db.Question.belongsTo(db.Category, { foreignKey: 'category_id' });
 db.User.hasMany(db.Answer, { foreignKey : 'user_id'});
 db.Answer.belongsTo(db.User, { foreignKey : 'user_id'});
 
+
 /* M : N User : Answer => scrap */
 db.User.belongsToMany(db.Answer, { through: 'Scrap', as: 'Scrapped', foreignKey: 'user_id' });
 db.Answer.belongsToMany(db.User, { through: 'Scrap', as: 'Scrapper', foreignKey: 'answer_id'});
