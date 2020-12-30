@@ -3,7 +3,7 @@ const { User } = require("./index");
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('RecentSearch', {
 
-        recentSearch_id: {
+        id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false,

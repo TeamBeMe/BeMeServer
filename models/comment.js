@@ -3,7 +3,7 @@ const { User, Answer } = require('./index');
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
 
-        comment_id: {
+        id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             allowNull: false, 
