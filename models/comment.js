@@ -1,8 +1,7 @@
-const { User, Answer } = require('./index');
+const { User, Answer, Sequelize } = require('./index');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
-
         content: { // 질문 제목
             type: DataTypes.TEXT(),
             allowNull: false,
@@ -15,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-
         user_id: {
             type: DataTypes.INTEGER,
             reference: {

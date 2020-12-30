@@ -8,6 +8,6 @@ router.post('/', answerController.postAnswer);
 router.put('/', answerController.updateAnswer);
 
 // 댓글 달기
-router.post('/comments', answerController.postComment);
+// router.post('/comments', answerController.postComment);
 
 module.exports = router;
