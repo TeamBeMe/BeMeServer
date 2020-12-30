@@ -29,6 +29,13 @@ module.exports = {
     ALREADY_EMAIL: "이미 존재하는 이메일 입니다.",
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
+
+    /* 답변 등록 */
+    POST_ANSWER_SUCCESS: "답변 등록 성공",
+    POST_ANSWER_FAIL: "답변 등록 실패",
+    UPDATE_ANSWER_SUCCESS : "답변 수정 성공",
+    INVALID_ANSWER_ID: "존재하지 않는 답변 id 값입니다",
+    UPDATE_ANSWER_FAIL: "답변 수정 실패",
   
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
