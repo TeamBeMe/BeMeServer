@@ -13,12 +13,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
+        answer_date: { // 최초 답변 날짜
+            type: DataTypes.DATEONLY,
+            allowNull: true,
+        },
         answer_idx: { // 
             type: DataTypes.INTEGER,
             allowNull: true,
         }
     }, {
         freezeTableName: true,
-        timestamps: true, // arrivedDate는 createdAt, answerDate는 updatedAt으로 대체?
+        timestamps: true, // arrived_date는 created_at로 대체
+        underscored: true,
     });
 };

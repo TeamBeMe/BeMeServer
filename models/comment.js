@@ -3,13 +3,17 @@ const { User, Answer } = require('./index');
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
 
-        comment: { // 질문 제목
+        content: { // 질문 제목
             type: DataTypes.TEXT(),
             allowNull: false,
         },
         public_flag : { // 공개여부
             type: DataTypes.BOOLEAN,
             allowNull: false,
+        },
+        parent_id: { // 대댓글
+            type: DataTypes.INTEGER,
+            allowNull: true
         },
 
         user_id: {
@@ -29,5 +33,6 @@ module.exports = (sequelize, DataTypes) => {
     }, {
         freezeTableName: true,
         timestamps: true,
+        underscored: true,
     });
 };
