@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         comment_id: {
             type: DataTypes.INTEGER,
             primaryKey: true,
-            allowNull: false,
+            allowNull: false, 
         },
         content: { // 질문 제목
             type: DataTypes.TEXT(),
