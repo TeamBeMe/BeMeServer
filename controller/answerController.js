@@ -31,6 +31,8 @@ module.exports = {
                 public_flag,
             });
 
+            console.log(answerService.getOne(1));
+
             console.log(message.POST_ANSWER_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.POST_ANSWER_SUCCESS));
 
@@ -66,14 +68,14 @@ module.exports = {
         }
         
     },
-    // // 댓글 등록하기
-    // postComment : async (req, res) => {
-    //     try {
-    //         // const { answer_id, content }
+    // 댓글 등록하기
+    postComment : async (req, res) => {
+        try {
+            // const { answer_id, content }
 
-    //     } catch (err) {
-    //         console.error(err);
-    //         return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
-    //     }
-    // }
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
 }

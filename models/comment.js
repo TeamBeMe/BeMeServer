@@ -1,4 +1,4 @@
-const { User, Answer } = require('./index');
+const { User, Answer, Sequelize } = require('./index');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
@@ -20,7 +20,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-
         user_id: {
             type: DataTypes.INTEGER,
             reference: {
