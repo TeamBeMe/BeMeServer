@@ -14,10 +14,10 @@ module.exports = {
         try {
             const page = req.params.page;
             const limit = 5;
-            const answerData = await homeService.getUserAnswersByPage(page, limit);
+            const data = await homeService.getUserAnswersByPage(page, limit);
 
-            console.log(message.GET_ANSWER_SUCCESS)
-            res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, answerData));
+            console.log(message.GET_ANSWER_SUCCESS);
+            res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, data));
 
         } catch (err) {
             console.error(err);
