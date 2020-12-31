@@ -35,9 +35,22 @@ db.User.hasMany(db.Answer, { foreignKey : 'user_id'});
 db.Answer.belongsTo(db.User, { foreignKey : 'user_id'});
 
 
+/* 1 : N User : Comment */
+/*db.User.hasMany(db.Comment, { foreignKey : 'user_id'});
+db.Comment.belongsTo(db.User, { foreignKey : 'user_id'});*/
+
+/* 1 : N Answer : Comment */
+/*db.Answer.hasMany(db.Comment, { foreignKey : 'answer_id'});
+db.Comment.belongsTo(db.Answer, { foreignKey : 'answer_id'});*/
+
+/* 1 : N User : User */
+/*db.User.hasMany(db.RecentSearch, { foreignKey : 'user_id'});
+db.RecentSearch.belongsTo(db.User, { foreignKey : 'user_id'});*/
+
 /* M : N User : Answer => scrap */
 db.User.belongsToMany(db.Answer, { through: 'Scrap', as: 'Scrapped', foreignKey: 'user_id' });
 db.Answer.belongsToMany(db.User, { through: 'Scrap', as: 'Scrapper', foreignKey: 'answer_id'});
+
 
 /* M : N User : Answer => comment */
 db.User.belongsToMany(db.Answer, { through: 'Comment', as: 'Commented', foreignKey : 'user_id'});
