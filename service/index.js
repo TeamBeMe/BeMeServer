@@ -1,3 +1,4 @@
 module.exports = {
-    answerService: require('./answerService')
+    answerService: require('./answerService'),
+    homeService: require('./homeService')
 }
