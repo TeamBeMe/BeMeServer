@@ -40,7 +40,15 @@ module.exports = {
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
     GET_ANSWER_FAIL: "답변 불러오기 실패",
-  
+    
+    /* 질문 받기 */
+    GET_QUESTION_SUCCESS: "질문 받아오기 성공",
+    GET_QUESTION_FAIL: "질문 받아오기 실패",
+
+    /* 공개여부 수정 */
+    PUT_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
+    PUT_PUBLICFLAG_FAIL: "공개여부 수정 실패",
+    
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }
