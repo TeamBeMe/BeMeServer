@@ -2,9 +2,10 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, User } = require('../models');
+const { Answer, User, Comment, Question } = require('../models');
 
 const { answerService } = require('../service');
+const { get } = require('http');
 
 
 module.exports = {
@@ -13,7 +14,7 @@ module.exports = {
     postAnswer: async (req, res) => {
         // const id = req.decoded.id;
         try {
-            const user_id = 1;
+            const user_id = req.decoded.id;
             const { question_id, content, is_comment_blocked : comment_blocked_flag, is_public : public_flag } = req.body;
     
             if (! question_id || ! content ) {
@@ -22,6 +23,8 @@ module.exports = {
             if (typeof comment_blocked_flag !== 'boolean' || typeof public_flag !== 'boolean') {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
+
+            // 답변 
 
             const answer = await Answer.create({
                 user_id,
@@ -71,7 +74,21 @@ module.exports = {
     // 댓글 등록하기
     postComment : async (req, res) => {
         try {
-            // const { answer_id, content }
+            const { answer_id, content, parent_id, is_public : public_flag } = req.body;
+
+            const user_id = req.decoded.id;
+            const comment = await Comment.create({
+                answer_id,
+                content,
+                public_flag,
+                parent_id,
+                user_id
+            });
+            console.log(comment);
+
+            return res.status(code.OK).send(util.success(code.CREATED, message.POST_COMMENT_SUCCESS, comment));
+
+            // 해당 답변이 답변 허용 답변인지 확인하기
 
         } catch (err) {
             console.error(err);

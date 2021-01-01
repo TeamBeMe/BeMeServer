@@ -40,7 +40,9 @@ module.exports = {
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
     GET_ANSWER_FAIL: "답변 불러오기 실패",
-  
+
+    /** 댓글 */
+    POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }
