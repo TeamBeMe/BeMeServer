@@ -24,9 +24,9 @@ module.exports = {
     SIGN_UP_FAIL: "회원 가입 실패.",
     SIGN_IN_SUCCESS: "로그인 성공.",
     SIGN_IN_FAIL: "로그인 실패.",
-    ALREADY_ID: "존재하는 ID 입니다.",
-    NO_USER: "존재하지않는 유저 id 입니다.",
-    ALREADY_EMAIL: "이미 존재하는 이메일 입니다.",
+    ALREADY_NICKNAME: "존재하는 닉네임입니다.",
+    NO_USER: "존재하지않는 유저입니다.",
+    ALREADY_EMAIL: "존재하는 이메일 입니다.",
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
 
@@ -35,6 +35,7 @@ module.exports = {
     POST_ANSWER_FAIL: "답변 등록 실패",
     UPDATE_ANSWER_SUCCESS : "답변 수정 성공",
     INVALID_ANSWER_ID: "존재하지 않는 답변 id 값입니다",
+    ALREADY_POSTED_ANSWER : "이미 답변이 등록된 질문입니다",
     UPDATE_ANSWER_FAIL: "답변 수정 실패",
 
     /* 답변 불러오기 */
@@ -48,7 +49,12 @@ module.exports = {
     /* 공개여부 수정 */
     PUT_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
     PUT_PUBLICFLAG_FAIL: "공개여부 수정 실패",
-    
+
+    /** 댓글 */
+    POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
+    POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
+    INVALID_PARENT_ID : '잘못된 parent_id 입니다',
+
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }
