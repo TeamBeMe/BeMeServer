@@ -12,5 +12,7 @@ router.put('/', authUtil.checkToken, answerController.updateAnswer);
 router.post('/comments', authUtil.checkToken, answerController.postComment);
 // 댓글 수정하기
 router.put('/comments', authUtil.checkToken, answerController.updateComment);
+// 댓글 삭제하기
+router.delete('/comments/:comment_id', authUtil.checkToken, answerController.deleteComment);
 
 module.exports = router;

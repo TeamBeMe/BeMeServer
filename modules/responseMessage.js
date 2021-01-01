@@ -57,6 +57,7 @@ module.exports = {
     CHECK_PUBLIC_FLAG: '댓글 공개 여부를 확인하세요',
     MODIFY_COMMENT_SUCCESS : "댓글 수정하기 성공",
     INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
+    DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
     
 
     /* 서버에러 */
