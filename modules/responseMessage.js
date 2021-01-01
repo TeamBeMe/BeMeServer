@@ -41,11 +41,20 @@ module.exports = {
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
     GET_ANSWER_FAIL: "답변 불러오기 실패",
+    
+    /* 질문 받기 */
+    GET_QUESTION_SUCCESS: "질문 받아오기 성공",
+    GET_QUESTION_FAIL: "질문 받아오기 실패",
+
+    /* 공개여부 수정 */
+    PUT_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
+    PUT_PUBLICFLAG_FAIL: "공개여부 수정 실패",
 
     /** 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
     INVALID_PARENT_ID : '잘못된 parent_id 입니다',
+
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }
