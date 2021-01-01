@@ -37,7 +37,7 @@ module.exports = {
 
             // 유저 id 가 일치하는 지 확인
             if (answer.user_id != user_id) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
             
             const updated_answer = await Answer.update({content, comment_blocked_flag, public_flag, answer_date : today},{
@@ -154,5 +154,40 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
-    }
+    },
+    deleteComment : async (req, res) => {
+        const { comment_id } = req.params;
+
+        if (! comment_id) {
+            console.log(message.NULL_VALUE);
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        try {
+            // comment id 정보 확인
+            const comment = await Comment.findByPk(comment_id);
+            if (! comment ) {
+                console.log(message.INVALID_COMMENT_ID);
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_COMMENT_ID));
+            }
+
+            if (comment.user_id !== req.decoded.id) {
+                console.log(message.USER_UNAUTHORIZED);
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
+            }
+            
+            const deleted_count = await Comment.destroy({
+                where : {
+                    id : comment_id,
+                }
+            });
+            return res.status(code.OK).send(util.success(code.OK, message.DELETE_COMMENT_SUCCESS));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+
+        
+        
+    },
 }
