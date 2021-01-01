@@ -10,10 +10,6 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: false,
         },
-        parent_id: { // 대댓글 
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
         user_id: {
             type: DataTypes.INTEGER,
             reference: {

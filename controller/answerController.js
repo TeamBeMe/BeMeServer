@@ -73,10 +73,36 @@ module.exports = {
     },
     // 댓글 등록하기
     postComment : async (req, res) => {
+
+        const { answer_id, content, parent_id, is_public : public_flag } = req.body;
+        if (! answer_id || ! content  || ! public_flag) {
+            console.log(message.NULL_VALUE);
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
         try {
-            const { answer_id, content, parent_id, is_public : public_flag } = req.body;
 
             const user_id = req.decoded.id;
+
+            const answer = await Answer.findByPk(answer_id);
+
+            // 답변 존재하는 지 확인
+            if (! answer) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+
+            // 답변이 댓글 허용 답변인지 확인
+            if (answer.comment_blocked_flag) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.POST_COMMENT_BLOCKED));
+            }
+
+            // parent_id 존재하는 지 확인
+            if (parent_id) {
+                const parent = await Comment.findByPk(parent_id);
+                if (! parent || parent.parent_id) {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_PARENT_ID));
+                }
+            }
+
             const comment = await Comment.create({
                 answer_id,
                 content,
@@ -84,11 +110,10 @@ module.exports = {
                 parent_id,
                 user_id
             });
-            console.log(comment);
+            
 
             return res.status(code.OK).send(util.success(code.CREATED, message.POST_COMMENT_SUCCESS, comment));
 
-            // 해당 답변이 답변 허용 답변인지 확인하기
 
         } catch (err) {
             console.error(err);

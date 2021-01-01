@@ -43,6 +43,8 @@ module.exports = {
 
     /** 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
+    POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
+    INVALID_PARENT_ID : '잘못된 parent_id 입니다',
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }
