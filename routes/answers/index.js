@@ -9,7 +9,8 @@ router.post('/', authUtil.checkToken, answerController.postAnswer);
 router.put('/', authUtil.checkToken, answerController.updateAnswer);
 
 // 댓글 달기
-// router.post('/comments', authUtil.checkToken, answerController.postComment);
 router.post('/comments', authUtil.checkToken, answerController.postComment);
+// 댓글 수정하기
+router.put('/comments', authUtil.checkToken, answerController.updateComment);
 
 module.exports = router;
