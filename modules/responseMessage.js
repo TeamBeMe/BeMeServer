@@ -18,6 +18,7 @@ module.exports = {
     UPDATE_USER_FAIL: "사용자 업데이트 실패",
     DELETE_USER_SUCCESS: "사용자 삭제 성공",
     DELETE_USER_FAIL: "사용자 삭제 실패",
+    USER_UNAUTHORIZED : '해당 유저에게 권한이 없습니다',
   
     /* 회원가입 */
     SIGN_UP_SUCCESS: "회원 가입 성공.",
@@ -46,6 +47,10 @@ module.exports = {
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
     INVALID_PARENT_ID : '잘못된 parent_id 입니다',
+    CHECK_PUBLIC_FLAG: '댓글 공개 여부를 확인하세요',
+    MODIFY_COMMENT_SUCCESS : "댓글 수정하기 성공",
+    INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
+    
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
   }

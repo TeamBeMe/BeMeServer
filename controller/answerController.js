@@ -33,14 +33,14 @@ module.exports = {
             if ( answer.content ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.ALREADY_POSTED_ANSWER));
             }
-            const today = await userService.getToday();
+            const today = await userService.getTodayDate();
 
             // 유저 id 가 일치하는 지 확인
             if (answer.user_id != user_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
             
-            const updated_answer = await Answer.update({content, comment_blocked_flag, public_flag, answered_date : today},{
+            const updated_answer = await Answer.update({content, comment_blocked_flag, public_flag, answer_date : today},{
                 where : {
                     id : answer_id
                 }
@@ -67,6 +67,7 @@ module.exports = {
             const changedNum = await Answer.update({ content : content}, {
                 where : {
                     id : answer_id,
+                    user_id : req.decoded.id,
                 }
             });
             if (!changedNum[0]) {
@@ -84,8 +85,9 @@ module.exports = {
     // 댓글 등록하기
     postComment : async (req, res) => {
 
-        const { answer_id, content, parent_id, is_public : public_flag } = req.body;
-        if (! answer_id || ! content  || ! public_flag) {
+        const { answer_id, content, parent_id} = req.body;
+        let { is_public : public_flag  } = req.body;
+        if (! answer_id || ! content ) {
             console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
@@ -93,26 +95,14 @@ module.exports = {
 
             const user_id = req.decoded.id;
 
-            const answer = await Answer.findByPk(answer_id);
+            const hasError = await answerService.checkBeforeCommenting(answer_id, parent_id, public_flag);
 
-            // 답변 존재하는 지 확인
-            if (! answer) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            if (hasError === message.CHECK_PUBLIC_FLAG) {
+                public_flag = false;
+            } else if ( hasError ) {
+                console.log(hasError);
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
-
-            // 답변이 댓글 허용 답변인지 확인
-            if (answer.comment_blocked_flag) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.POST_COMMENT_BLOCKED));
-            }
-
-            // parent_id 존재하는 지 확인
-            if (parent_id) {
-                const parent = await Comment.findByPk(parent_id);
-                if (! parent || parent.parent_id) {
-                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_PARENT_ID));
-                }
-            }
-
             const comment = await Comment.create({
                 answer_id,
                 content,
@@ -125,6 +115,41 @@ module.exports = {
             return res.status(code.OK).send(util.success(code.CREATED, message.POST_COMMENT_SUCCESS, comment));
 
 
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+    updateComment : async (req, res) => {
+        const { comment_id, content } = req.body;
+        let { is_public : public_flag } = req.body;
+        if (! comment_id || ! content) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        if (typeof public_flag  !== 'boolean') {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        try {
+
+           const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id, public_flag);
+
+           if (hasError === message.CHECK_PUBLIC_FLAG) {
+                public_flag = false;
+            } else if ( hasError ) {
+                console.log(hasError);
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
+            }
+
+            // update
+            const updated_count = await Comment.update({content, public_flag},{
+                where : {
+                    id : comment_id,
+                }
+            });
+
+            return res.status(code.OK).send(util.success(code.OK, message.MODIFY_COMMENT_SUCCESS));
+            
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));

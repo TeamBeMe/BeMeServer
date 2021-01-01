@@ -16,15 +16,20 @@ const hashPassword =  async (password, salt = null) => {
     }
 }
 // 오늘 날짜 구하는 함수
-const getToday = async () => {
+const getTodayDatesOnly = async () => {
     const td = Date.now();
     const today = new Date(td);
     return new Date(moment.tz(today, 'Asia/Seoul').format('YYYY-MM-DD'));
 }
+const getTodayDate = async () => {
+    const td = Date.now();
+    const today = new Date(td);
+    return new Date(moment.tz(today, 'Asia/Seoul').format());
+}
 
 // 연속된 날짜인지 비교
 const isContinuedDates= async (last_visit) => {
-    const today = await getToday();
+    const today = await getTodayDatesOnly();
     // // last_visit에 의해 계산된 다음 날짜
     const next_visit = new Date(last_visit.setDate(last_visit.getDate() + 1));
     last_visit.setDate(last_visit.getDate() - 1)
@@ -88,9 +93,9 @@ module.exports = {
             console.error(err);
         }
     },
-    getToday,
+    getTodayDatesOnly, getTodayDate,
     updateVisit: async (user) => {
-        const today = await getToday();
+        const today = await getTodayDatesOnly();
         let { last_visit, continued_visit } = user;
         last_visit = new Date(last_visit);
         
