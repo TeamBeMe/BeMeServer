@@ -12,9 +12,11 @@ module.exports = {
     // 답변 불러오기
     getAnswers: async (req, res) => {
         try {
+            const user_id = req.decoded.id;
             const page = req.params.page;
             const limit = 5;
-            const data = await homeService.getUserAnswersByPage(page, limit);
+            console.log(user_id);
+            const data = await homeService.getUserAnswersByPage(user_id, page, limit);
 
             console.log(message.GET_ANSWER_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, data));
@@ -61,5 +63,29 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
-    }
+    },
+
+    deleteAnswer: async (req, res) => {
+        try {
+            const answer_id = req.params.answerId;
+            
+            if (! answer_id ) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+            const resultDestroyNum = await Answer.destroy({
+                where : {
+                    id : answer_id,
+                }
+            });
+            if (!resultDestroyNum) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+            console.log(message.DELETE_ANSWER_SUCCESS)
+            res.status(code.OK).send(util.success(code.OK, message.DELETE_ANSWER_SUCCESS));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
 }
