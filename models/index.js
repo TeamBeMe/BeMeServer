@@ -40,15 +40,12 @@ db.Comment.belongsTo(db.User, {foreignKey : 'user_id'});
 db.Answer.hasMany(db.Comment, {foreignKey : 'answer_id'});
 db.Comment.belongsTo(db.Answer, {foreignKey : 'answer_id'});
 
+db.Comment.hasMany(db.Comment, { as : 'Children', foreignKey : 'parent_id', useJunctionTable: false});
+db.Comment.belongsTo(db.Comment, { as : 'Parent', foreignKey : 'parent_id'});
+
 /* User : Answer => scrap */
 db.User.belongsToMany(db.Answer, { through: 'Scrap', as: 'Scrapped', foreignKey: 'user_id' });
 db.Answer.belongsToMany(db.User, { through: 'Scrap', as: 'Scrapper', foreignKey: 'answer_id'});
-
-
-// /* User : Answer => comment */
-// db.User.belongsToMany(db.Answer, { through: 'Comment', as: 'Commented', foreignKey : 'user_id'});
-// db.Answer.belongsToMany(db.User, { through: 'Comment', as: 'Commenter', foreignKey : 'answer_id'});
-
 
 
 /* User : User => block */
