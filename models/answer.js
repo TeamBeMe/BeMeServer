@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         answer_date: { // 최초 답변 날짜
-            type: DataTypes.DATEONLY,
+            type: DataTypes.DATE,
             allowNull: true,
         },
         answer_idx: { // 

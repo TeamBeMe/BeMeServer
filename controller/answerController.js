@@ -6,6 +6,7 @@ const { Answer, User, Comment, Question } = require('../models');
 
 const { answerService } = require('../service');
 const { get } = require('http');
+const userService = require('../service/userService');
 
 
 module.exports = {
@@ -14,28 +15,37 @@ module.exports = {
     postAnswer: async (req, res) => {
         // const id = req.decoded.id;
         try {
-            const user_id = req.decoded.id;
-            const { question_id, content, is_comment_blocked : comment_blocked_flag, is_public : public_flag } = req.body;
+            const user_id = req.decoded.id
+            const { answer_id, content, is_comment_blocked : comment_blocked_flag, is_public : public_flag } = req.body;
     
-            if (! question_id || ! content ) {
+            if (! answer_id || ! content ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
             if (typeof comment_blocked_flag !== 'boolean' || typeof public_flag !== 'boolean') {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
 
-            // 답변 
+            // 존재하는 답변 id 인지 확인하고 답변 여부 확인
+            const answer = await Answer.findByPk(answer_id);
+            if (! answer) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+            if ( answer.content ) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.ALREADY_POSTED_ANSWER));
+            }
+            const today = await userService.getToday();
 
-            const answer = await Answer.create({
-                user_id,
-                question_id,
-                content,
-                comment_blocked_flag,
-                public_flag,
-            });
-
-            console.log(answerService.getOne(1));
-
+            // 유저 id 가 일치하는 지 확인
+            if (answer.user_id != user_id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+            
+            const updated_answer = await Answer.update({content, comment_blocked_flag, public_flag, answered_date : today},{
+                where : {
+                    id : answer_id
+                }
+            })
+            
             console.log(message.POST_ANSWER_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.POST_ANSWER_SUCCESS));
 
