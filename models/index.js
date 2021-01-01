@@ -22,49 +22,44 @@ db.Block = require('./block')(sequelize, Sequelize);
 db.Follow = require('./follow')(sequelize, Sequelize);
 db.RecentSearch = require('./recentSearch')(sequelize, Sequelize);
 
-/* 1 : 1 Question : Answer */
-db.Question.hasOne(db.Answer, { foreignKey: 'question_id'});
+/* Question : Answer */
+db.Question.hasMany(db.Answer, { foreignKey: 'question_id'});
 db.Answer.belongsTo(db.Question, { foreignKey: 'question_id'});
 
-/* 1 : N Category : Question */
+/* Category : Question */
 db.Category.hasMany(db.Question, { foreignKey: 'category_id' });
 db.Question.belongsTo(db.Category, { foreignKey: 'category_id' });
 
-/* 1 : N User : Answer */
+/* User : Answer */
 db.User.hasMany(db.Answer, { foreignKey : 'user_id'});
 db.Answer.belongsTo(db.User, { foreignKey : 'user_id'});
 
+db.User.hasMany(db.Comment, {foreignKey : 'user_id'});
+db.Comment.belongsTo(db.User, {foreignKey : 'user_id'});
 
-/* 1 : N User : Comment */
-/*db.User.hasMany(db.Comment, { foreignKey : 'user_id'});
-db.Comment.belongsTo(db.User, { foreignKey : 'user_id'});*/
+db.Answer.hasMany(db.Comment, {foreignKey : 'answer_id'});
+db.Comment.belongsTo(db.Answer, {foreignKey : 'answer_id'});
 
-/* 1 : N Answer : Comment */
-/*db.Answer.hasMany(db.Comment, { foreignKey : 'answer_id'});
-db.Comment.belongsTo(db.Answer, { foreignKey : 'answer_id'});*/
-
-/* 1 : N User : User */
-/*db.User.hasMany(db.RecentSearch, { foreignKey : 'user_id'});
-db.RecentSearch.belongsTo(db.User, { foreignKey : 'user_id'});*/
-
-/* M : N User : Answer => scrap */
+/* User : Answer => scrap */
 db.User.belongsToMany(db.Answer, { through: 'Scrap', as: 'Scrapped', foreignKey: 'user_id' });
 db.Answer.belongsToMany(db.User, { through: 'Scrap', as: 'Scrapper', foreignKey: 'answer_id'});
 
 
-/* M : N User : Answer => comment */
-db.User.belongsToMany(db.Answer, { through: 'Comment', as: 'Commented', foreignKey : 'user_id'});
-db.Answer.belongsToMany(db.User, { through: 'Comment', as: 'Commenter', foreignKey : 'answer_id'});
+// /* User : Answer => comment */
+// db.User.belongsToMany(db.Answer, { through: 'Comment', as: 'Commented', foreignKey : 'user_id'});
+// db.Answer.belongsToMany(db.User, { through: 'Comment', as: 'Commenter', foreignKey : 'answer_id'});
 
-/* M : N User : User => block */
+
+
+/* User : User => block */
 db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocked', foreignKey : 'blocked_id'});
 db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocker', foreignKey : 'user_id'});
 
-/* M : N User : User => follow */
+/* User : User => follow */
 db.User.belongsToMany(db.User, { through: 'Follow', as: 'Followed', foreignKey : 'followed_id'});
 db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower', foreignKey : 'follower_id'});
 
-/* M : N User : User => recentSearch */
+/* User : User => recentSearch */
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched', foreignKey: 'searched_id'});
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher', foreignKey : 'user_id' });
 

@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const answerController = require('../../controller/answerController');
+const authUtil = require('../../middleware/authUtil');
 
 // 답변 등록하기
-router.post('/', answerController.postAnswer);
+router.post('/', authUtil.checkToken, answerController.postAnswer);
 // 답변 수정하기
-router.put('/', answerController.updateAnswer);
+router.put('/', authUtil.checkToken, answerController.updateAnswer);
 
 // 댓글 달기
-//router.post('/comments', answerController.postComment);
+// router.post('/comments', authUtil.checkToken, answerController.postComment);
+router.post('/comments', authUtil.checkToken, answerController.postComment);
 
 module.exports = router;
