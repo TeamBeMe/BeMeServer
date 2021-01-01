@@ -55,7 +55,7 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
             console.log(message.UPDATE_ANSWER_SUCCESS)
-            res.status(code.OK).send(util.success(code.OK, message.UPDATE_ANSWER_SUCCESS));
+            res.status(code.OK).send(util.success(code.OK, message.UPDATE_PUBLICFLAG_SUCCESS));
 
         } catch (err) {
             console.error(err);

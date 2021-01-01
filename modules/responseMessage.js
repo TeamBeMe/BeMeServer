@@ -46,8 +46,8 @@ module.exports = {
     GET_QUESTION_FAIL: "질문 받아오기 실패",
 
     /* 공개여부 수정 */
-    PUT_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
-    PUT_PUBLICFLAG_FAIL: "공개여부 수정 실패",
+    UPDATE_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
+    UPDATE_PUBLICFLAG_FAIL: "공개여부 수정 실패",
     
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
