@@ -9,6 +9,7 @@ const { answerService } = require('../service');
 const { get } = require('http');
 const userService = require('../service/userService');
 const sequelize = require('sequelize');
+const answer = require('../models/answer');
 
 module.exports = {
 
@@ -199,7 +200,7 @@ module.exports = {
         }
         try {
 
-            let answer = await answerService.getFormattedAnswerwithPK(answer_id, req.decoded.id);
+            const answer = await answerService.getFormattedAnswerwithPK(answer_id, req.decoded.id);
             if (! answer) {
                 console.log(message.INVALID_ANSWER_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
@@ -212,5 +213,33 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
 
+    },
+    getMyAnswers: async(req, res) => {
+        try {
+            const answers = await Answer.findAll({
+                where : {
+                    user_id : req.decoded.id,
+                },
+                attributes : ['id'],
+                order : [['createdAt', 'ASC']],
+                raw : true
+            });
+            console.log(answers)
+
+            if ( answers.length==0 ) {
+                return res.status(code.OK).send(util.success(code.OK, message.USER_NO_ANSWERS, []));
+            }
+
+            const results = []
+            for (ans of answers) {
+                const item = await answerService.getFormattedAnswerwithPK(ans.id, req.decoded.id);
+                results.push(item);
+            }
+            return res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, results));
+
+        } catch (err) {
+            console.log(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
     }
 }
