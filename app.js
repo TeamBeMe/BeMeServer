@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const {sequelize} = require('./models');
 const indexRouter = require('./routes/index');
-const { truncate } = require('fs/promises');
 
 sequelize.sync({ alter : false })
 .then(() => {
