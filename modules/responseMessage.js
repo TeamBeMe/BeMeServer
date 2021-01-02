@@ -50,6 +50,18 @@ module.exports = {
     UPDATE_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
     UPDATE_PUBLICFLAG_FAIL: "공개여부 수정 실패",
 
+    /* 질문 변경하기 */
+    CHANGE_QUESTION_SUCCESS: "질문 변경하기 성공",
+    CHANGE_QUESTION_FAIL: "질문 변경하기 실패",
+
+    /* 답변 삭제 */
+    DELETE_ANSWER_SUCCESS: "답변 삭제 성공",
+    DELETE_ANSWER_FAIL: "답변 삭제 실패",
+
+    /* 새로운 질문 받기 */
+    RECEIVE_NEWQUESTION_SUCCESS: "새로운 질문 받기 성공",
+    RECEIVE_NEWQUESTION_FAIL: "새로운 질문 받기 실패",
+
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
@@ -58,11 +70,6 @@ module.exports = {
     MODIFY_COMMENT_SUCCESS : "댓글 수정하기 성공",
     INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
     DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
-    
-
-    /* 답변 삭제 */
-    DELETE_ANSWER_SUCCESS: "답변 삭제 성공",
-    DELETE_ANSWER_FAIL: "답변 삭제 실패",
 
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
