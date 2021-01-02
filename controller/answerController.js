@@ -1,13 +1,14 @@
 const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
+const { Op } = require('sequelize'); 
 
 const { Answer, User, Comment, Question } = require('../models');
 
 const { answerService } = require('../service');
 const { get } = require('http');
 const userService = require('../service/userService');
-
+const sequelize = require('sequelize');
 
 module.exports = {
 
@@ -27,6 +28,7 @@ module.exports = {
 
             // 존재하는 답변 id 인지 확인하고 답변 여부 확인
             const answer = await Answer.findByPk(answer_id);
+            console.log(answer)
             if (! answer) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
@@ -186,8 +188,29 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
-
-        
         
     },
+    getDetailAnswer: async (req, res) => {
+        const { answer_id } = req.params;
+
+        if (! answer_id) {
+            console.log(message.NULL_VALUE);
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        try {
+
+            let answer = await answerService.getFormattedAnswerwithPK(answer_id, req.decoded.id);
+            if (! answer) {
+                console.log(message.INVALID_ANSWER_ID);
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_DETAIL_ANSWER_SUCCESS, answer));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+
+    }
 }
