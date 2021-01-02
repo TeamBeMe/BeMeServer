@@ -27,6 +27,10 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 }
 
+const getLocalTime = async (date) => {
+    return new Date(moment.tz(date, 'Asia/Seoul').format());
+}
+
 // 연속된 날짜인지 비교
 const isContinuedDates= async (last_visit) => {
     const today = await getTodayDatesOnly();
@@ -35,7 +39,35 @@ const isContinuedDates= async (last_visit) => {
     last_visit.setDate(last_visit.getDate() - 1)
     return today.getTime() == next_visit.getTime();
 }
+ // Date 객체 가공 
+const formatAnswerDate = async (date) => {
+    
+    try {
+        const today = await getTodayDate();
+        let td = today;
+    
+        const diff = td.getTime()- date.getTime();
+        const minDiff = diff / 60000;
+        
+        if (minDiff < 60) {
+            return parseInt(minDiff) + '분 전';
+        }
+        const hrDiff = diff / 3600000;
+        if (hrDiff < 24) {
+            return parseInt(hrDiff) + '시간 전';
+        }
+        const dayDiff = hrDiff / 24;
+        if (dayDiff < 365) {
+            return (moment.tz(date, 'Asia/Seoul').format('M월 D일'));
+        }
+        return (moment.tz(date, 'Asia/Seoul').format('YYYY년 M월 D일'));
 
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
+
+}
 
 module.exports = {
     // 이미 존재하는 email, nickname 인지 확인
@@ -93,7 +125,7 @@ module.exports = {
             console.error(err);
         }
     },
-    getTodayDatesOnly, getTodayDate,
+    getTodayDatesOnly, getTodayDate, formatAnswerDate,
     updateVisit: async (user) => {
         const today = await getTodayDatesOnly();
         let { last_visit, continued_visit } = user;

@@ -37,6 +37,7 @@ module.exports = {
     UPDATE_ANSWER_SUCCESS : "답변 수정 성공",
     INVALID_ANSWER_ID: "존재하지 않는 답변 id 값입니다",
     UPDATE_ANSWER_FAIL: "답변 수정 실패",
+    ALREADY_POSTED_ANSWER : '이미 답변이 등록된 질문입니다',
 
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
@@ -58,6 +59,7 @@ module.exports = {
     MODIFY_COMMENT_SUCCESS : "댓글 수정하기 성공",
     INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
     DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
+    GET_DETAIL_ANSWER_SUCCESS: '상세페이지 가져오기 성공',
     
 
     /* 서버에러 */
