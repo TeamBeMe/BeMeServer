@@ -38,6 +38,7 @@ module.exports = {
     INVALID_ANSWER_ID: "존재하지 않는 답변 id 값입니다",
     UPDATE_ANSWER_FAIL: "답변 수정 실패",
     ALREADY_POSTED_ANSWER : '이미 답변이 등록된 질문입니다',
+    USER_NO_ANSWERS: '유저가 작성한 답변이 존재하지 않습니다',
 
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
@@ -77,6 +78,7 @@ module.exports = {
     DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
     GET_DETAIL_ANSWER_SUCCESS: '상세페이지 가져오기 성공',
     
+
 
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",

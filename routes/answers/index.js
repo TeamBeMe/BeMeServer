@@ -7,6 +7,8 @@ const authUtil = require('../../middleware/authUtil');
 router.post('/', authUtil.checkToken, answerController.postAnswer);
 // 답변 수정하기
 router.put('/', authUtil.checkToken, answerController.updateAnswer);
+// 내가 쓴 게시글 가져오기
+router.get('/', authUtil.checkToken, answerController.getMyAnswers);
 
 // 댓글 달기
 router.post('/comments', authUtil.checkToken, answerController.postComment);

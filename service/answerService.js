@@ -63,7 +63,7 @@ module.exports = {
         }
     },
     // comment 포함하는 answer 객체 내부의 datetime format
-    getFormattedAnswerwithPK: async (answer_id, user_id) => {
+    getFormattedAnswerwithPK: async (answer_id, user_id = null) => {
         let answer = await Answer.findOne({
             where : {
                 id : answer_id,
@@ -75,7 +75,9 @@ module.exports = {
             return null;
         }
 
-        answer.is_author = user_id == answer.user_id;
+        if (user_id) {
+            answer.is_author = user_id == answer.user_id;
+        }
 
         let comments = await Comment.findAll({
             where: {
@@ -92,13 +94,17 @@ module.exports = {
          for (parent of comments) {
             parent.createdAt = await userService.formatAnswerDate(parent.createdAt);
             parent.updatedAt = await userService.formatAnswerDate(parent.updatedAt);
-            parent.is_author = user_id == parent.user_id;
+            if (user_id) {
+                parent.is_author = user_id == parent.user_id;
+            }
             if (parent.Children) {
                 parent.Children = parent.Children.map(i => i.dataValues);
                 for (child of parent.Children) {
-                            child.is_author = user_id == child.user_id;
-                            child.createdAt = await userService.formatAnswerDate(child.createdAt);
-                            child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
+                    if (user_id) {
+                        child.is_author = user_id == child.user_id;
+                    }
+                    child.createdAt = await userService.formatAnswerDate(child.createdAt);
+                    child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
                 }
             }
         }
