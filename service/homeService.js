@@ -64,7 +64,6 @@ module.exports = {
                 attributes: ['question_id'],
                 order: [['question_id', 'DESC']]
             });
-
             return latAnswer
 
         } catch (error) {

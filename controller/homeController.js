@@ -3,7 +3,7 @@ const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
 const { Answer, Question, Category, User } = require('../models');
-const { homeService } = require('../service');
+const homeService = require('../service/homeService');
 
 const sch = require('node-schedule');
 const rule = new sch.RecurrenceRule();
@@ -11,7 +11,7 @@ const rule = new sch.RecurrenceRule();
 rule.tz = 'Asia/Seoul';
 rule.dayOfWeek = [0, new sch.Range(0, 6)];
 rule.hour = 0; // rule로 하면 뭔가 잘 안됨... 시간을 서울로 안맞춰서 그런가
-rule.minute = 0;
+rule.minute = 0;   
 // '*/7 * * * * *'
 
 // 매일 오전 12시 마다 새로운 질문
@@ -21,7 +21,7 @@ const shedule = sch.scheduleJob(rule, async () => {
         const userCount = await User.count({});
         console.log(userCount);
 
-        for (let i = 2; i <= userCount; i++) { // 인덱스 1이 이상해서 2부터 해놓음
+        for (let i = 5; i <= userCount; i++) { // 인덱스 1이 이상해서 2부터 해놓음
             // 가장 최근 답변
             const latAnswer = await Answer.findOne({
                 where: {
@@ -30,7 +30,7 @@ const shedule = sch.scheduleJob(rule, async () => {
                 attributes: ['user_id','question_id'],
                 order: [['question_id', 'DESC']]
             });
-
+ 
             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
             const latQuestionId = latAnswer.question_id;
             const moreQuestion = await Answer.create({
@@ -79,10 +79,11 @@ module.exports = {
         try {
             const user_id = req.decoded.id;
 
-            const latAnswer = homeService.getLatAnswer(user_id);
+            const latAnswer = await homeService.getLatAnswer(user_id);
 
             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
             const latQuestionId = latAnswer.question_id;
+            console.log(latQuestionId)
             const moreQuestion = await Answer.create({
                 public_flag: 0,
                 user_id: user_id,

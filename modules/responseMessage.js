@@ -62,6 +62,10 @@ module.exports = {
     RECEIVE_NEWQUESTION_SUCCESS: "새로운 질문 받기 성공",
     RECEIVE_NEWQUESTION_FAIL: "새로운 질문 받기 실패",
 
+    /* '나와 다른 생각들' 답변 7개 불러오기 */
+    GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 가져오기 성공",
+    GET_ANOTHER_ANSWERS_FAIL: "다른 답변 가져오기 실패",
+
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
