@@ -51,7 +51,23 @@ module.exports = {
     UPDATE_PUBLICFLAG_SUCCESS: "공개여부 수정 성공",
     UPDATE_PUBLICFLAG_FAIL: "공개여부 수정 실패",
 
-    /** 댓글 */
+    /* 질문 변경하기 */
+    CHANGE_QUESTION_SUCCESS: "질문 변경하기 성공",
+    CHANGE_QUESTION_FAIL: "질문 변경하기 실패",
+
+    /* 답변 삭제 */
+    DELETE_ANSWER_SUCCESS: "답변 삭제 성공",
+    DELETE_ANSWER_FAIL: "답변 삭제 실패",
+
+    /* 새로운 질문 받기 */
+    RECEIVE_NEWQUESTION_SUCCESS: "새로운 질문 받기 성공",
+    RECEIVE_NEWQUESTION_FAIL: "새로운 질문 받기 실패",
+
+    /* '나와 다른 생각들' 답변 7개 불러오기 */
+    GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 가져오기 성공",
+    GET_ANOTHER_ANSWERS_FAIL: "다른 답변 가져오기 실패",
+
+    /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
     INVALID_PARENT_ID : '잘못된 parent_id 입니다',
@@ -59,8 +75,11 @@ module.exports = {
     MODIFY_COMMENT_SUCCESS : "댓글 수정하기 성공",
     INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
     DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
+<<<<<<< HEAD
     GET_DETAIL_ANSWER_SUCCESS: '상세페이지 가져오기 성공',
     
+=======
+>>>>>>> 9835f863bf65b2c69b7e7c771c4afc54e5ac7d40
 
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
