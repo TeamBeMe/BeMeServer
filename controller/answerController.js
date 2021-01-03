@@ -1,15 +1,11 @@
 const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
-const { Op } = require('sequelize'); 
 
 const { Answer, User, Comment, Question } = require('../models');
 
 const { answerService } = require('../service');
-const { get } = require('http');
 const userService = require('../service/userService');
-const sequelize = require('sequelize');
-const answer = require('../models/answer');
 
 module.exports = {
 

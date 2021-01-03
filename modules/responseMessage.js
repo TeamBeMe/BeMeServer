@@ -19,6 +19,7 @@ module.exports = {
     DELETE_USER_SUCCESS: "사용자 삭제 성공",
     DELETE_USER_FAIL: "사용자 삭제 실패",
     USER_UNAUTHORIZED : '해당 유저에게 권한이 없습니다',
+    NO_USER: "존재하지않는 유저 id 입니다.",
   
     /* 회원가입 */
     SIGN_UP_SUCCESS: "회원 가입 성공.",
@@ -26,7 +27,6 @@ module.exports = {
     SIGN_IN_SUCCESS: "로그인 성공.",
     SIGN_IN_FAIL: "로그인 실패.",
     ALREADY_ID: "존재하는 ID 입니다.",
-    NO_USER: "존재하지않는 유저 id 입니다.",
     ALREADY_EMAIL: "이미 존재하는 이메일 입니다.",
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
@@ -77,6 +77,11 @@ module.exports = {
     INVALID_COMMENT_ID : '존재하지 않는 댓글 id 입니다.',
     DELETE_COMMENT_SUCCESS: '댓글 삭제하기 성공',
     GET_DETAIL_ANSWER_SUCCESS: '상세페이지 가져오기 성공',
+
+    /**팔로잉 */
+    FOLLOWING_MYSELF : '자기 자신은 팔로우할 수 없습니다',
+    FOLLOWING_SUCCESS : '팔로우 성공',
+    FOLLOWING_EXIST : '이미 팔로우한 유저입니다',
     
 
 
