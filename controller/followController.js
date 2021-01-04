@@ -9,9 +9,10 @@ const {userService, followService} = require('../service');
 
 
 module.exports = {
-    postFollow: async (req, res) => {
+    makeOrDeleteFollow: async (req, res) => {
         const followed_id = req.body.user_id;
         const user_id = req.decoded.id;
+
         if (! followed_id) {
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
@@ -32,9 +33,15 @@ module.exports = {
                     followed_id,
                 }
             });
+            // 이미 팔로우된 id 이면 팔로우 취소
             if (existFollow.length > 0) {
-                console.log(message.FOLLOWING_EXIST);
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.FOLLOWING_EXIST));
+                const follow = await Follow.destroy({
+                    where : {
+                        follower_id : user_id,
+                        followed_id,
+                    }
+                });
+                return res.status(code.OK).send(util.success(code.OK, message.UN_FOLLOWING_SUCCESS))
             }
 
             const follow = await Follow.create({
@@ -42,8 +49,7 @@ module.exports = {
                 followed_id,
             });
 
-            console.log(follow);
-            return res.status(code.OK).send(util.success(code.OK, message.FOLLOWING_SUCCESS, follow));
+            return res.status(code.OK).send(util.success(code.OK, message.FOLLOWING_SUCCESS));
 
 
         } catch (err) {
@@ -82,6 +88,81 @@ module.exports = {
             followers = await convertUsers(followers);
 
             return res.status(code.OK).send(util.success(code.OK, message.FOLLOWING_LIST_SUCCESS, {followers, followees}));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    getFollowAnswers: async (req, res) => {
+        const { category } = req.query;
+        let { page } = req.query;
+        if (! category) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        if (category != 'follower' && category != 'followee') {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+        }
+        try {
+            const user_id = req.decoded.id;
+
+            if (! page) {
+                page = 1;
+            }
+            // 카테고리를 통해 유저 리스트 가져오기
+            const users = await followService.findFollowerOrFollowee(category, user_id);
+            // 유저들이 쓴 답변들 가져오기
+            let answers = await followService.getAnswers(users, user_id);
+            // createdAt으로 답변 정렬
+            answers.sort( (a,b) => b.answer_date.getTime() - a.answer_date.getTime());
+
+            // 답변 formatting
+            answers = await answerService.getFormattedAnswers(answers, user_id);
+            
+            
+            // 페이지 총 수
+            const page_len = parseInt(answers.length / 10) + 1;
+
+            const idx_start = 0 + (page - 1) * 10;
+            const idx_end = idx_start + 9;
+
+            // 페이지네이션
+            answers = answers.filter((item, idx) => {
+                return (idx >= idx_start && idx <= idx_end);
+            })
+            
+            return res.status(code.OK).send(util.success(code.OK, message.GET_FOLLOW_ANSWERS_SUCCESS, {page_len, answers}));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    // 팔로우 삭제하기
+    deleteFollower: async (req, res) => {
+        const follower_id = req.params.user_id;
+        if (! follower_id) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.BAD_REQUEST));
+        }
+        try {
+            const user_id = req.decoded.id;
+
+            const follower = await User.findByPk(follower_id);
+            if (! follower) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
+            }
+
+            const deleted_count = await Follow.destroy({
+                where : {
+                    follower_id,
+                    followed_id : user_id,
+                }
+            });
+            if (deleted_count > 0) {
+                return res.status(code.OK).send(util.success(code.OK, message.DELETE_FOLLOWING_SUCCESS));
+            }
+            // deleted 되지 않은 경우에는 follower id 
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NOT_MY_FOLLOEWR));
+            
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
