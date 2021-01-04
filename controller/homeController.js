@@ -9,13 +9,14 @@ const sch = require('node-schedule');
 const rule = new sch.RecurrenceRule();
 
 rule.tz = 'Asia/Seoul';
-rule.dayOfWeek = [0, new sch.Range(0, 6)];
+//rule.dayOfWeek = [0, new sch.Range(0, 6)];
 rule.hour = 0; // rule로 하면 뭔가 잘 안됨... 시간을 서울로 안맞춰서 그런가
-rule.minute = 0;   
+rule.minute = 0;
+rule.second = 7;
 // '*/7 * * * * *'
 
 // 매일 오전 12시 마다 새로운 질문
-const shedule = sch.scheduleJob(rule, async () => {
+const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
     try {
         console.log("반복!")
         const userCount = await User.count({});
