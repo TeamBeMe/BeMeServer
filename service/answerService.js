@@ -1,4 +1,4 @@
-const { Answer, Comment } = require('../models');
+const { Answer, Comment, User, Question, Category } = require('../models');
 const message = require('../modules/responseMessage');
 const userService = require('./userService');
 const { Op } = require('sequelize');
@@ -14,17 +14,18 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                 }
             },
             attributes: { exclude: ['createdAt', 'updatedAt']},
-            raw: true,
+            raw : true,
         });
         if (! answer) {
             return
         }
-
+        
         if (user_id) {
             answer.is_author = user_id == answer.user_id;
         }
         answer.public_flag = Boolean(answer.public_flag);
         answer.comment_blocked_flag = Boolean(answer.comment_blocked_flag);
+
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
             where : {
@@ -73,6 +74,17 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                 }
             }
         }
+        // user, question, category 정보 넣어주기
+        const user = await User.findByPk(answer.user_id);
+        const question = await Question.findByPk(answer.question_id);
+        const category = await Category.findByPk(question.category_id);
+        
+        answer.user_profile = user.profile_img;
+        answer.user_nickname = user.nickname;
+        answer.question_id = question.id;
+        answer.question = question.title;
+        answer.category = category.name;
+        answer.category_id = category.id;
         
         answer.is_answered = is_answered;
         answer.answer_date = await userService.formatAnswerDate(answer.answer_date);
@@ -147,11 +159,47 @@ module.exports = {
     getFormattedAnswerwithPK,
     // answers list 에 해당하는 formatted answer 가져오기
     getFormattedAnswers: async (answers, user_id) => {
-        const result = []
-        for (answer of answers) {
-            result.push(await getFormattedAnswerwithPK(answer.id, user_id))
+        try {
+            const result = []
+            for (answer of answers) {
+                result.push(await getFormattedAnswerwithPK(answer.id, user_id))
+            }
+            return result;
+        } catch (err) {
+            throw err;
         }
-        return result;
     },
+    getAnswerByUserId : async (user_id) => {
+        try {
+            const answers = await Answer.findAll({
+                where : {
+                    user_id
+                }
+            });
+            return answers;
+        } catch (err) {
+            throw err;
+        }
+    },
+    getPublicAnswersByUserId : async (author_id) => {
+        try {
+            const answers = await Answer.findAll({
+                where : {
+                    user_id: author_id,
+                    public_flag : true,
+                    content : {
+                        [Op.not]: null,
+                    }
+                },
+                attributes : ['id', 'answer_date'],
+                raw : true,
+            });
+
+            return answers;
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+}
 
 }
