@@ -45,6 +45,9 @@ const formatAnswerDate = async (date) => {
     try {
         const today = await getTodayDate();
         let td = today;
+        if (! date) {
+            return null
+        }
     
         const diff = td.getTime()- date.getTime();
         const minDiff = diff / 60000;

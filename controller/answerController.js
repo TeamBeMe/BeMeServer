@@ -210,6 +210,7 @@ module.exports = {
         }
 
     },
+    // 내가 쓴 게시글 불러오기
     getMyAnswers: async(req, res) => {
         try {
             const answers = await Answer.findAll({
@@ -217,10 +218,9 @@ module.exports = {
                     user_id : req.decoded.id,
                 },
                 attributes : ['id'],
-                order : [['createdAt', 'ASC']],
+                order : [['answer_date', 'DESC']],
                 raw : true
             });
-            console.log(answers)
 
             if ( answers.length==0 ) {
                 return res.status(code.OK).send(util.success(code.OK, message.USER_NO_ANSWERS, []));
@@ -229,7 +229,9 @@ module.exports = {
             const results = []
             for (ans of answers) {
                 const item = await answerService.getFormattedAnswerwithPK(ans.id, req.decoded.id);
-                results.push(item);
+                if (item) {
+                    results.push(item);
+                }
             }
             return res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, results));
 
