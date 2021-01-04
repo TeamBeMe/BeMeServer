@@ -2,23 +2,7 @@ const message = require('../modules/responseMessage');
 const {User, Follow, Answer} = require('../models');
 const answerService = require('./answerService');
 
-const getAnswersByUserId = async (author_id, user_id) => {
-        try {
-            const answers = await Answer.findAll({
-                where : {
-                    user_id: author_id,
-                    public_flag : true,
-                },
-                attributes : ['id', 'answer_date'],
-                raw : true,
-            });
 
-            return answers;
-        } catch (err) {
-            console.error(err);
-            throw err;
-        }
-}
 module.exports = {
     // id 에 해당하는 유저 정복 가져오기
     idToUser : async (user_id) => {
@@ -61,12 +45,11 @@ module.exports = {
     getAnswers : async (users, user_id) => {
         let result = []
         for (user of users) {
-            result = result.concat(await getAnswersByUserId(user.id, user_id));
+            result = result.concat(await answerService.getPublicAnswersByUserId(user.id));
         }
         return result;
     },
     // id 에 해당하는 글 가져오기
-    getAnswersByUserId,
     
 
 }
