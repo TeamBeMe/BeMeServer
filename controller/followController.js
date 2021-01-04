@@ -5,7 +5,8 @@ const message = require('../modules/responseMessage');
 const { Answer, User, Comment, Question, Follow } = require('../models');
 
 const { answerService } = require('../service');
-const userService = require('../service/userService');
+const {userService, followService} = require('../service');
+
 
 module.exports = {
     postFollow: async (req, res) => {
@@ -46,7 +47,43 @@ module.exports = {
 
 
         } catch (err) {
-            console.error(err)
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    getFollowerFollowee: async (req, res) => {
+        const user_id = req.decoded.id;
+        try {
+            // 나를 팔로우한 사람들 불러오기
+            let followers = await Follow.findAll({
+                where : {
+                    followed_id : user_id,
+                },
+                attributes : [['follower_id', 'id']],
+                raw : true,
+            });
+            // 내가 팔로우한 사람들 불러오기
+            let followees = await Follow.findAll({
+                where : {
+                    follower_id : user_id,
+                },
+                attributes: [['followed_id', 'id']],
+                raw : true,
+            });
+
+            const convertUsers = async(users) => {
+                const result = []
+                for (user of users) {
+                    result.push(await followService.idToUser(user.id));
+                }
+                return result;
+            }
+            followees = await convertUsers(followees);
+            followers = await convertUsers(followers);
+
+            return res.status(code.OK).send(util.success(code.OK, message.FOLLOWING_LIST_SUCCESS, {followers, followees}));
+        } catch (err) {
+            console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     }

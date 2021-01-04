@@ -82,6 +82,7 @@ module.exports = {
     FOLLOWING_MYSELF : '자기 자신은 팔로우할 수 없습니다',
     FOLLOWING_SUCCESS : '팔로우 성공',
     FOLLOWING_EXIST : '이미 팔로우한 유저입니다',
+    FOLLOWING_LIST_SUCCESS : '팔로워, 팔로이 가져오기 성공',
     
 
 
