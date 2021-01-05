@@ -3,6 +3,7 @@ const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 const { User, Answer, Follow} = require('../models');
 const { answerService, profileService } = require('../service');
+const { getFormattedAnswers } = require('../service/answerService');
 
 module.exports = {
     getOtherAnswers: async (req, res) => {
@@ -74,6 +75,31 @@ module.exports = {
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_OTHER_PROFILE_SUCCESS, target_user));
             
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    getMyAnswer : async (req, res) => {
+        try {
+            let {public, category, page} = req.query;
+            if (! public) {
+                public = 'all'
+            }
+            if (public != 'public' && public != 'unpublic' && public != 'all') {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+            if (! page) {
+                page = 1;
+            }
+
+            const user_id = req.decoded.id;
+            let answers = await answerService.getAnswerByUserId(user_id);
+            answers = await answerService.getFormattedAnswers(answers, user_id);
+            answers = await profileService.filterAnswer(answers,category, public);
+            
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, answers))
+
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));

@@ -1,4 +1,4 @@
-const { Answer, Comment, User, Question, Category } = require('../models');
+const { Answer, Comment, User, Question, Category, Scrap } = require('../models');
 const message = require('../modules/responseMessage');
 const userService = require('./userService');
 const { Op } = require('sequelize');
@@ -25,6 +25,18 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
         }
         answer.public_flag = Boolean(answer.public_flag);
         answer.comment_blocked_flag = Boolean(answer.comment_blocked_flag);
+        // 내가 스크랩한 질문인지 확인하기
+        const isScrapped = await Scrap.findOne({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if (! isScrapped) {
+            answer.is_scrapped = false;
+        } else {
+            answer.is_scrapped = true;
+        }
 
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
@@ -52,7 +64,7 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
             },
             include : 'Children',
             attributes: {exclude: ['parent_id']},
-            order :[['createdAt', 'DESC'], [{model: Comment, as : 'Children'}, 'createdAt', 'ASC']]
+            order :[['createdAt', 'ASC'], [{model: Comment, as : 'Children'}, 'createdAt', 'ASC']]
         });
         comments = comments.map(i => i.dataValues);
 
@@ -60,9 +72,11 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
          for (parent of comments) {
             parent.createdAt = await userService.formatAnswerDate(parent.createdAt);
             parent.updatedAt = await userService.formatAnswerDate(parent.updatedAt);
+            
             if (user_id) {
                 parent.is_author = user_id == parent.user_id;
             }
+            parent.is_visible = parent.is_author || answer.is_author;
             if (parent.Children) {
                 parent.Children = parent.Children.map(i => i.dataValues);
                 for (child of parent.Children) {
@@ -71,6 +85,8 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                     }
                     child.createdAt = await userService.formatAnswerDate(child.createdAt);
                     child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
+                    // 내가 볼 수 있는 댓글인지 확인
+                    child.is_visible = (child.is_author || answer.is_author);
                 }
             }
         }
@@ -173,8 +189,12 @@ module.exports = {
         try {
             const answers = await Answer.findAll({
                 where : {
-                    user_id
-                }
+                    user_id,
+                    content : {
+                        [Op.not]: null,
+                    }
+                },
+                raw : true,
             });
             return answers;
         } catch (err) {
