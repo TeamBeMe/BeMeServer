@@ -10,14 +10,6 @@ module.exports = {
     ISSUE_SUCCESS: '새로운 토큰이 생성되었습니다.',
   
     /* User */
-    READ_USER_SUCCESS: "사용자 조회 성공",
-    READ_USER_ALL_SUCCESS: "전체 사용자 조회 실패",
-    READ_USER_FAIL: "사용자 조회 성공",
-    READ_USER_ALL_FAIL: "전체 사용자 조회 실패",
-    UPDATE_USER_SUCCESS: "사용자 업데이트 성공",
-    UPDATE_USER_FAIL: "사용자 업데이트 실패",
-    DELETE_USER_SUCCESS: "사용자 삭제 성공",
-    DELETE_USER_FAIL: "사용자 삭제 실패",
     USER_UNAUTHORIZED : '해당 유저에게 권한이 없습니다',
     NO_USER: "존재하지않는 유저 id 입니다.",
   
@@ -90,6 +82,7 @@ module.exports = {
     /**마이페이지 */
     GET_OTHER_ANSWER_SUCCESS: '다른 사람 게시글 가져오기 성공',
     GET_OTHER_PROFILE_SUCCESS: '다른 사람 프로필 정보 가져오기 성공',
+    GET_MY_ANSWER_SUCCESS : '마이페이지 게시글 가져오기 성공',
 
 
     /* 서버에러 */

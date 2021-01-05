@@ -16,5 +16,17 @@ module.exports={
         }
         answers = await getFormatted(answers);
         return answers;
+    },
+    filterAnswer : async (answers, category, public) => {
+        if (public == 'unpublic') {
+            answers = answers.filter(item => item.public_flag == false);
+        } else if (public == 'public') {
+            answers = answers.filter(item => item.public_flag == true);
+        } 
+        if (category ) {
+            answers = answers.filter(item => item.category_id == category);
+        }
+       return answers; 
+        
     }
 }

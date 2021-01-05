@@ -7,6 +7,8 @@ const authUtil = require('../../middleware/authUtil');
 
 // 내 프로필 가져오기
 // router.get('profiles', authUtil, controller.getMyAnswers);
+// 내 글 가져오기/ 스크랩 가져오기
+router.get('/answers', authUtil.checkToken, controller.getMyAnswer);
 // 다른 사람 글 가져오기
 router.get('/answers/:user_id', authUtil.checkToken, controller.getOtherAnswers);
 // 다른 사람 프로필 가져오기
