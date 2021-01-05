@@ -101,7 +101,7 @@ module.exports = {
             const user_id = req.decoded.id;
             
             let answers = await answerService.getMyAnswersByQuery(query, user_id);
-            answers = await answerService.getFormattedAnswers(answers, user_id);
+            answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
             answers = await profileService.filterAnswer(answers,category, public);
 
             const pagination = await answerService.makePagination(answers,page);

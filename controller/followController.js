@@ -116,7 +116,7 @@ module.exports = {
             answers.sort( (a,b) => b.answer_date.getTime() - a.answer_date.getTime());
 
             // 답변 formatting
-            answers = await answerService.getFormattedAnswers(answers, user_id);
+            answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
             
             
             // 페이지 총 수
