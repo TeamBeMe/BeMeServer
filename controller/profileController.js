@@ -158,5 +158,27 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
-    }
+    },
+    // 내 프로필사진 변경하기
+    updateProfileImg: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+
+            const image = await userService.getImageUrl(req.file);
+
+            const user = await User.update({ profile_img : image }, {
+                where : {
+                    id: user_id,
+                },
+                raw : true,
+            });
+ 
+            return res.status(code.OK).send(util.success(code.OK, message.UPDATE_MY_PROFILE_IMG_SUCCESS));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    
 }
