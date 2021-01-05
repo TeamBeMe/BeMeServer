@@ -89,6 +89,7 @@ module.exports = {
     
     /**마이페이지 */
     GET_OTHER_ANSWER_SUCCESS: '다른 사람 게시글 가져오기 성공',
+    GET_OTHER_PROFILE_SUCCESS: '다른 사람 프로필 정보 가져오기 성공',
 
 
     /* 서버에러 */
