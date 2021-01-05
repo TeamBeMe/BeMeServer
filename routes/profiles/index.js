@@ -15,5 +15,7 @@ router.get('/answers/:user_id', authUtil.checkToken, controller.getOtherAnswers)
 router.get('/scraps', authUtil.checkToken, controller.getMyScrap);
 // 다른 사람 프로필 가져오기
 router.get('/:user_id', authUtil.checkToken, controller.getOtherProfile);
+// 프로필 사진 변경하기
+router.put('/', authUtil.checkToken, controller.updateProfileImg);
 
 module.exports = router;
