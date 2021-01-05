@@ -9,5 +9,7 @@ const authUtil = require('../../middleware/authUtil');
 // router.get('profiles', authUtil, controller.getMyAnswers);
 // 다른 사람 글 가져오기
 router.get('/answers/:user_id', authUtil.checkToken, controller.getOtherAnswers);
+// 다른 사람 프로필 가져오기
+router.get('/:user_id', authUtil.checkToken, controller.getOtherProfile);
 
 module.exports = router;
