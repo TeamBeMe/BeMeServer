@@ -87,6 +87,8 @@ module.exports = {
     DELETE_FOLLOWING_SUCCESS : '팔로우 삭제 성공',
     NOT_MY_FOLLOEWR : '팔로워가 아닙니다',
     
+    /**마이페이지 */
+    GET_OTHER_ANSWER_SUCCESS: '다른 사람 게시글 가져오기 성공',
 
 
     /* 서버에러 */
