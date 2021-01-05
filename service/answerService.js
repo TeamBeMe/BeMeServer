@@ -113,7 +113,7 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
 
 module.exports = {
     // 유저가 가지고 있는 답변을 질문과 함께 연결하기
-    checkBeforeCommenting : async (answer_id, parent_id, public_flag) => {
+    checkBeforeCommenting : async (answer_id, parent_id, public_flag, user_id) => {
         const answer = await Answer.findByPk(answer_id);
 
         try {
@@ -134,10 +134,15 @@ module.exports = {
                 if (! parent || parent.parent_id) {
                     return message.INVALID_PARENT_ID;
                 }
+                // parent_id 가 unpublic 인 경우, answer author 거나 comment author 여야함
+                if (! parent.public_flag && (answer.user_id != user_id || parent.user_id != user_id)) {
+                    return message.USER_UNAUTHORIZED;;
+                }
                 // parent_id 가 public_flag false 인 경우, child 도 flase
                 if (! parent.public_flag && public_flag) {
                     return message.CHECK_PUBLIC_FLAG;
                 }
+                return null;
             }
             return null;
         } catch (err) {
@@ -159,13 +164,6 @@ module.exports = {
                 return message.USER_UNAUTHORIZED;
             }
     
-            if (comment.parent_id) {
-                const parent = await Comment.findByPk(comment.parent_id);
-                // parent_id 가 public_flag false 인 경우, child 도 flase
-                if (! parent.public_flag && public_flag) {
-                    return message.CHECK_PUBLIC_FLAG;
-                }
-            }
             return null;
         } catch (err) {
             throw err;
