@@ -5,6 +5,7 @@ const { User, Answer, Follow, sequelize} = require('../models');
 const { answerService, profileService } = require('../service');
 const { getFormattedAnswers } = require('../service/answerService');
 const {Op} = require('sequelize');
+const userService = require('../service/userService');
 
 module.exports = {
     getOtherAnswers: async (req, res) => {
@@ -106,6 +107,25 @@ module.exports = {
             const pagination = await answerService.makePagination(answers,page);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, pagination))
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    // 내 프로필 가져오기
+    getMyProfile: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+            const user = await User.findOne({
+                where : {
+                    id: user_id,
+                },
+                attributes: ['id', 'nickname','email', 'profile_img','continued_visit'],
+                raw : true,
+            });
+            user.answer_count = await profileService.getAnswerCountByUserId(user_id);
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_PROFILE_SUCCESS, user));
 
         } catch (err) {
             console.error(err);
