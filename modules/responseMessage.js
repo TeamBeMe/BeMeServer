@@ -84,6 +84,7 @@ module.exports = {
     GET_OTHER_PROFILE_SUCCESS: '다른 사람 프로필 정보 가져오기 성공',
     GET_MY_ANSWER_SUCCESS : '마이페이지 게시글 가져오기 성공',
     GET_MY_PROFILE_SUCCESS: '내 프로필 정보 가져오기 성공',
+    GET_MY_SCRAP_SUCCESS: '내가 스크랩한 글 가져오기 성공',
 
 
     /* 서버에러 */

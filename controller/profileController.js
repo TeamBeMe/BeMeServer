@@ -131,5 +131,32 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
+    },
+    // 내가 스크랩한 글 가져오기
+    getMyScrap: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+
+            let {public, category, page, query} = req.query;
+            if (! public) {
+                public = 'all'
+            }
+            if (public != 'public' && public != 'unpublic' && public != 'all') {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+            if (! page) {
+                page = 1;
+            }
+            let answers = await profileService.getScrapByQuery(query, user_id);
+            answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
+            answers = await profileService.filterAnswer(answers,category, public);
+
+            const pagination = await answerService.makePagination(answers,page);
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_SCRAP_SUCCESS, pagination));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
     }
 }

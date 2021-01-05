@@ -11,6 +11,8 @@ router.get('/', authUtil.checkToken, controller.getMyProfile);
 router.get('/answers', authUtil.checkToken, controller.getMyAnswer);
 // 다른 사람 글 가져오기
 router.get('/answers/:user_id', authUtil.checkToken, controller.getOtherAnswers);
+// 마이페이지 스크랩한 글 가져오기
+router.get('/scraps', authUtil.checkToken, controller.getMyScrap);
 // 다른 사람 프로필 가져오기
 router.get('/:user_id', authUtil.checkToken, controller.getOtherProfile);
 
