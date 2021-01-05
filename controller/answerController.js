@@ -130,6 +130,7 @@ module.exports = {
            const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id);
 
            if ( hasError ) {
+                console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
 
