@@ -52,7 +52,7 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
             },
             include : 'Children',
             attributes: {exclude: ['parent_id']},
-            order :[['createdAt', 'ASC'], [{model: Comment, as : 'Children'}, 'createdAt', 'ASC']]
+            order :[['createdAt', 'DESC'], [{model: Comment, as : 'Children'}, 'createdAt', 'ASC']]
         });
         comments = comments.map(i => i.dataValues);
 
@@ -192,6 +192,7 @@ module.exports = {
                     }
                 },
                 attributes : ['id', 'answer_date'],
+                order :[['answer_date', 'DESC']],
                 raw : true,
             });
 

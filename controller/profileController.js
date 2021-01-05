@@ -8,7 +8,7 @@ module.exports = {
     getOtherAnswers: async (req, res) => {
 
         const target_user_id = req.params.user_id;
-        const page = req.params.page;
+        let page = req.query.page;
         if (! page) {
             page = 1
         }
@@ -23,9 +23,7 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
             }
             // 게시글 가져오기
-            const answers = await answerService.getPublicAnswersByUserId(target_user_id);
-            
-
+            let answers = await profileService.getPublicOtherAnswers(target_user_id, req.decoded.id);
 
             // 페이지 총 수
             const page_len = parseInt(answers.length / 10) + 1;
@@ -37,7 +35,7 @@ module.exports = {
             answers = answers.filter((item, idx) => {
                 return (idx >= idx_start && idx <= idx_end);
             })
-            return res.status(code.OK).send(util.success(code.OK, message.ISSUE_SUCCESS, answers));
+            return res.status(code.OK).send(util.success(code.OK, message.GET_OTHER_ANSWER_SUCCESS, { page_len, answers}));
 
         } catch (err) {
             console.error(err);
