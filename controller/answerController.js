@@ -99,7 +99,7 @@ module.exports = {
             if (hasError === message.CHECK_PUBLIC_FLAG) {
                 public_flag = false;
             } else if ( hasError ) {
-                console.log(hasError);
+                // console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
             const comment = await Comment.create({
@@ -119,7 +119,7 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
-
+    // 댓글 수정하기
     updateComment : async (req, res) => {
         const { comment_id, content } = req.body;
         if (! comment_id || ! content) {
@@ -130,7 +130,6 @@ module.exports = {
            const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id);
 
            if ( hasError ) {
-                console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
 

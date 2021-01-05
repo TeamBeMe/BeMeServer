@@ -1,9 +1,10 @@
 const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
-const { User, Answer, Follow} = require('../models');
+const { User, Answer, Follow, sequelize} = require('../models');
 const { answerService, profileService } = require('../service');
 const { getFormattedAnswers } = require('../service/answerService');
+const {Op} = require('sequelize');
 
 module.exports = {
     getOtherAnswers: async (req, res) => {
@@ -71,8 +72,8 @@ module.exports = {
             } else {
                 target_user.is_followed = true;
             }
-            
-
+            // 답변 개수 가져오기
+            target_user.answer_count = await profileService.getAnswerCountByUserId(target_user_id);
             return res.status(code.OK).send(util.success(code.OK, message.GET_OTHER_PROFILE_SUCCESS, target_user));
             
         } catch (err) {
