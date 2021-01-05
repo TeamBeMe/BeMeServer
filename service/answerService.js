@@ -261,6 +261,7 @@ module.exports = {
             const result = []
             for (answer of answers) {
                 result.push(await getFormattedAnswerbyPkwithoutComment(answer.id, user_id))
+                console.log(answer.id)
             }
             return result;
         } catch (err) {
