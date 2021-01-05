@@ -94,7 +94,7 @@ module.exports = {
 
             const user_id = req.decoded.id;
 
-            const hasError = await answerService.checkBeforeCommenting(answer_id, parent_id, public_flag);
+            const hasError = await answerService.checkBeforeCommenting(answer_id, parent_id, public_flag, user_id);
 
             if (hasError === message.CHECK_PUBLIC_FLAG) {
                 public_flag = false;
@@ -122,26 +122,20 @@ module.exports = {
 
     updateComment : async (req, res) => {
         const { comment_id, content } = req.body;
-        let { is_public : public_flag } = req.body;
         if (! comment_id || ! content) {
-            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
-        }
-        if (typeof public_flag  !== 'boolean') {
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
 
-           const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id, public_flag);
+           const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id);
 
-           if (hasError === message.CHECK_PUBLIC_FLAG) {
-                public_flag = false;
-            } else if ( hasError ) {
+           if ( hasError ) {
                 console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
 
             // update
-            const updated_count = await Comment.update({content, public_flag},{
+            const updated_count = await Comment.update({content},{
                 where : {
                     id : comment_id,
                 }
