@@ -57,8 +57,16 @@ module.exports = {
     RECEIVE_NEWQUESTION_FAIL: "새로운 질문 받기 실패",
 
     /* '나와 다른 생각들' 답변 7개 불러오기 */
-    GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 가져오기 성공",
-    GET_ANOTHER_ANSWERS_FAIL: "다른 답변 가져오기 실패",
+    GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 7개 가져오기 성공",
+    GET_ANOTHER_ANSWERS_FAIL: "다른 답변 7개 가져오기 실패",
+
+    /* 나와 다른 생각들 답변 7개 상세보기 */
+    INVALID_SORTING_QUERY: "잘못된 최신 / 흥미 쿼리",
+    GET_SPECIFIC_ANSWERS_SUCCESS: "한 질문에 대한 답변 모아보기 성공",
+    GET_SPECIFIC_ANSWERS_FAIL: "한 질문에 대한 답변 모아보기 실패",
+
+    /* 다른 글 둘러보기 */
+    GET_EXPLORATION_RESULT_SUCCESS: "다른 글 둘러보기 성공",
 
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",

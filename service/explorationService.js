@@ -7,11 +7,6 @@ module.exports = {
     // 7개 각 질문의 가장 인기가 많은 답변 하나씩 가져오기
     getSevenAnswers : async(latSevenAnswer) => {
         try {
-            // [0] 우선 해당 유저의 최근 7개 질문 id를 가져와야 한다 - latSevenAnswer
-            // [1] id 리스트 한바퀴 돌면서 (for...of) [answer+comment조인 테이블]에서 해당 Answer.question_id를 가지는 Answer 중
-            // comment수 내림차순대로 findAll
-            // [2] findAll 결과값의 배열 첫번째 data return
-            // 근데 모오오오든 게시물을 가져와서 코멘트 수 구하는건 비효율적이지 않나? 최근 50개 정도만 가져오는 방법?
             let answersArr = [];
             
             for await (answer of latSevenAnswer) {
@@ -42,9 +37,82 @@ module.exports = {
         }
     },
 
-    // 배열을 최신순으로 sorting 하는 합수
+    // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수
+    sortNewAnswerByQid : async(question_id) => {
+        try {
+            const filteredAnswers = await Answer.findAll({
+                attributes: ['id'],
+                where: {
+                    question_id: question_id
+                },
+                order: [['answer_date', 'DESC']]
+            });
+            console.dir('sorting 된 답변 id', filteredAnswers)
+            return filteredAnswers
 
-    // 배열을 흥미순으로 sorting 하는 함수
+        } catch (error) {
+            throw error;
+        }
+    },
 
-    // 전체 글을 
+    // 전체 배열을 최신순으로 sorting 하는 함수
+    sortNewAnswers : async() => {
+        try {
+            
+            const filteredAnswers = await Answer.findAll({
+                attributes: ['id'],
+                order: [['answer_date', 'DESC']]
+            });
+            console.dir('sorting 된 답변 id', filteredAnswers)
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수
+    sortIntAnswerByQid : async() => {
+        try {
+            
+            const filteredAnswers = await Answer.findAll({
+                include: [{
+                    model: Comment,
+                    attributes: []
+                }],
+                attributes: ['id',
+                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                where: {
+                    question_id: question_id
+                },
+                order: [[sequelize.literal('comment_count'), 'DESC']]
+            });
+
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // 전체 배열을 흥미순으로 sorting 하는 함수
+    sortIntAnswers : async() => {
+        try {
+            
+            const filteredAnswers = await Answer.findAll({
+                include: [{
+                    model: Comment,
+                    attributes: []
+                }],
+                attributes: ['id',
+                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                order: [[sequelize.literal('comment_count'), 'DESC']]
+            });
+
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
 }

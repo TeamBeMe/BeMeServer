@@ -24,7 +24,7 @@ module.exports = {
                     user_id: user_id
                 }
             })
-
+            //console.dir(`홈화면 엔서들 ${result}`)
             return result
 
         } catch (error) {

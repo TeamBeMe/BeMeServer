@@ -56,6 +56,9 @@ module.exports = {
             const user_id = req.decoded.id;
             const page = req.params.page;
             const limit = 5;
+            if (! page) {
+                page = 1;
+            }
 
             if (!user_id || !page ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
