@@ -201,6 +201,46 @@ module.exports = {
             throw err;
         }
     },
+    getMyAnswersByQuery: async (query, user_id) => {
+        try {
+            let answers = await Answer.findAll({
+                where: {
+                    user_id,
+                    content : {
+                        [Op.not]: null,
+                        [Op.like]: `%${query}%`,
+                    }
+                },
+                raw : true,
+            });
+            const answers2 = await Answer.findAll({
+                where: {
+                    user_id,
+                    content: {
+                        [Op.not]: null,
+                    },
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        title : {
+                            [Op.like]: `%${query}%`,
+                        }
+                    },
+                    attributes: [],
+                },
+                raw : true,
+            });
+            console.log(answers2);
+            answers = answers2.concat(answers);
+            // 중복 제거
+            answers = answers.filter((arr, index, callback) => index === callback.findIndex(t => t.id === arr.id));
+
+            return answers;
+        } catch (err) {
+            throw err;
+        }
+    },
     getPublicAnswersByUserId : async (author_id) => {
         try {
             const answers = await Answer.findAll({
@@ -221,6 +261,19 @@ module.exports = {
             console.error(err);
             throw err;
         }
-}
+    },
+    makePagination : async (answers, page) => {
+         // 페이지 총 수
+         const page_len = parseInt(answers.length / 10) + 1;
+
+         const idx_start = 0 + (page - 1) * 10;
+         const idx_end = idx_start + 9;
+
+         // 페이지네이션
+         answers = answers.filter((item, idx) => {
+             return (idx >= idx_start && idx <= idx_end);
+         })
+         return {page_len, answers}
+    }
 
 }
