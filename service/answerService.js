@@ -135,7 +135,7 @@ module.exports = {
                     return message.INVALID_PARENT_ID;
                 }
                 // parent_id 가 unpublic 인 경우, answer author 거나 comment author 여야함
-                if (! parent.public_flag && (answer.user_id != user_id || parent.user_id != user_id)) {
+                if (! parent.public_flag && answer.user_id != user_id && parent.user_id != user_id) {
                     return message.USER_UNAUTHORIZED;;
                 }
                 // parent_id 가 public_flag false 인 경우, child 도 flase
@@ -150,7 +150,7 @@ module.exports = {
         }
 
     },
-    checkBeforeModifying : async (comment_id, user_id, public_flag) => {
+    checkBeforeModifying : async (comment_id, user_id) => {
 
         try {
             const comment = await Comment.findByPk(comment_id);
