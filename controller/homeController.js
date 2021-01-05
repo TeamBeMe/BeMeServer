@@ -22,7 +22,7 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
         const userCount = await User.count({});
         console.log(userCount);
 
-        for (let i = 5; i <= userCount; i++) { // 인덱스 1이 이상해서 2부터 해놓음
+        for (let i = 1; i <= userCount; i++) { 
             // 가장 최근 답변
             const latAnswer = await Answer.findOne({
                 where: {
@@ -80,11 +80,7 @@ module.exports = {
         try {
             const user_id = req.decoded.id;
 
-            const latAnswer = await homeService.getLatAnswer(user_id);
-
-            // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
-            const latQuestionId = latAnswer.question_id;
-            console.log(latQuestionId)
+            const latQuestionId = await homeService.getLatAnswer(user_id);
             const moreQuestion = await Answer.create({
                 public_flag: 0,
                 user_id: user_id,
@@ -122,16 +118,25 @@ module.exports = {
         try {
             const user_id = req.decoded.id;
             const answer_id = req.params.answerId;
-            console.log(user_id);
-            console.log(answer_id);
+            console.log(`homeController 질문 변경할 user_id =  ${user_id}, 질문 변경할 answer_id = ${answer_id}`);
 
             if (!user_id || !answer_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
 
-            const check = homeService.checkExiAnswerAndUser(answer_id, user_id);
-            const latAnswer = homeService.getLatAnswer(user_id);
-            const latQuestionId = latAnswer.question_id;
+            const oneAnswer = await Answer.findByPk(answer_id);
+            console.log(`homeService 답변과 유저 존재 검사 answer 객체 = ${oneAnswer}`);
+            // 존재하는 answer인지 확인
+            if (! oneAnswer) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+            console.log(`homeService 답변과 유저 존재 검사 answer 객체의 user_id = ${oneAnswer.user_id}`);
+            // 불러온 answer의 유저 id와, 토큰 유저 id가 일치하는 지 확인
+            if (oneAnswer.user_id != user_id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+
+            const latQuestionId = await homeService.getLatAnswer(user_id);
 
             // 질문 변경
             const resultChangedNum = await Answer.update({ question_id: latQuestionId + 1 }, {
