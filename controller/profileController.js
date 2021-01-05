@@ -82,7 +82,7 @@ module.exports = {
     },
     getMyAnswer : async (req, res) => {
         try {
-            let {public, category, page} = req.query;
+            let {public, category, page, query} = req.query;
             if (! public) {
                 public = 'all'
             }
@@ -92,13 +92,19 @@ module.exports = {
             if (! page) {
                 page = 1;
             }
+            if (! query) {
+                query = "";
+            }
 
             const user_id = req.decoded.id;
-            let answers = await answerService.getAnswerByUserId(user_id);
+            
+            let answers = await answerService.getMyAnswersByQuery(query, user_id);
             answers = await answerService.getFormattedAnswers(answers, user_id);
             answers = await profileService.filterAnswer(answers,category, public);
-            
-            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, answers))
+
+            const pagination = await answerService.makePagination(answers,page);
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, pagination))
 
         } catch (err) {
             console.error(err);
