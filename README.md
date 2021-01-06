@@ -31,9 +31,10 @@
 ![](https://images.velog.io/images/jujube0/post/4aea98e8-2140-4035-972b-e7963f8b2bec/image.png)
 
 ## 서버 아키텍쳐
-
+![Untitled Diagram](https://user-images.githubusercontent.com/59338503/103678223-9e20ca00-4fc6-11eb-9d37-f67b7a75d45d.png)
 
 ## 핵심 기능 설명
+
 ### 홈화면 
 - 매일 같은 시간 질문 업로드
 - 질문 변경, 질문 더 받기

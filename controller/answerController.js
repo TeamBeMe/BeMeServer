@@ -130,7 +130,6 @@ module.exports = {
            const hasError = await answerService.checkBeforeModifying(comment_id, req.decoded.id);
 
            if ( hasError ) {
-                console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
 
@@ -204,34 +203,4 @@ module.exports = {
         }
 
     },
-    // 내가 쓴 게시글 불러오기
-    getMyAnswers: async(req, res) => {
-        try {
-            const answers = await Answer.findAll({
-                where : {
-                    user_id : req.decoded.id,
-                },
-                attributes : ['id'],
-                order : [['answer_date', 'DESC']],
-                raw : true
-            });
-
-            if ( answers.length==0 ) {
-                return res.status(code.OK).send(util.success(code.OK, message.USER_NO_ANSWERS, []));
-            }
-
-            const results = []
-            for (ans of answers) {
-                const item = await answerService.getFormattedAnswerwithPK(ans.id, req.decoded.id);
-                if (item) {
-                    results.push(item);
-                }
-            }
-            return res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, results));
-
-        } catch (err) {
-            console.log(err);
-            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
-        }
-    }
 }
