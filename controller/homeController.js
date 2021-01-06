@@ -31,6 +31,11 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 attributes: ['user_id','question_id'],
                 order: [['question_id', 'DESC']]
             });
+
+            // 만약 답변 없다면, id = 0
+            if (! latAnswer) {
+                latAnswer.question_id = 0;
+            }
  
             // 마지막 질문까지 모두 답변했다면 다시 1부터
             const latQuestionId = latAnswer.question_id;
