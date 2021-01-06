@@ -1,7 +1,8 @@
-const { User } = require('../models');
+const { User, Follow } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
+const { Op } = require('sequelize');
 
 //비밀번호 hash 시키는 함수
 const hashPassword =  async (password, salt = null) => {
@@ -155,10 +156,42 @@ module.exports = {
             }
         );
         return changedNum;
-        
+    },
 
+    getUserByQuery: async (query, range) => {
+        //받아온 range로 다 다르게 해주기
+        // 쿼리문 포함하는 닉네임 유저들
+        let user = await User.findOne({
+            where : {
+                nickname: query
+            },
+            attributes: ['id', 'nickname', 'profile_img'],
+            raw: true,
 
-        
+        });
+
+        console.log(user);
+
+        return user;
+    },
+
+    isFollowee: async (user, user_id) => {
+
+        let is_followed = await Follow.findAll({
+            where : {
+                followed_id : user.id,
+                follower_id : user_id,
+            },
+            raw: true,
+        });
+        // followed id 가 undefined 라는 오류 발생 
+        if (is_followed.length < 1) {
+            user.is_followed = false;
+        } else {
+            user.is_followed = true;
+        }
+
+        return user;
     }
 
 }

@@ -1,9 +1,11 @@
 const util = require('../modules/util');
 const message = require('../modules/responseMessage');
 const code = require('../modules/statusCode');
-const { User } = require('../models');
+const { User, Follow } = require('../models');
 const jwt = require('../modules/jwt');
 const { userService } = require('../service');
+const user = require('../models/user');
+const { Op } = require('sequelize');
 
 
 
@@ -79,5 +81,31 @@ module.exports = {
         }
 
     },
+
+    searchId : async (req, res) => {
+
+        try {
+            let { query, range } = req.query;
+            let user_id = req.decoded.id;
+            if (!query || !range) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+
+            let user = await userService.getUserByQuery(query, range);
+            if (!user.nickname) {
+                return res.status(code.OK).send(util.success(code.OK, message.NO_USER_NICKNAME));
+            }
+            console.log(user);
+
+            user = await userService.isFollowee(user, user_id);
+            console.log(user);
+
+            return res.status(code.OK).send(util.success(code.OK, message.SEARCH_ID_SUCCESS, user));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
     
 }
