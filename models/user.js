@@ -3,13 +3,13 @@ module.exports = (sequelize, DataTypes) => {
 
         nickname: { // 유저 닉네임
             type: DataTypes.STRING(20),
-            unique: true,
             allowNull: false,
+            unique: 'nickname'
         },
         email: { // 이메일
             type: DataTypes.STRING(30),
-            unique: true,
             allowNull: false,
+            unique:'email'
         },
         password: { // 비밀번호
             type: DataTypes.STRING(200),
