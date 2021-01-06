@@ -196,6 +196,10 @@ module.exports = {
                 // console.log(message.INVALID_ANSWER_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
+            // public==false 인 경우 다른 유저 접근 못하도록
+            if (!answer.public_flag && answer.user_id!=req.decoded.id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
+            }
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_DETAIL_ANSWER_SUCCESS, answer));
 
