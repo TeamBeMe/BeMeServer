@@ -16,36 +16,36 @@ rule.second = 7;
 // '*/7 * * * * *' '0 0 * * 0-6'
 
 // 매일 오전 12시 마다 새로운 질문
-const shedule = sch.scheduleJob('1 * * * *', async () => {
-    try {
-        console.log("반복!")
-        const userCount = await User.count({});
-        console.log(userCount);
+// const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
+//     try {
+//         console.log("반복!")
+//         const userCount = await User.count({});
+//         console.log(userCount);
 
-        for (let i = 1; i <= userCount; i++) { 
-            // 가장 최근 답변
-            const latAnswer = await Answer.findOne({
-                where: {
-                    user_id: i
-                },
-                attributes: ['user_id','question_id'],
-                order: [['question_id', 'DESC']]
-            });
+//         for (let i = 5; i <= userCount; i++) { // 인덱스 1이 이상해서 2부터 해놓음
+//             // 가장 최근 답변
+//             const latAnswer = await Answer.findOne({
+//                 where: {
+//                     user_id: i
+//                 },
+//                 attributes: ['user_id','question_id'],
+//                 order: [['question_id', 'DESC']]
+//             });
  
-            // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
-            const latQuestionId = latAnswer.question_id;
-            const moreQuestion = await Answer.create({
-                public_flag: 0,
-                user_id: i,
-                question_id: (latQuestionId + 1)
-            })
+//             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
+//             const latQuestionId = latAnswer.question_id;
+//             const moreQuestion = await Answer.create({
+//                 public_flag: 0,
+//                 user_id: i,
+//                 question_id: (latQuestionId + 1)
+//             })
             
-        }
-    } catch (err) {
-        console.log(err);
-    }
+//         }
+//     } catch (err) {
+//         console.log(err);
+//     }
 
-})
+// })
 
 
 module.exports = {
