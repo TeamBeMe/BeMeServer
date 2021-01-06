@@ -98,6 +98,9 @@ module.exports = {
     GET_MY_SCRAP_SUCCESS: '내가 스크랩한 글 가져오기 성공',
     UPDATE_MY_PROFILE_IMG_SUCCESS: "내 프로필 사진 변경 성공",
 
+    /**알림뷰 */
+    GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',
+
 
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",
