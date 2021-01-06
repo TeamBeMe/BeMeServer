@@ -207,6 +207,10 @@ module.exports = {
                 if (! parent || parent.parent_id) {
                     return message.INVALID_PARENT_ID;
                 }
+                // parent와 answerid 동일한지 확인
+                if ( parent.answer_id != answer_id) {
+                    return message.INVALID_PARENT_ID;
+                }
                 // parent_id 가 unpublic 인 경우, answer author 거나 comment author 여야함
                 if (! parent.public_flag && answer.user_id != user_id && parent.user_id != user_id) {
                     return message.USER_UNAUTHORIZED;;
