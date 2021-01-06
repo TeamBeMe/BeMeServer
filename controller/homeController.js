@@ -16,7 +16,7 @@ rule.second = 7;
 // '*/7 * * * * *' '0 0 * * 0-6'
 
 // 매일 오전 12시 마다 새로운 질문
-const shedule = sch.scheduleJob('1 * * * *', async () => {
+const shedule = sch.scheduleJob('*/1 * * * *', async () => {
     try {
         console.log("반복!")
         const userCount = await User.count({});
@@ -32,8 +32,14 @@ const shedule = sch.scheduleJob('1 * * * *', async () => {
                 order: [['question_id', 'DESC']]
             });
  
-            // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
+            // 마지막 질문까지 모두 답변했다면 다시 1부터
             const latQuestionId = latAnswer.question_id;
+            const maxQuestionId = await Question.max('id');
+            if (latQuestionId == maxQuestionId) {
+                latQuestionId = 0;
+            }
+
+            // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
             const moreQuestion = await Answer.create({
                 public_flag: 0,
                 user_id: i,
@@ -65,8 +71,9 @@ module.exports = {
             }
 
             const answersByPage = await homeService.getUserAnswersByPage(user_id, page, limit);
-
-            console.log(message.GET_ANSWER_SUCCESS);
+            if (!answersByPage) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_NO_ANSWERS));
+            }
             res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, answersByPage));
 
         } catch (err) {
@@ -75,10 +82,6 @@ module.exports = {
         }
     },
 
-    // 열두시 질문은 스케줄로 추가만 해주면 된다, 질문 더받기는 create 후 get
-    // 질문 더받기를 누르면 새로 받아와지는 질문만 받아와도 되나?
-    // 전체를 get 해와야 페이징이 적용되지 않을까?
-    // 질문 더 받기 (현재는 더 받은 질문만 get 하도록 되어 있음)
     getMoreQuestion: async (req, res) => {
         try {
             const user_id = req.decoded.id;
@@ -180,7 +183,7 @@ module.exports = {
             const user_id = req.decoded.id;
             const { public_flag, answer_id } = req.body;
 
-            if (!user_id || !public_flag || !answer_id) {
+            if (!user_id || public_flag == undefined || !answer_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
 

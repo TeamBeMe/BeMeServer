@@ -5,7 +5,7 @@ module.exports = {
     // 유저 답변 페이지별로 가져오기
     getUserAnswersByPage : async(user_id, page, limit) => {
         try {
-            const offset = (page - 1) * limit
+            const offset = (page - 1) * limit +1
 
             const result = await Answer.findAll({
                 offset: offset,
@@ -19,7 +19,7 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date'],
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'created_at', 'answer_date'],
                 where: {
                     user_id: user_id
                 }
