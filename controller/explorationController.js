@@ -2,7 +2,7 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, User, Comment, Question } = require('../models');
+const { Answer, User, Comment, Question, Scrap } = require('../models');
 const { homeService, userService } = require('../service');
 const explorationService = require('../service/explorationService');
 const answerService = require('../service/answerService');
@@ -101,6 +101,47 @@ module.exports = {
             const pagination = await answerService.makePagination(answers,page);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, pagination))
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+    // 스크랩 하기 & 스크랩 취소하기
+    doOrCancelScrap: async (req, res) => {
+        const answer_id = req.params.answerId;
+        const user_id = req.decoded.id;
+
+        if (! answer_id) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        try {
+            // 이미 scrap 했는지 확인
+            const alreadyScrap = await Scrap.findAll({
+                where : {
+                    answer_id : answer_id,
+                    user_id,
+                }
+            });
+            // 이미 scrap 했으면 스크랩 취소
+            if (alreadyScrap.length > 0) {
+                const scrap = await Scrap.destroy({
+                    where : {
+                        answer_id : answer_id,
+                        user_id,
+                    }
+                });
+                return res.status(code.OK).send(util.success(code.OK, message.UNDO_SCRAP_SUCCESS))
+            }
+
+            const scrap = await Scrap.create({
+                answer_id : answer_id,
+                user_id,
+            });
+
+            return res.status(code.OK).send(util.success(code.OK, message.DO_SCRAP_SUCCESS));
+
 
         } catch (err) {
             console.error(err);

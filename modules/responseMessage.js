@@ -68,6 +68,9 @@ module.exports = {
     /* 다른 글 둘러보기 */
     GET_EXPLORATION_RESULT_SUCCESS: "다른 글 둘러보기 성공",
 
+    /* 스크랩 하기, 스크랩 취소하기 */
+    DO_SCRAP_SUCCESS: "스크랩 성공",
+    UNDO_SCRAP_SUCCESS: "스크랩 취소 성공",
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
