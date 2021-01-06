@@ -58,12 +58,14 @@ module.exports = {
 
         try {
 
-            const { content, answer_id } = req.body;
+            const { content, answer_id, is_comment_blocked: comment_blocked_flag, is_public: public_flag } = req.body;
             
             if (! content || ! answer_id ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
-            const changedNum = await Answer.update({ content : content}, {
+            const new_answer = {content, answer_id, comment_blocked_flag, public_flag};
+
+            const changedNum = await Answer.update(new_answer, {
                 where : {
                     id : answer_id,
                     user_id : req.decoded.id,
@@ -72,7 +74,7 @@ module.exports = {
             if (!changedNum[0]) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
-            console.log(message.UPDATE_ANSWER_SUCCESS)
+            // console.log(message.UPDATE_ANSWER_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.UPDATE_ANSWER_SUCCESS));
 
         } catch (err) {
@@ -87,7 +89,7 @@ module.exports = {
         const { answer_id, content, parent_id} = req.body;
         let { is_public : public_flag  } = req.body;
         if (! answer_id || ! content ) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
@@ -151,19 +153,19 @@ module.exports = {
         const { comment_id } = req.params;
 
         if (! comment_id) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
             // comment id 정보 확인
             const comment = await Comment.findByPk(comment_id);
             if (! comment ) {
-                console.log(message.INVALID_COMMENT_ID);
+                // console.log(message.INVALID_COMMENT_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_COMMENT_ID));
             }
 
             if (comment.user_id !== req.decoded.id) {
-                console.log(message.USER_UNAUTHORIZED);
+                // console.log(message.USER_UNAUTHORIZED);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
             
@@ -184,14 +186,14 @@ module.exports = {
         const { answer_id } = req.params;
 
         if (! answer_id) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
 
             const answer = await answerService.getFormattedAnswerwithPK(answer_id, req.decoded.id);
             if (! answer) {
-                console.log(message.INVALID_ANSWER_ID);
+                // console.log(message.INVALID_ANSWER_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
 
