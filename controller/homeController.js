@@ -44,8 +44,7 @@ const shedule = sch.scheduleJob('*/1 * * * *', async () => {
                 public_flag: 0,
                 user_id: i,
                 question_id: (latQuestionId + 1)
-            })
-            
+            })  
         }
     } catch (err) {
         console.log(err);

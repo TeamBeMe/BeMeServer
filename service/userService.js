@@ -1,7 +1,8 @@
-const { User } = require('../models');
+const { User, Answer, Question } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
+const answer = require('../models/answer');
 
 //비밀번호 hash 시키는 함수
 const hashPassword =  async (password, salt = null) => {
@@ -129,14 +130,14 @@ module.exports = {
         }
     },
     getTodayDatesOnly, getTodayDate, formatAnswerDate,
-    updateVisit: async (user) => {
+    updateVisit: async (user_id) => {
         const today = await getTodayDatesOnly();
+        const user = await User.findByPk(user_id);
         let { last_visit, continued_visit } = user;
         last_visit = new Date(last_visit);
         
         const isContinued = await isContinuedDates(last_visit);
         // console.log(isContinued)
-        console.log(today.getTime()==last_visit.getTime());
         // last_visit 데이터가 없으면 == 회원가입 후 첫 로그인
         if (!last_visit) {
             continued_visit = 1;
@@ -155,10 +156,53 @@ module.exports = {
             }
         );
         return changedNum;
-        
+    },
+    formatRecentActivity: async (datas, type, user_id = null) => {
+        try {
 
+            const results = []
+            switch (type) {
+                case 'comment':
+                    for (data of datas) {
+                        const question = await Question.findOne({
+                            include : {
+                                model : Answer,
+                                where : {
+                                    id : data.answer_id,
+                                },
+                                attributes: []
+                            }
+                        });
+                        let type = 'comment'
+                        if (data.parent_id) {
+                            type = 'cocomment'
+                        }
+                        results.push({ type, user_id: data.user_id, question_title: question.title, user_nickname: data.User.nickname, profile_img: data.User.profile_img, createdAt: data.createdAt})
+                    }
+                    break;
+                case 'follow':
+                    for (data of datas) {
+                        results.push({ type: 'follow', user_id: data.id, user_nickname: data.nickname, profile_img: data.profile_img, question_title: null, createdAt: data['Follower.Follow.createdAt']})
+                    }
+                    break;
+                }
+                return results;
+        } catch (err) {
+            throw err;
+        }
+    },
+    makeActivityPagination : async (activities, page) => {
+        // 페이지 총 수
+        const page_len = parseInt(activities.length / 20) + 1;
 
-        
-    }
+        const idx_start = 0 + (page - 1) * 20;
+        const idx_end = idx_start + 19;
+
+        // 페이지네이션
+        activities = activities.filter((item, idx) => {
+            return (idx >= idx_start && idx <= idx_end);
+        })
+        return {page_len, activities}
+   },
 
 }

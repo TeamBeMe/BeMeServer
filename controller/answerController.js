@@ -14,18 +14,19 @@ module.exports = {
         // const id = req.decoded.id;
         try {
             const user_id = req.decoded.id
-            const { answer_id, content, is_comment_blocked : comment_blocked_flag, is_public : public_flag } = req.body;
+            const { answer_id, content, is_public : public_flag } = req.body;
+            let comment_blocked_flag = req.body.is_comment_blocked;
     
             if (! answer_id || ! content ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
-            if (typeof comment_blocked_flag !== 'boolean' || typeof public_flag !== 'boolean') {
+            if (typeof public_flag !== 'boolean') {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
 
             // 존재하는 답변 id 인지 확인하고 답변 여부 확인
             const answer = await Answer.findByPk(answer_id);
-            console.log(answer)
+
             if (! answer) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
@@ -39,13 +40,18 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
             
+            // 답변 비공개이거나 comment_blocked_flag 가 null 일경우
+            if (comment_blocked_flag == null || ! public_flag) {
+                comment_blocked_flag = true;
+            }
+            
             const updated_answer = await Answer.update({content, comment_blocked_flag, public_flag, answer_date : today},{
                 where : {
                     id : answer_id
                 }
             })
             
-            console.log(message.POST_ANSWER_SUCCESS)
+            // console.log(message.POST_ANSWER_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.POST_ANSWER_SUCCESS));
 
         } catch (err) {
@@ -58,12 +64,14 @@ module.exports = {
 
         try {
 
-            const { content, answer_id } = req.body;
+            const { content, answer_id, is_comment_blocked: comment_blocked_flag, is_public: public_flag } = req.body;
             
             if (! content || ! answer_id ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
-            const changedNum = await Answer.update({ content : content}, {
+            const new_answer = {content, answer_id, comment_blocked_flag, public_flag};
+
+            const changedNum = await Answer.update(new_answer, {
                 where : {
                     id : answer_id,
                     user_id : req.decoded.id,
@@ -72,7 +80,7 @@ module.exports = {
             if (!changedNum[0]) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
-            console.log(message.UPDATE_ANSWER_SUCCESS)
+            // console.log(message.UPDATE_ANSWER_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.UPDATE_ANSWER_SUCCESS));
 
         } catch (err) {
@@ -87,7 +95,7 @@ module.exports = {
         const { answer_id, content, parent_id} = req.body;
         let { is_public : public_flag  } = req.body;
         if (! answer_id || ! content ) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
@@ -151,19 +159,19 @@ module.exports = {
         const { comment_id } = req.params;
 
         if (! comment_id) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
             // comment id 정보 확인
             const comment = await Comment.findByPk(comment_id);
             if (! comment ) {
-                console.log(message.INVALID_COMMENT_ID);
+                // console.log(message.INVALID_COMMENT_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_COMMENT_ID));
             }
 
             if (comment.user_id !== req.decoded.id) {
-                console.log(message.USER_UNAUTHORIZED);
+                // console.log(message.USER_UNAUTHORIZED);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
             
@@ -184,15 +192,19 @@ module.exports = {
         const { answer_id } = req.params;
 
         if (! answer_id) {
-            console.log(message.NULL_VALUE);
+            // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
 
             const answer = await answerService.getFormattedAnswerwithPK(answer_id, req.decoded.id);
             if (! answer) {
-                console.log(message.INVALID_ANSWER_ID);
+                // console.log(message.INVALID_ANSWER_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+            // public==false 인 경우 다른 유저 접근 못하도록
+            if (!answer.public_flag && answer.user_id!=req.decoded.id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_DETAIL_ANSWER_SUCCESS, answer));

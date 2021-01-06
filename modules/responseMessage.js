@@ -104,6 +104,10 @@ module.exports = {
     SEARCH_ID_SUCCESS: "전체 아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
 
+    /**알림뷰 */
+    GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',
+
+
 
     /* 서버에러 */
     INTERNAL_SERVER_ERROR: "서버 내부 오류",

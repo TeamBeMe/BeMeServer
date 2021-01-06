@@ -1,9 +1,12 @@
 const util = require('../modules/util');
 const message = require('../modules/responseMessage');
 const code = require('../modules/statusCode');
-const { User } = require('../models');
+const { User, Comment, Answer, Question, Follow} = require('../models');
 const jwt = require('../modules/jwt');
 const { userService } = require('../service');
+const {Op} = require('sequelize');
+const { formatRecentActivity } = require('../service/userService');
+const answerService = require('../service/answerService');
 
 
 
@@ -69,7 +72,7 @@ module.exports = {
             const { token } = await jwt.sign(user);
             
             // 연속 출석수 갱신
-            userService.updateVisit(user);
+            // userService.updateVisit(user);
 
             return res.status(code.OK).send(util.success(code.OK, message.SIGN_IN_SUCCESS, { token }));
 
@@ -79,5 +82,75 @@ module.exports = {
         }
 
     },
+    // 최근 활동 가져오기
+    getActivity: async (req, res) => {
+        try {
+            let { page } = req.query;
+            // page default 1
+            if (! page) {
+                page = 1;
+            }
+            const user_id = req.decoded.id;
+            // 댓글 기록 가져오기
+            let comments = await Comment.findAll({
+                include : [{
+                    model : Answer,
+                    where : {
+                        user_id
+                    },
+                    attributes: [],
+                },{
+                    model : User,
+                }],
+                where : {
+                    user_id:{ [Op.not]: user_id},
+                },
+                order : [['createdAt', 'DESC']],
+            });
+            // 내가 쓴 댓글에 대댓글 기록 가져오기
+            let second_comments = await Comment.findAll({
+                include : [{
+                    model : Comment,
+                    as : 'Parent',
+                    where : {
+                        user_id
+                    },
+                    attributes: []
+                },{
+                    model : User,
+                }],
+                where : {
+                    user_id:{ [Op.not]: user_id},
+                },
+                order: [['createdAt','DESC']],
+            });
+            // 나를 팔로잉한 기록 가져오기
+            let followers = await User.findAll({
+                include : {
+                    model: User,
+                    as : 'Follower',
+                    where : {
+                        id : user_id,
+                    },
+                    attributes: []
+                },
+                raw : true,
+            });
+
+            let results = [];
+            comments = await formatRecentActivity(comments, 'comment');
+            second_comments = await formatRecentActivity(second_comments, 'comment');
+            followers = await formatRecentActivity(followers, 'follow', user_id);
+            results = results.concat(comments, second_comments, followers)
+            // createdAt으로 답변 정렬
+            results.sort( (a,b) => b.createdAt.getTime() - a.createdAt.getTime());
+            const pagination = await userService.makeActivityPagination(results, page);
+            return res.status(code.OK).send(util.success(code.OK, message.GET_RECENT_ACTIVITY_SUCCESS, pagination));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
     
 }
