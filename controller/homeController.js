@@ -100,7 +100,7 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date'],
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'created_at', 'answer_date'],
                 where: {
                     user_id: user_id
                 },
@@ -162,7 +162,7 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date']
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'created_at', 'answer_date']
             })
 
             console.log(message.CHANGE_QUESTION_SUCCESS)
