@@ -69,7 +69,7 @@ module.exports = {
             const { token } = await jwt.sign(user);
             
             // 연속 출석수 갱신
-            userService.updateVisit(user);
+            // userService.updateVisit(user);
 
             return res.status(code.OK).send(util.success(code.OK, message.SIGN_IN_SUCCESS, { token }));
 

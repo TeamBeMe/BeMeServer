@@ -129,14 +129,14 @@ module.exports = {
         }
     },
     getTodayDatesOnly, getTodayDate, formatAnswerDate,
-    updateVisit: async (user) => {
+    updateVisit: async (user_id) => {
         const today = await getTodayDatesOnly();
+        const user = await User.findByPk(user_id);
         let { last_visit, continued_visit } = user;
         last_visit = new Date(last_visit);
         
         const isContinued = await isContinuedDates(last_visit);
         // console.log(isContinued)
-        console.log(today.getTime()==last_visit.getTime());
         // last_visit 데이터가 없으면 == 회원가입 후 첫 로그인
         if (!last_visit) {
             continued_visit = 1;

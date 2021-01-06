@@ -2,6 +2,7 @@ const jwt = require('../modules/jwt');
 const responseMessage = require('../modules/responseMessage');
 const statusCode = require('../modules/statusCode');
 const util = require('../modules/util');
+const userService = require('../service/userService');
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
 
@@ -23,6 +24,7 @@ const authUtil = {
             return res.status(statusCode.UNAUTHORIZED).send(util.fail(statusCode.UNAUTHORIZED, responseMessage.INVALID_TOKEN));
         }
         req.decoded = user;
+        userService.updateVisit(user.id);
         next();
     }
 }
