@@ -18,34 +18,75 @@ rule.second = 7;
 // 매일 오전 12시 마다 새로운 질문
 const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
     try {
-        console.log("반복!")
-        const userCount = await User.count({});
-        console.log(userCount);
 
-        for (let i = 1; i <= userCount; i++) { 
-            // 가장 최근 답변
-            const latAnswer = await Answer.findOne({
+        const users = await User.findAll({
+            attributes: ['id'],
+            raw : true,
+            order : ['id'],
+        });
+
+        // question_id 최댓값
+        const maxQuestionId = await Question.max('id');
+
+        for (user of users) {
+            const latestAnswer = await Answer.findOne({
                 where: {
-                    user_id: i
+                    user_id: user.id,
                 },
-                attributes: ['user_id','question_id'],
-                order: [['question_id', 'DESC']]
+                attributes: ['question_id'],
+                order: [['question_id', 'DESC']],
+                raw: true,
             });
- 
-            // 마지막 질문까지 모두 답변했다면 다시 1부터
-            const latQuestionId = latAnswer.question_id;
-            const maxQuestionId = await Question.max('id');
-            if (latQuestionId == maxQuestionId) {
-                latQuestionId = 0;
+
+            // 만약 답변 없다면, id = 1
+            let question_id = 1;
+            if ( latestAnswer) {
+                question_id = latestAnswer.question_id + 1;
+            } 
+             // 마지막 질문까지 모두 답변했다면 다시 1부터
+            if (question_id > maxQuestionId) {
+                question_id = 1;
             }
 
             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
-            const moreQuestion = await Answer.create({
-                public_flag: 0,
-                user_id: i,
-                question_id: (latQuestionId + 1)
-            })  
+            const newQuestion = await Answer.create({
+                user_id: user.id,
+                question_id,
+                public_flag: true,
+            });
+            
+            
         }
+        console.log('새로운 질문이 생성되었습니다');
+        // for (let i = 1; i <= userCount; i++) { 
+        //     // 가장 최근 답변
+        //     const latAnswer = await Answer.findOne({
+        //         where: {
+        //             user_id: i
+        //         },
+        //         attributes: ['user_id','question_id'],
+        //         order: [['question_id', 'DESC']]
+        //     });
+
+        //     // 만약 답변 없다면, id = 0
+        //     if (! latAnswer) {
+        //         latAnswer.question_id = 0;
+        //     }
+ 
+        //     // 마지막 질문까지 모두 답변했다면 다시 1부터
+        //     const latQuestionId = latAnswer.question_id;
+        //     const maxQuestionId = await Question.max('id');
+        //     if (latQuestionId == maxQuestionId) {
+        //         latQuestionId = 0;
+        //     }
+
+        //     // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
+        //     const moreQuestion = await Answer.create({
+        //         public_flag: 0,
+        //         user_id: i,
+        //         question_id: (latQuestionId + 1)
+        //     })  
+        // }
     } catch (err) {
         console.log(err);
     }
