@@ -35,6 +35,7 @@ module.exports = {
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
     GET_ANSWER_FAIL: "답변 불러오기 실패",
+    USER_NO_ANSWERS: '유저에게 질문이 존재하지 않습니다',
     
     /* 질문 받기 */
     GET_QUESTION_SUCCESS: "질문 받아오기 성공",
@@ -71,6 +72,7 @@ module.exports = {
     /* 스크랩 하기, 스크랩 취소하기 */
     DO_SCRAP_SUCCESS: "스크랩 성공",
     UNDO_SCRAP_SUCCESS: "스크랩 취소 성공",
+
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
@@ -98,8 +100,13 @@ module.exports = {
     GET_MY_SCRAP_SUCCESS: '내가 스크랩한 글 가져오기 성공',
     UPDATE_MY_PROFILE_IMG_SUCCESS: "내 프로필 사진 변경 성공",
 
+    /* 검색 */
+    SEARCH_ID_SUCCESS: "전체 아이디 검색 성공",
+    NO_USER_NICKNAME: "검색 결과가 없습니다",
+
     /**알림뷰 */
     GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',
+
 
 
     /* 서버에러 */
