@@ -26,10 +26,11 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'created_at', 'answer_date'],
                 where: {
                     user_id: user_id
                 },
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'comment_blocked_flag', 
+                            'created_at', 'answer_date'],
                 raw: true,
             })
 
@@ -90,7 +91,7 @@ module.exports = {
         try {
             const today = await getTodayDate();
             let td = today;
-    
+            console.log(answer.created_at);
             const diff = td.getTime()- answer.created_at.getTime();
             const hrDiff = diff / 3600000;
             if (hrDiff < 24) {

@@ -52,7 +52,8 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
             const newQuestion = await Answer.create({
                 user_id: user.id,
                 question_id,
-                public_flag: true,
+                public_flag: false,
+                commented_blocked_flag: false,
             });
             
             
@@ -134,7 +135,8 @@ module.exports = {
 
             const latQuestionId = await homeService.getLatAnswer(user_id);
             const moreQuestion = await Answer.create({
-                public_flag: 0,
+                public_flag: false,
+                commented_blocked_flag: false,
                 user_id: user_id,
                 question_id: (latQuestionId + 1)
             })
@@ -149,11 +151,12 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date'],
                 where: {
                     user_id: user_id
                 },
                 order: [['question_id', 'DESC']],
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'comment_blocked_flag', 
+                'created_at', 'answer_date'],
                 raw: true,
             })
 
@@ -215,7 +218,8 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date'],
+                attributes: ['id', 'answer_idx', 'content', 'public_flag', 'comment_blocked_flag', 
+                'created_at', 'answer_date'],
                 raw: true,
             })
 
