@@ -1,11 +1,18 @@
 const { Answer, Question, Category } = require('../models');
+const moment = require('moment');
+
+const getTodayDate = async () => {
+    const td = Date.now();
+    const today = new Date(td);
+    return new Date(moment.tz(today, 'Asia/Seoul').format());
+};
 
 
 module.exports = {
     // 유저 답변 페이지별로 가져오기
     getUserAnswersByPage : async(user_id, page, limit) => {
         try {
-            const offset = (page - 1) * limit +1
+            const offset = (page - 1) * limit
 
             const result = await Answer.findAll({
                 offset: offset,
@@ -22,8 +29,10 @@ module.exports = {
                 attributes: ['id', 'answer_idx', 'content', 'public_flag', 'created_at', 'answer_date'],
                 where: {
                     user_id: user_id
-                }
+                },
+                raw: true,
             })
+
             //console.dir(`홈화면 엔서들 ${result}`)
             return result
 
@@ -76,5 +85,28 @@ module.exports = {
 
 
     },
+
+    isToday : async(answer) => {
+        try {
+            const today = await getTodayDate();
+            let td = today;
+    
+            const diff = td.getTime()- answer.created_at.getTime();
+            const hrDiff = diff / 3600000;
+            if (hrDiff < 24) {
+                answer.is_today = 1;
+            } else {
+                answer.is_today = 0;
+            }
+
+            return answer
+
+        } catch (error) {
+            throw error;
+        }
+
+
+    },
+
 
 }
