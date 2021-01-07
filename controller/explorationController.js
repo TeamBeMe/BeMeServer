@@ -2,7 +2,7 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, User, Comment, Question, Scrap } = require('../models');
+const { Answer, User, Comment, Question, Scrap, Category } = require('../models');
 const { homeService, userService } = require('../service');
 const explorationService = require('../service/explorationService');
 const answerService = require('../service/answerService');
@@ -148,4 +148,15 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
+    // 카테고리 리스트 가져오기
+    getCategories: async (req, res) => {
+        try {
+            const categories = await Category.findAll({});
+            return res.status(code.OK).send(util.success(code.OK, message.GET_CATEGORY_SUCCESS, categories));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
 }
