@@ -4,11 +4,11 @@ const { Op } = require('sequelize');
 
 module.exports={
     // 타인 프로필에서 다른 사람의 공개된 답변 가져오기
-    getPublicOtherAnswers: async (target_id, user_id) => {
-        let answers = await answerService.getPublicAnswersByUserId(target_id);
+    getPublicOtherAnswers: async (target_id, user_id, limit, page) => {
+        let {answers, count} = await answerService.getPublicAnswersByUserIdWithPage(target_id, limit, page);
 
         answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id)
-        return answers;
+        return {answers, count};
     },
     // 답변을 카테고리, public 에 맞춰 필터링
     filterAnswer : async (answers, category, public) => {
