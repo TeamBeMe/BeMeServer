@@ -1,7 +1,9 @@
 const message = require('../modules/responseMessage');
 const {User, Follow, Answer} = require('../models');
 const answerService = require('./answerService');
-
+const answer = require('../models/answer');
+const {Op} = require('sequelize');
+const sequelize = require('sequelize');
 
 module.exports = {
     // id 에 해당하는 유저 정복 가져오기
@@ -20,36 +22,68 @@ module.exports = {
             throw err;
         }
     },
-    //팔로이, 팔로워 리스트 가져오기
-    findFollowerOrFollowee :async (category, user_id) => {
-        if (category == 'followee') {
-            return await Follow.findAll({
-                where : {
-                    follower_id : user_id,
+    // 팔로워 팔로이의 게시글 가져오기
+    getFollowAnswers: async (category, user_id, page) => {
+
+        let users;
+        // follwer 가져오기
+        if (category=='follower') {
+            users = await Follow.findAll({
+                where: {
+                    followed_id: user_id,
                 },
-                attributes: [['followed_id', 'id']],
-                raw : true,
+                attributes: [['follower_id', 'id']],
+                raw: true,
+                
+            });
+
+        } else {
+            users = await Follow.findAll({
+                where: {
+                    follower_id: user_id,
+                },
+                attributes: [['follower_id', 'id']],
+                raw: true,
+                
             });
         }
-        if (category == 'follower') {
-            return await Follow.findAll({
-                where : {
-                    followed_id : user_id,
+        users = users.map(i => i.id);
+
+        // users 가 쓴 답변 불러오기
+        const answers = await Answer.findAll({
+            where : {
+                user_id : {
+                    [Op.or] : users,
                 },
-                attributes : [['follower_id', 'id']],
-                raw : true,
-            });
-        }
-    },
-    // 유저가 쓴 답변들 중 public_flag: true 인 답변들 가져오기
-    getAnswers : async (users, user_id) => {
-        let result = []
-        for (user of users) {
-            result = result.concat(await answerService.getPublicAnswersByUserId(user.id));
-        }
-        return result;
-    },
-    // id 에 해당하는 글 가져오기
-    
+                public_flag: true,
+                content: {
+                    [Op.not] : null,
+                }
+            },
+            attributes:['id'],
+            order: [['answer_date', 'DESC']],
+            raw : true,
+            limit: 10,
+            offset: (page - 1) * 10,
+        });
+        const count = await Answer.count({
+            where : {
+                user_id : {
+                    [Op.or] : users,
+                },
+                public_flag: true,
+                content: {
+                    [Op.not] : null,
+                }
+            },
+            attributes:['id'],
+            order: [['answer_date', 'DESC']],
+            raw : true,
+            limit: 10,
+            offset: (page - 1) * 10,
+        })
+        return {answers, count};
+
+    }
 
 }

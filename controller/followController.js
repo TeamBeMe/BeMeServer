@@ -108,28 +108,15 @@ module.exports = {
             if (! page) {
                 page = 1;
             }
-            // 카테고리를 통해 유저 리스트 가져오기
-            const users = await followService.findFollowerOrFollowee(category, user_id);
-            // 유저들이 쓴 답변들 가져오기
-            let answers = await followService.getAnswers(users, user_id);
-            // createdAt으로 답변 정렬
-            answers.sort( (a,b) => b.answer_date.getTime() - a.answer_date.getTime());
 
+            let {answers, count} = await followService.getFollowAnswers(category, user_id, page);
+            
             // 답변 formatting
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
             
-            
             // 페이지 총 수
-            const page_len = parseInt(answers.length / 10) + 1;
+            const page_len = parseInt(count / 10) + 1;
 
-            const idx_start = 0 + (page - 1) * 10;
-            const idx_end = idx_start + 9;
-
-            // 페이지네이션
-            answers = answers.filter((item, idx) => {
-                return (idx >= idx_start && idx <= idx_end);
-            })
-            
             return res.status(code.OK).send(util.success(code.OK, message.GET_FOLLOW_ANSWERS_SUCCESS, {page_len, answers}));
 
         } catch (err) {

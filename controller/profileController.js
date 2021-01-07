@@ -12,6 +12,7 @@ module.exports = {
 
         const target_user_id = req.params.user_id;
         let page = req.query.page;
+
         if (! page) {
             page = 1
         }
@@ -26,18 +27,11 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
             }
             // 게시글 가져오기
-            let answers = await profileService.getPublicOtherAnswers(target_user_id, req.decoded.id);
+            let {answers, count} = await profileService.getPublicOtherAnswers(target_user_id, req.decoded.id, 10, page);
 
             // 페이지 총 수
-            const page_len = parseInt(answers.length / 10) + 1;
+            const page_len = parseInt(count / 10) + 1;
 
-            const idx_start = 0 + (page - 1) * 10;
-            const idx_end = idx_start + 9;
-
-            // 페이지네이션
-            answers = answers.filter((item, idx) => {
-                return (idx >= idx_start && idx <= idx_end);
-            })
             return res.status(code.OK).send(util.success(code.OK, message.GET_OTHER_ANSWER_SUCCESS, { page_len, answers}));
 
         } catch (err) {

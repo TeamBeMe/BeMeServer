@@ -265,7 +265,6 @@ module.exports = {
             const result = []
             for (answer of answers) {
                 result.push(await getFormattedAnswerbyPkwithoutComment(answer.id, user_id))
-                console.log(answer.id)
             }
             return result;
         } catch (err) {
@@ -327,7 +326,7 @@ module.exports = {
             throw err;
         }
     },
-    getPublicAnswersByUserId : async (author_id) => {
+    getPublicAnswersByUserIdWithPage : async (author_id, limit, page) => {
         try {
             const answers = await Answer.findAll({
                 where : {
@@ -338,11 +337,28 @@ module.exports = {
                     }
                 },
                 attributes : ['id', 'answer_date'],
+                limit,
+                offset: (page - 1) * limit,
                 order :[['answer_date', 'DESC']],
                 raw : true,
             });
 
-            return answers;
+            const count = await Answer.count({
+                where : {
+                    user_id: author_id,
+                    public_flag : true,
+                    content : {
+                        [Op.not]: null,
+                    }
+                },
+                attributes : ['id', 'answer_date'],
+                limit,
+                offset: (page - 1) * limit,
+                order :[['answer_date', 'DESC']],
+                raw : true,
+            });
+
+            return {answers, count};
         } catch (err) {
             console.error(err);
             throw err;
