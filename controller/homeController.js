@@ -102,18 +102,19 @@ module.exports = {
             const user_id = req.decoded.id;
             const page = req.params.page;
             const limit = 5;
-            if (! page) {
-                page = 1;
-            }
-            if (!user_id || !page ) {
+            
+            if (!user_id || !page) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+            if (page == 0) {
+                page = 1;
             }
 
             // 페이징 결과
             const answersByPage = await homeService.getUserAnswersByPage(user_id, page, limit);
             // 더 이상 페이지가 없을 때
             if (answersByPage.length == 0) {
-                return res.status(code.BAD_REQUEST).send(util.success(code.BAD_REQUEST, message.NO_MORE_PAGE));
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_PAGE));
             }
 
             // 오늘 질문인지
@@ -134,7 +135,7 @@ module.exports = {
 
             // 가장 최근 답한 answer
             const latQuestionId = await homeService.getLatAnswer(user_id);
-            if (latQuestionId == message.NO_MORE_QUESTION) {
+            if (!latQuestionId) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
@@ -201,7 +202,7 @@ module.exports = {
             }
 
             const latQuestionId = await homeService.getLatAnswer(user_id);
-            if (latQuestionId == message.NO_MORE_QUESTION) {
+            if (!latQuestionId) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 

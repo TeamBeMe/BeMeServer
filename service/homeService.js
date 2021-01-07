@@ -7,8 +7,8 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
-const getCountOfQuestion = async () => {
-    const countQuestion = await Question.count('id');
+const maxQuestionId = async () => {
+    const countQuestion = await Question.max('id');
     return countQuestion
 }
 
@@ -82,9 +82,10 @@ module.exports = {
                 order: [['question_id', 'DESC']]
             });
 
-            const countQuestion = getCountOfQuestion();
+            const countQuestion = await maxQuestionId();
+            console.log(`총 question_id = ${countQuestion}`);
             if (countQuestion == latAnswer.question_id) {
-                return message.NO_MORE_QUESTION;
+                return false;
             }
 
             console.log(`가장 최근 question_id = ${latAnswer.question_id}`);
