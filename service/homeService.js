@@ -94,9 +94,9 @@ module.exports = {
             const diff = td.getTime()- answer.created_at.getTime();
             const hrDiff = diff / 3600000;
             if (hrDiff < 24) {
-                answer.is_today = 1;
+                answer.is_today = true;
             } else {
-                answer.is_today = 0;
+                answer.is_today = false;
             }
 
             return answer
