@@ -287,45 +287,85 @@ module.exports = {
             throw err;
         }
     },
+  
     getMyAnswersByQuery: async (query, user_id) => {
         try {
-            let answers = await Answer.findAll({
-                where: {
-                    user_id,
-                    content : {
-                        [Op.not]: null,
-                        [Op.like]: `%${query}%`,
-                    }
-                },
-                raw : true,
-            });
-            const answers2 = await Answer.findAll({
+            const answers = await Answer.findAll({
                 where: {
                     user_id,
                     content: {
                         [Op.not]: null,
                     },
+                    [Op.or]: [{'$Question.title$' : {
+                        [Op.like]: `%${query}%`}},
+                        {content : {
+                            [Op.like]: `%${query}`
+                        }}
+                    ]
                 },
                 include : {
                     model : Question,
-                    where : {
-                        title : {
-                            [Op.like]: `%${query}%`,
-                        }
-                    },
                     attributes: [],
                 },
                 raw : true,
+                order :[['answer_date', 'DESC']],
             });
-            answers = answers2.concat(answers);
-            // 중복 제거
-            answers = answers.filter((arr, index, callback) => index === callback.findIndex(t => t.id === arr.id));
 
             return answers;
         } catch (err) {
             throw err;
         }
     },
+    // getMyAnswersByQuery: async (query, user_id, limit, page) => {
+    //     try {
+    //         const answers = await Answer.findAll({
+    //             where: {
+    //                 user_id,
+    //                 content: {
+    //                     [Op.not]: null,
+    //                 },
+    //                 [Op.or]: [{'$Question.title$' : {
+    //                     [Op.like]: `%${query}%`}},
+    //                     {content : {
+    //                         [Op.like]: `%${query}`
+    //                     }}
+    //                 ]
+    //             },
+    //             include : {
+    //                 model : Question,
+    //                 attributes: [],
+    //             },
+    //             raw : true,
+    //             limit,
+    //             offset: (page - 1) * 10,
+    //             order :[['answer_date', 'DESC']],
+    //         });
+
+    //         const count = await Answer.count({
+    //             where: {
+    //                 user_id,
+    //                 content: {
+    //                     [Op.not]: null,
+    //                 },
+    //                 [Op.or]: [{'$Question.title$' : {
+    //                     [Op.like]: `%${query}%`}},
+    //                     {content : {
+    //                         [Op.like]: `%${query}`
+    //                     }}
+    //                 ]
+    //             },
+    //             include : {
+    //                 model : Question,
+    //                 attributes: [],
+    //             },
+    //             raw : true,
+    //         })
+
+    //         return {answers, count};
+    //     } catch (err) {
+    //         throw err;
+    //     }
+    // },
     getPublicAnswersByUserIdWithPage : async (author_id, limit, page) => {
         try {
             const answers = await Answer.findAll({

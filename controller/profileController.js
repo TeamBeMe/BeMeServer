@@ -76,6 +76,7 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
+    // 내가 쓴 게시글 가져오기
     getMyAnswer : async (req, res) => {
         try {
             let {public, category, page, query} = req.query;
