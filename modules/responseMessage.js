@@ -23,6 +23,9 @@ module.exports = {
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
 
+    /**탐색 */
+    GET_CATEGORY_SUCCESS: '카테고리 가져오기 성공',
+
     /* 답변 등록 */
     POST_ANSWER_SUCCESS: "답변 등록 성공",
     POST_ANSWER_FAIL: "답변 등록 실패",
