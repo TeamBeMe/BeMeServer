@@ -91,7 +91,9 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
         console.log(err);
     }
 
-})
+});
+
+
 
 
 module.exports = {
@@ -113,6 +115,10 @@ module.exports = {
             const answersByPage = await homeService.getUserAnswersByPage(user_id, page, limit);
             if (!answersByPage) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_NO_ANSWERS));
+            }
+            for (answer of answersByPage) {
+                //오늘 질문인지
+                const answerWithIsToday = await homeService.isToday(answer);
             }
             res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, answersByPage));
 
@@ -147,8 +153,12 @@ module.exports = {
                 where: {
                     user_id: user_id
                 },
-                order: [['question_id', 'DESC']]
+                order: [['question_id', 'DESC']],
+                raw: true,
             })
+
+            //오늘 질문인지
+            const answerWithIsToday = await homeService.isToday(answer);
 
             console.log(message.GET_QUESTION_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_SUCCESS, answer));
@@ -205,11 +215,15 @@ module.exports = {
                     }],
                     attributes: ['id', 'title']
                 }],
-                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date']
+                attributes: ['id', 'answer_idx', 'content', 'created_at', 'answer_date'],
+                raw: true,
             })
 
+            //오늘 질문인지
+            const answerWithIsToday = await homeService.isToday(answer);
+
             console.log(message.CHANGE_QUESTION_SUCCESS)
-            res.status(code.OK).send(util.success(code.OK, message.CHANGE_QUESTION_SUCCESS, answer));
+            res.status(code.OK).send(util.success(code.OK, message.CHANGE_QUESTION_SUCCESS, answerWithIsToday));
 
         } catch (err) {
             console.error(err);
