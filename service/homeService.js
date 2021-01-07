@@ -7,6 +7,12 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
+const getCountOfQuestion = async () => {
+    const countQuestion = await Question.count('id');
+    return countQuestion
+}
+
+
 
 module.exports = {
     // 유저 답변 페이지별로 가져오기
@@ -75,6 +81,11 @@ module.exports = {
                 attributes: ['question_id'],
                 order: [['question_id', 'DESC']]
             });
+
+            const countQuestion = getCountOfQuestion();
+            if (countQuestion == latAnswer.question_id) {
+                return message.NO_MORE_QUESTION;
+            }
 
             console.log(`가장 최근 question_id = ${latAnswer.question_id}`);
             const latQuestionId = latAnswer.question_id;

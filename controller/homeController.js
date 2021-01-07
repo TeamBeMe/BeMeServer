@@ -94,9 +94,6 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
 
 });
 
-
-
-
 module.exports = {
 
     // 모든 답변 불러오기 (페이징)
@@ -108,17 +105,19 @@ module.exports = {
             if (! page) {
                 page = 1;
             }
-
             if (!user_id || !page ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
 
+            // 페이징 결과
             const answersByPage = await homeService.getUserAnswersByPage(user_id, page, limit);
-            if (!answersByPage) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_NO_ANSWERS));
+            // 더 이상 페이지가 없을 때
+            if (answersByPage.length == 0) {
+                return res.status(code.BAD_REQUEST).send(util.success(code.BAD_REQUEST, message.NO_MORE_PAGE));
             }
+
+            // 오늘 질문인지
             for (answer of answersByPage) {
-                //오늘 질문인지
                 const answerWithIsToday = await homeService.isToday(answer);
             }
             res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, answersByPage));
@@ -128,12 +127,18 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
-
+    // 질문 더 받아오기
     getMoreQuestion: async (req, res) => {
         try {
             const user_id = req.decoded.id;
 
+            // 가장 최근 답한 answer
             const latQuestionId = await homeService.getLatAnswer(user_id);
+            if (latQuestionId == message.NO_MORE_QUESTION) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
+            }
+
+            // 받아올 질문 생성
             const moreQuestion = await Answer.create({
                 public_flag: false,
                 commented_blocked_flag: false,
@@ -141,7 +146,7 @@ module.exports = {
                 question_id: (latQuestionId + 1)
             })
 
-            // 해당 유저의 가장 최근 답변(방금 불러온 답변) 가져오기
+            // 받아온 질문 가져오기
             const answer = await Answer.findOne({
                 include: [{
                     model: Question,
@@ -196,6 +201,9 @@ module.exports = {
             }
 
             const latQuestionId = await homeService.getLatAnswer(user_id);
+            if (latQuestionId == message.NO_MORE_QUESTION) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
+            }
 
             // 질문 변경
             const resultChangedNum = await Answer.update({ question_id: latQuestionId + 1 }, {

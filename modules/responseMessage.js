@@ -56,6 +56,7 @@ module.exports = {
     /* 새로운 질문 받기 */
     RECEIVE_NEWQUESTION_SUCCESS: "새로운 질문 받기 성공",
     RECEIVE_NEWQUESTION_FAIL: "새로운 질문 받기 실패",
+    NO_MORE_QUESTION: "새로운 질문이 없습니다",
 
     /* '나와 다른 생각들' 답변 7개 불러오기 */
     GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 7개 가져오기 성공",
@@ -103,6 +104,9 @@ module.exports = {
     /* 검색 */
     SEARCH_ID_SUCCESS: "전체 아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
+
+    /* 페이징 */
+    NO_MORE_PAGE: "더이상 페이지가 없습니다",
 
     /**알림뷰 */
     GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',
