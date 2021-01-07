@@ -120,7 +120,7 @@ module.exports = {
             const answerWithIsToday = await homeService.isToday(answer);
 
             console.log(message.GET_QUESTION_SUCCESS);
-            res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_SUCCESS, answer));
+            res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_SUCCESS, answerWithIsToday));
 
         } catch (err) {
             console.error(err);
