@@ -307,7 +307,7 @@ module.exports = {
                 public_attr[Op.is] = true;
             }
 
-            const answers = await Answer.findAll({
+            const answers =  await Answer.findAll({
                 where: {
                     user_id,
                     content: {
@@ -316,7 +316,7 @@ module.exports = {
                     [Op.or]: [{'$Question.title$' : {
                         [Op.like]: `%${query}%`}},
                         {content : {
-                            [Op.like]: `%${query}`
+                            [Op.like]: `%${query}%`
                         }}
                     ],
                     '$Question.category_id$': category_attr,
@@ -329,7 +329,7 @@ module.exports = {
                 raw : true,
                 order :[['answer_date', 'DESC']],
                 limit,
-                offset : (page - 1) * 10,
+                offset: (page-1)*10,
             });
             const count =  await Answer.count({
                 where: {
@@ -340,7 +340,7 @@ module.exports = {
                     [Op.or]: [{'$Question.title$' : {
                         [Op.like]: `%${query}%`}},
                         {content : {
-                            [Op.like]: `%${query}`
+                            [Op.like]: `%${query}%`
                         }}
                     ],
                     '$Question.category_id$': category_attr,
