@@ -288,8 +288,25 @@ module.exports = {
         }
     },
   
-    getMyAnswersByQuery: async (query, user_id) => {
+    getMyAnswersByQuery: async (query, user_id, category_id, public, page) => {
         try {
+            const limit = 10;
+            const category_attr = {};
+            if ( category_id ) {
+                category_attr[Op.eq]= category_id;
+            } else {
+                category_attr[Op.not]= null;
+            }
+
+            const public_attr = {};
+            if ( public == 'all') {
+                public_attr[Op.not] = null;
+            } else if (public == 'unpublic') {
+                public_attr[Op.is]= false;
+            } else {
+                public_attr[Op.is] = true;
+            }
+
             const answers = await Answer.findAll({
                 where: {
                     user_id,
@@ -301,7 +318,33 @@ module.exports = {
                         {content : {
                             [Op.like]: `%${query}`
                         }}
-                    ]
+                    ],
+                    '$Question.category_id$': category_attr,
+                    public_flag: public_attr,
+                },
+                include : {
+                    model : Question,
+                    attributes: [],
+                },
+                raw : true,
+                order :[['answer_date', 'DESC']],
+                limit,
+                offset : (page - 1) * 10,
+            });
+            const count =  await Answer.count({
+                where: {
+                    user_id,
+                    content: {
+                        [Op.not]: null,
+                    },
+                    [Op.or]: [{'$Question.title$' : {
+                        [Op.like]: `%${query}%`}},
+                        {content : {
+                            [Op.like]: `%${query}`
+                        }}
+                    ],
+                    '$Question.category_id$': category_attr,
+                    public_flag: public_attr,
                 },
                 include : {
                     model : Question,
@@ -311,7 +354,8 @@ module.exports = {
                 order :[['answer_date', 'DESC']],
             });
 
-            return answers;
+
+            return {count, answers};
         } catch (err) {
             throw err;
         }
@@ -336,7 +380,7 @@ module.exports = {
     //                 attributes: [],
     //             },
     //             raw : true,
-    //             limit,
+    //             limit
     //             offset: (page - 1) * 10,
     //             order :[['answer_date', 'DESC']],
     //         });

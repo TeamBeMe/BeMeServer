@@ -95,13 +95,13 @@ module.exports = {
 
             const user_id = req.decoded.id;
             
-            let answers = await answerService.getMyAnswersByQuery(query, user_id);
+            let {count, answers} = await answerService.getMyAnswersByQuery(query, user_id, category, public, page);
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            answers = await profileService.filterAnswer(answers,category, public);
+            // answers = await profileService.filterAnswer(answers,category, public);
 
-            const pagination = await answerService.makePagination(answers,page);
+            const page_len = parseInt(count / 10) + 1;
 
-            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, pagination))
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_ANSWER_SUCCESS, {page_len, answers}))
 
         } catch (err) {
             console.error(err);
