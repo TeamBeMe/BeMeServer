@@ -116,6 +116,10 @@ module.exports = {
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
             })
+
+            if (userAnswers.length < 1) {
+                return message.NO_ANSWERED_QUESTION;
+            }
             userAnswers = userAnswers.map(a => a.question_id);
 
             const filteredAnswers = await Answer.findAll({
@@ -186,6 +190,10 @@ module.exports = {
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
             })
+
+            if (userAnswers.length < 1) {
+                return message.NO_ANSWERED_QUESTION;
+            }
             userAnswers = userAnswers.map(a => a.question_id);
             
             const filteredAnswers = await Answer.findAll({
