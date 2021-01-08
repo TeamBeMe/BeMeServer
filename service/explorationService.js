@@ -66,7 +66,8 @@ module.exports = {
                     attributes: ['id', 'content',
                     [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
                     where: {
-                        question_id: question_id
+                        question_id: question_id,
+                        public_flag: true,
                     },
                     group: ['id'], // 아직 이해 x
                     order: [[sequelize.literal('comment_count'), 'DESC']],
@@ -91,7 +92,8 @@ module.exports = {
                     question_id: question_id,
                     content: {
                         [Op.not]: null,
-                    }
+                    },
+                    public_flag: true,
                 },
                 order: [['answer_date', 'DESC']]
             });
@@ -138,6 +140,7 @@ module.exports = {
                     question_id: {
                         [Op.or]: userAnswers,
                     },
+                    public_flag: true,
                 }
             });
 
@@ -164,7 +167,8 @@ module.exports = {
                     question_id: question_id,
                     content: {
                         [Op.not]: null,
-                    }
+                    },
+                    public_flag: true,
                 },
                 order: [[sequelize.literal('comment_count'), 'DESC']]
             });
@@ -217,6 +221,7 @@ module.exports = {
                     question_id: {
                         [Op.or]: userAnswers,
                     },
+                    public_flag: true,
                 }
             });
 
