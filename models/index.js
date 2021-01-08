@@ -21,6 +21,7 @@ db.Comment = require('./comment')(sequelize, Sequelize);
 db.Block = require('./block')(sequelize, Sequelize);
 db.Follow = require('./follow')(sequelize, Sequelize);
 db.RecentSearch = require('./recentSearch')(sequelize, Sequelize);
+db.AnswerSearch = require('./answerSearch')(sequelize, Sequelize);
 
 /* Question : Answer */
 db.Question.hasMany(db.Answer, { foreignKey: 'question_id'});
@@ -59,6 +60,9 @@ db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower', foreignKey :
 /* User : User => recentSearch */
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched', foreignKey: 'searched_id'});
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher', foreignKey : 'user_id' });
+
+db.User.hasMany(db.AnswerSearch, {foreignKey: 'user_id'});
+db.AnswerSearch.belongsTo(db.User, {foreignKey: 'user_id'});
 
 
 

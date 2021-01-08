@@ -7,5 +7,6 @@ const authUtil = require('../../middleware/authUtil');
 router.post('/signup', upload.single('image'), userController.signup);
 router.post('/signin', userController.signin);
 router.get('/activities', authUtil.checkToken, userController.getActivity);
+router.get('/search', authUtil.checkToken, userController.getIdSearch)
 
 module.exports = router;

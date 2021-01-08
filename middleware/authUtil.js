@@ -24,7 +24,10 @@ const authUtil = {
             return res.status(statusCode.UNAUTHORIZED).send(util.fail(statusCode.UNAUTHORIZED, responseMessage.INVALID_TOKEN));
         }
         req.decoded = user;
-        userService.updateVisit(user.id);
+        const isValid = userService.updateVisit(user.id);
+        if (! isValid) {
+            return res.status(statusCode.UNAUTHORIZED).send(util.fail(statusCode.UNAUTHORIZED, responseMessage.INVALID_TOKEN));
+        }
         next();
     }
 }

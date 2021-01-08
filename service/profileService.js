@@ -1,8 +1,24 @@
-const { Answer, Comment, User, Question, Category } = require('../models');
+const { Answer, Comment, User, Question, AnswerSearch } = require('../models');
 const answerService= require('./answerService');
 const { Op } = require('sequelize');
 
+// 최근 검색어에 기록하기
+const recordSearch =  async (query, user_id) => {
+    try {
+        const created = await AnswerSearch.create({
+            user_id,
+            query
+        });
+        console.log(created);
+        return true;
+    } catch (err) {
+        throw err;
+    }
+}
+
 module.exports={
+    // 최근 검색어에 기록하기
+    recordSearch,
     // 타인 프로필에서 다른 사람의 공개된 답변 가져오기
     getPublicOtherAnswers: async (target_id, user_id, limit, page) => {
         let {answers, count} = await answerService.getPublicAnswersByUserIdWithPage(target_id, limit, page);
@@ -131,4 +147,5 @@ module.exports={
             throw err;
         }
     },
+   
 }
