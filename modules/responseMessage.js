@@ -106,7 +106,7 @@ module.exports = {
     UPDATE_MY_PROFILE_IMG_SUCCESS: "내 프로필 사진 변경 성공",
 
     /* 검색 */
-    SEARCH_ID_SUCCESS: "전체 아이디 검색 성공",
+    SEARCH_ID_SUCCESS: "아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
 
     /* 페이징 */

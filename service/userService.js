@@ -1,4 +1,4 @@
-const { User, Answer, Question } = require('../models');
+const { User, Answer, Question, Follow } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
@@ -135,6 +135,10 @@ module.exports = {
         try {
             const today = await getTodayDatesOnly();
             const user = await User.findByPk(user_id);
+            // user 가 없는 경우 경고 
+            if (! user) {
+                return false;
+            }
             let { last_visit, continued_visit } = user;
             last_visit = new Date(last_visit);
             
@@ -157,7 +161,7 @@ module.exports = {
                     }
                 }
             );
-            return changedNum;
+            return true;
         } catch (err) {
             throw err;
         }
@@ -197,17 +201,72 @@ module.exports = {
         }
     },
     makeActivityPagination : async (activities, page) => {
-        // 페이지 총 수
-        const page_len = parseInt(activities.length / 20) + 1;
-
-        const idx_start = 0 + (page - 1) * 20;
-        const idx_end = idx_start + 19;
-
-        // 페이지네이션
-        activities = activities.filter((item, idx) => {
-            return (idx >= idx_start && idx <= idx_end);
-        })
-        return {page_len, activities}
+        try {
+            // 페이지 총 수
+            const page_len = parseInt(activities.length / 20) + 1;
+    
+            const idx_start = 0 + (page - 1) * 20;
+            const idx_end = idx_start + 19;
+    
+            // 페이지네이션
+            activities = activities.filter((item, idx) => {
+                return (idx >= idx_start && idx <= idx_end);
+            })
+            return {page_len, activities}
+        } catch (err) {
+            throw err;
+        }
    },
+   idSearch: async (query, range, user_id) => {
+       try {
+           const user = await User.findOne({
+               where : {
+                   nickname: query,
+               },
+               attributes: ['id', 'nickname', 'profile_img'],
+               raw: true,
+           });
+           // 검색결과 없으면 null 반환
+           if (! user) {
+               return null;
+           }
+           // 팔로워 검색이면 내 팔로워가 맞는지 확인하기
+           if (range == 'follower') {
+               const isFollower = await Follow.findOne({
+                   where : {
+                       follower_id: user.id,
+                       followed_id: user_id,
+                   }
+               });
+               // 팔로워 아니면 Null 반환
+               if (! isFollower) {
+                return null;
+               }
+           } else if (range == 'followee') {
+               const isFollowee = await Follow.findOne({
+                    where : {
+                        followed_id: user.id,
+                        follower_id: user_id,
+                    }
+                });
+                // 팔로이 아니면 null 반환
+                if (! isFollowee) {
+                    return null;
+                }
+           }
+           // user 객체 있으면 팔로우 했는 지 확인
+           const is_followed = await Follow.findOne({
+                where : {
+                    followed_id : user.id,
+                    follower_id : user_id,
+                }
+            });
+            user.is_followed = Boolean(is_followed);
+        
+           return user;
+       } catch (err) {
+           throw err;
+       }
+   }
 
 }

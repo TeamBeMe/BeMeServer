@@ -158,5 +158,28 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     }, 
+    // 아이디 검색하기
+    getIdSearch: async (req, res) => {
+        try {
+            let {query, range} = req.query;
+
+            const user_id = req.decoded.id;
+
+            if (! query) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+            if (! range) {
+                range = 'all';
+            }
+            if (range != 'all' && range != 'follower' && range != 'followee') {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+            const user = await userService.idSearch(query, range, user_id);
+            return res.status(code.OK).send(util.success(code.OK, message.SEARCH_ID_SUCCESS, user));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
     
 }
