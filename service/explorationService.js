@@ -10,8 +10,10 @@ module.exports = {
             let answersArr = [];
             
             for await (answer of latSevenAnswer) {
-                const question_id = answer.Question.id;
-                console.log(question_id)
+                console.log(answer);
+                console.log(answer['Question.id']);
+                const question_id = answer['Question.id'];
+                
 
  
                 const popAnswer = await Answer.findAll({
