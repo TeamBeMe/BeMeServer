@@ -98,15 +98,12 @@ module.exports = {
     },
 
     // 전체 배열을 최신순으로 sorting 하는 함수
-    sortNewAnswers : async(user_id, category) => {
+    sortNewAnswers : async(user_id, category_attr) => {
         try {
             
             let userAnswers = await Answer.findAll({
                 include:[{
                     model: Question,
-                    where: {
-                        category_id: category
-                    },
                     attributes: [],
                 }],
                 where: {
@@ -114,6 +111,7 @@ module.exports = {
                     content: {
                         [Op.not]: null,
                     },
+                    '$Question.category_id$': category_attr,
                 },
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
@@ -143,7 +141,7 @@ module.exports = {
     },
 
     // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수
-    sortIntAnswerByQid : async() => {
+    sortIntAnswerByQid : async(question_id) => {
         try {
             
             const filteredAnswers = await Answer.findAll({
@@ -170,22 +168,20 @@ module.exports = {
     },
 
     // 전체 배열을 흥미순으로 sorting 하는 함수
-    sortIntAnswers : async() => {
+    sortIntAnswers : async(user_id, category_attr) => {
         try {
 
             let userAnswers = await Answer.findAll({
                 include:[{
                     model: Question,
-                    where: {
-                        category_id: category
-                    },
                     attributes: [],
                 }],
                 where: {
                     user_id: user_id,
                     content: {
                         [Op.not]: null,
-                    }
+                    },
+                    '$Question.category_id$': category_attr,
                 },
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
@@ -200,6 +196,7 @@ module.exports = {
                 attributes: ['id',
                 [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
                 order: [[sequelize.literal('comment_count'), 'DESC']],
+                group: ['id'],
                 where: {
                     content: {
                         [Op.not]: null,

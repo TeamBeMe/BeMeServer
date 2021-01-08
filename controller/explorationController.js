@@ -6,7 +6,7 @@ const { Answer, User, Comment, Question, Scrap, Category } = require('../models'
 const { homeService, userService } = require('../service');
 const explorationService = require('../service/explorationService');
 const answerService = require('../service/answerService');
-const question = require('../models/question');
+const { Op } = require('sequelize');
 
 module.exports = {
     // '나와 다른 생각들' 대표 7개
@@ -91,13 +91,21 @@ module.exports = {
                 sorting = "최신";
             }
 
+            const category_attr = {};
+            if ( category ) {
+                category_attr[Op.eq]= category;
+            } else {
+                category_attr[Op.not]= null;
+            }
+
             let answers;
 
             if (sorting == "최신") {
-                answers = await explorationService.sortNewAnswers(user_id, category);
+                answers = await explorationService.sortNewAnswers(user_id, category_attr);
                 
             } else if (sorting == "흥미") {
-                answers = await explorationService.sortIntAnswers(user_id, category);
+                answers = await explorationService.sortIntAnswers(user_id, category_attr);
+
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
