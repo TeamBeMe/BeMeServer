@@ -131,31 +131,36 @@ module.exports = {
     },
     getTodayDatesOnly, getTodayDate, formatAnswerDate,
     updateVisit: async (user_id) => {
-        const today = await getTodayDatesOnly();
-        const user = await User.findByPk(user_id);
-        let { last_visit, continued_visit } = user;
-        last_visit = new Date(last_visit);
-        
-        const isContinued = await isContinuedDates(last_visit);
-        // console.log(isContinued)
-        // last_visit 데이터가 없으면 == 회원가입 후 첫 로그인
-        if (!last_visit) {
-            continued_visit = 1;
-        } else if ( isContinued ) {
-            continued_visit += 1;
-        } else if (today.getTime()!=last_visit.getTime()){
-            continued_visit = 1;
-        } 
-        last_visit = today;
-        const changedNum = await User.update(
-            { last_visit, continued_visit},
-            {
-                where : {
-                    id : user.id
+
+        try {
+            const today = await getTodayDatesOnly();
+            const user = await User.findByPk(user_id);
+            let { last_visit, continued_visit } = user;
+            last_visit = new Date(last_visit);
+            
+            const isContinued = await isContinuedDates(last_visit);
+            // console.log(isContinued)
+            // last_visit 데이터가 없으면 == 회원가입 후 첫 로그인
+            if (!last_visit) {
+                continued_visit = 1;
+            } else if ( isContinued ) {
+                continued_visit += 1;
+            } else if (today.getTime()!=last_visit.getTime()){
+                continued_visit = 1;
+            } 
+            last_visit = today;
+            const changedNum = await User.update(
+                { last_visit, continued_visit},
+                {
+                    where : {
+                        id : user.id
+                    }
                 }
-            }
-        );
-        return changedNum;
+            );
+            return changedNum;
+        } catch (err) {
+            throw err;
+        }
     },
     formatRecentActivity: async (datas, type, user_id = null) => {
         try {
