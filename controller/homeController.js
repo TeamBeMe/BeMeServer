@@ -252,16 +252,16 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
-            console.log(latQuestionId);
+            const question = await Question.findByPk(latQuestionId);
 
             const answerIdxCount = await Answer.count({
                 where : {
-                    user_id
+                    user_id,
                 },
                 include : {
                     model : Question,
                     where : {
-                        category_id: latQuestionId['Question.Category.id'],
+                        category_id: question.category_id,
                     }
                 }
             })
