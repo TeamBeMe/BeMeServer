@@ -167,7 +167,8 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
-            const question = await Question.findByPk(latQuestionId);
+            // 그 다음 들어올 질문의 카테고리의 개수
+            const question = await Question.findByPk(latQuestionId+1);
 
             const answerIdxCount = await Answer.count({
                 where : {
@@ -252,16 +253,17 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
-            console.log(latQuestionId);
+            // 그 다음 들어올 질문의 카테고리의 개수
+            const question = await Question.findByPk(latQuestionId+1);
 
             const answerIdxCount = await Answer.count({
                 where : {
-                    user_id
+                    user_id,
                 },
                 include : {
                     model : Question,
                     where : {
-                        category_id: latQuestionId['Question.Category.id'],
+                        category_id: question.category_id,
                     }
                 }
             })
