@@ -7,6 +7,7 @@ const { homeService, userService } = require('../service');
 const explorationService = require('../service/explorationService');
 const answerService = require('../service/answerService');
 const { Op } = require('sequelize');
+const { sortNewAnswers, sortIntAnswers } = require('../service/explorationService');
 
 module.exports = {
     // '나와 다른 생각들' 대표 7개
@@ -108,6 +109,10 @@ module.exports = {
 
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
+            }
+
+            if (sortNewAnswers == message.NO_ANSWERED_QUESTION || sortIntAnswers == message.NO_ANSWERED_QUESTION) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
             }
 
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
