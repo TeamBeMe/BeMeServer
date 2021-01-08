@@ -75,6 +75,14 @@ module.exports = {
     getLatAnswer : async(user_id) => {
         try {
             const latAnswer = await Answer.findOne({
+                include: [{
+                    model: Question,
+                    include: [{
+                        model: Category,
+                        attributes: ['id'],
+                    }],
+                    attributes:[],
+                }],
                 where: {
                     user_id: user_id
                 },

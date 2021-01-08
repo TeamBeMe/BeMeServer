@@ -30,6 +30,14 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
 
         for (user of users) {
             const latestAnswer = await Answer.findOne({
+                include: [{
+                    model: Question,
+                    include: [{
+                        model: Category,
+                        attributes: ['id'],
+                    }],
+                    attributes:[],
+                }],
                 where: {
                     user_id: user.id,
                 },
@@ -38,20 +46,6 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 raw: true,
             });
 
-            const answerIdxCount = await Answer.count({
-                where : {
-                    user_id
-                },
-                include : {
-                    model : Question,
-                    where : {
-                        category_id
-                    }
-                }
-            })
-            
-            // answer_idx +1
-            const answerIdx = answerIdxCount + 1;
             // 만약 답변 없다면, id = 1
             let question_id = 1;
             if ( latestAnswer) {
@@ -61,6 +55,23 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
             if (question_id > maxQuestionId) {
                 question_id = 1;
             }
+
+            const question = await Question.findByPk(question_id);
+
+            const answerIdxCount = await Answer.count({
+                where : {
+                    user_id,
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        category_id: question.category_id,
+                    }
+                }
+            })
+            
+            // answer_idx +1
+            const answerIdx = answerIdxCount + 1;
 
             
 
@@ -156,10 +167,28 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
+            const question = await Question.findByPk(latQuestionId);
+
+            const answerIdxCount = await Answer.count({
+                where : {
+                    user_id,
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        category_id: question.category_id,
+                    }
+                }
+            })
+            
+            // answer_idx +1
+            const answerIdx = answerIdxCount + 1;
+
             // 받아올 질문 생성
             const moreQuestion = await Answer.create({
                 public_flag: false,
                 commented_blocked_flag: false,
+                answer_idx: answerIdx,
                 user_id: user_id,
                 question_id: (latQuestionId + 1)
             })
@@ -223,8 +252,30 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_QUESTION));
             }
 
+            console.log(latQuestionId);
+
+            const answerIdxCount = await Answer.count({
+                where : {
+                    user_id
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        category_id: latQuestionId['Question.Category.id'],
+                    }
+                }
+            })
+            
+            // answer_idx +1
+            const answerIdx = answerIdxCount + 1;
+
             // 질문 변경
-            const resultChangedNum = await Answer.update({ question_id: latQuestionId + 1 }, {
+            const resultChangedNum = await Answer.update({
+
+                question_id: latQuestionId + 1,
+                aswer_idx: answerIdx,
+            },
+            {
                 where: {
                     id: answer_id,
                 }
