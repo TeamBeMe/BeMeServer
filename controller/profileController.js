@@ -142,13 +142,16 @@ module.exports = {
             if (! page) {
                 page = 1;
             }
-            let answers = await profileService.getScrapByQuery(query, user_id);
+            if (! query) {
+                query = "";
+            }
+            let { count, answers} = await profileService.getScrapByQuery(query, user_id, category, public, page);
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            answers = await profileService.filterAnswer(answers,category, public);
+            // answers = await profileService.filterAnswer(answers,category, public);
 
-            const pagination = await answerService.makePagination(answers,page);
+            const page_len = parseInt(count / 10) + 1;
 
-            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_SCRAP_SUCCESS, pagination));
+            return res.status(code.OK).send(util.success(code.OK, message.GET_MY_SCRAP_SUCCESS, {page_len, answers}));
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
