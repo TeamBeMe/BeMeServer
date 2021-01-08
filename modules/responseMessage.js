@@ -64,6 +64,7 @@ module.exports = {
     /* '나와 다른 생각들' 답변 7개 불러오기 */
     GET_ANOTHER_ANSWERS_SUCCESS: "다른 답변 7개 가져오기 성공",
     GET_ANOTHER_ANSWERS_FAIL: "다른 답변 7개 가져오기 실패",
+    NO_ANSWERED_QUESTION: "아직 답한 질문이 없습니다",
 
     /* 나와 다른 생각들 답변 7개 상세보기 */
     INVALID_SORTING_QUERY: "잘못된 최신 / 흥미 쿼리",
