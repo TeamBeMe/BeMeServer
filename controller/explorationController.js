@@ -10,7 +10,7 @@ const question = require('../models/question');
 
 module.exports = {
     // '나와 다른 생각들' 대표 7개
-    getAnotherAnswers: async (req, res) => {
+    getAnotherAnswers: async (req, res) => { 
         try {
             const user_id = req.decoded.id;
             const page = 1; // 가장 최근 7개 답변
@@ -19,8 +19,12 @@ module.exports = {
             if (!user_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
+            // 조건을 더해야함 - 아직 답하지 않은 질문, 즉 content가 null인 질문은 포함 x
 
-            const latSevenAnswer = await homeService.getUserAnswersByPage(user_id, page, limit);
+            const latSevenAnswer = await explorationService.getLatSeven(user_id, limit);
+            if(latSevenAnswer == message.NO_ANSWERED_QUESTION) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
+            }
             const anotherAnswers = await explorationService.getSevenAnswers(latSevenAnswer);
 
             console.log(message.GET_ANOTHER_ANSWERS_SUCCESS);
@@ -32,16 +36,16 @@ module.exports = {
         }
     },
 
-    // 특정 question에 해당하는 answer들 
+    // 특정 question에 해당하는 answer들 (카테고리 x)
     getSpecificAnswers: async (req, res) => {
         try {
             let { page, sorting } = req.query;
             let question_id = req.params.questionId;
             const user_id = req.decoded.id;
-            if (!page) {
+            if (page == 0) {
                 page = 1;
             }
-            if (!question_id) {
+            if (!question_id || !page) {
                 console.log(question_id)
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
@@ -71,15 +75,15 @@ module.exports = {
         }
     },
 
-    // 다른 글 둘러보기
+    // 다른 글 둘러보기 (카테고리 o)
     getExpAnswers: async (req, res) => {
         try {
             let { page, category, sorting } = req.query;
             const user_id = req.decoded.id;
-            if (!page) {
+            if (page == 0) {
                 page = 1;
             }
-            if (!category) {
+            if (!category || !page) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
             if (!sorting) {
@@ -89,15 +93,14 @@ module.exports = {
             let answers;
 
             if (sorting == "최신") {
-                answers = await explorationService.sortNewAnswers();
+                answers = await explorationService.sortNewAnswers(category);
             } else if (sorting == "흥미") {
-                answers = await explorationService.sortIntAnswers();
+                answers = await explorationService.sortIntAnswers(category);
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
-            //console.dir(answers)
+
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            console.dir(answers)
             const pagination = await answerService.makePagination(answers,page);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, pagination))
