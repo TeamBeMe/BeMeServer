@@ -80,6 +80,7 @@ module.exports = {
         try {
             let { page, category, sorting } = req.query;
             const user_id = req.decoded.id;
+            console.log(user_id)
             if (page == 0) {
                 page = 1;
             }
@@ -93,9 +94,9 @@ module.exports = {
             let answers;
 
             if (sorting == "최신") {
-                answers = await explorationService.sortNewAnswers(category);
+                answers = await explorationService.sortNewAnswers(user_id, category);
             } else if (sorting == "흥미") {
-                answers = await explorationService.sortIntAnswers(category);
+                answers = await explorationService.sortIntAnswers(user_id, category);
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
