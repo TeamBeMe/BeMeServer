@@ -58,14 +58,19 @@ module.exports = {
                     include: [{
                         model: Comment,
                         attributes: []
+                    },
+                    {
+                        model: Question,
+                        attributes:['id', 'title']
                     }],
-                    attributes: ['id', 'question_id', 'content',
+                    attributes: ['id', 'content',
                     [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
                     where: {
                         question_id: question_id
                     },
                     group: ['id'], // 아직 이해 x
-                    order: [[sequelize.literal('comment_count'), 'DESC']]
+                    order: [[sequelize.literal('comment_count'), 'DESC']],
+                    raw: true,
                 });
                 answersArr.push(popAnswer[0]);
             };
