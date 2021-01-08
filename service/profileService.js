@@ -41,73 +41,91 @@ module.exports={
         }
     },
     // 유저가 스크랩한 글 가져오기
-    getScrapByQuery: async (query, user_id) => {
+    getScrapByQuery: async (query, user_id, category_id, public, page) => {
         try {
-            if (! query) {
-                return await Answer.findAll({
-                    where : {
-                        content : {
-                            [Op.not]: null,
-                        }
-                    },
-                    include : {
-                        model : User,
-                        as : 'Scrapper',
-                        where : {
-                            id: user_id,
-                        },
-                        attributes: []
-                    },
-                    attributes: ['id'],
-                });
+            const limit = 10;
+            const category_attr = {};
+            if ( category_id ) {
+                category_attr[Op.eq]= category_id;
+            } else {
+                category_attr[Op.not]= null;
             }
-            let answers = await Answer.findAll({
-                where : {
-                    content : {
-                        [Op.not]: null,
-                        [Op.like]: `%${query}%`,
-                    }
-                },
-                include : {
-                    model : User,
-                    as : 'Scrapper',
-                    where : {
-                        id: user_id,
-                    },
-                    attributes: []
-                },
-                attributes: ['id'],
-            });
-            let answers2 = await Answer.findAll({
+
+            const public_attr = {};
+            if ( public == 'all') {
+                public_attr[Op.not] = null;
+            } else if (public == 'unpublic') {
+                public_attr[Op.is]= false;
+            } else {
+                public_attr[Op.is] = true;
+            }
+
+            const answers = await Answer.findAll({
                 where: {
                     content: {
                         [Op.not]: null,
                     },
+                    [Op.or]: [{'$Question.title$' : {
+                        [Op.like]: `%${query}%`}},
+                        {content : {
+                            [Op.like]: `%${query}%`
+                        }}
+                    ],
+                    public_flag: public_attr,
                 },
-                include: [
-                    {
-                        model : User,
-                        as : 'Scrapper',
-                        where : {
-                            id: user_id,
-                        },
-                        attributes: []
-                    },{
-                        model: Question,
-                        where: {
-                            title: {
-                                [Op.like]: `%${query}%`,
-                            },
-                        },
-                        attributes: []
+                include : [{
+                    model : Question,
+                    attributes: [],
+                    where: {
+                        category_id: category_attr
+                    }
+                },{
+                    model: User,
+                    as : 'Scrapper',
+                    where : {
+                        id : user_id,
                     },
-            ]
+                    attributes: [],
+                }],
+                raw : true,
+                order :[['answer_date', 'DESC']],
+                limit,
+                offset : (page - 1) * 10,
             });
-            answers = answers2.concat(answers);
-            // 중복 제거
-            answers = answers.filter((arr, index, callback) => index === callback.findIndex(t => t.id === arr.id));
-            return answers;
-            
+
+            const count = await Answer.count({
+                where: {
+                    content: {
+                        [Op.not]: null,
+                    },
+                    [Op.or]: [{'$Question.title$' : {
+                        [Op.like]: `%${query}%`}},
+                        {content : {
+                            [Op.like]: `%${query}%`
+                        }}
+                    ],
+                    '$Question.category_id$': category_attr,
+                    public_flag: public_attr,
+                },
+                include : [{
+                    model : Question,
+                    attributes: [],
+                },{
+                    model: User,
+                    as : 'Scrapper',
+                    where : {
+                        id : user_id,
+                    },
+                    attributes: [],
+                }],
+                raw : true,
+                order :[['answer_date', 'DESC']],
+                limit,
+                offset : (page - 1) * 10,
+            });
+
+
+            return {count, answers};
 
         } catch (err) {
             throw err;
