@@ -102,11 +102,18 @@ module.exports = {
         try {
             
             let userAnswers = await Answer.findAll({
+                include:[{
+                    model: Question,
+                    where: {
+                        category_id: category
+                    },
+                    attributes: [],
+                }],
                 where: {
                     user_id: user_id,
                     content: {
                         [Op.not]: null,
-                    }
+                    },
                 },
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
@@ -167,6 +174,13 @@ module.exports = {
         try {
 
             let userAnswers = await Answer.findAll({
+                include:[{
+                    model: Question,
+                    where: {
+                        category_id: category
+                    },
+                    attributes: [],
+                }],
                 where: {
                     user_id: user_id,
                     content: {
