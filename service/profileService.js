@@ -68,20 +68,24 @@ module.exports={
                     [Op.or]: [{'$Question.title$' : {
                         [Op.like]: `%${query}%`}},
                         {content : {
-                            [Op.like]: `%${query}`
+                            [Op.like]: `%${query}%`
                         }}
                     ],
                     public_flag: public_attr,
                 },
                 include : [{
                     model : Question,
+                    attributes: [],
                     where: {
-                        category_id: category_attr,
+                        category_id: category_attr
+                    }
+                },{
+                    model: User,
+                    as : 'Scrapper',
+                    where : {
+                        id : user_id,
                     },
                     attributes: [],
-                }, {
-                    model : User,
-                    as : 'Scrapper'
                 }],
                 raw : true,
                 order :[['answer_date', 'DESC']],
