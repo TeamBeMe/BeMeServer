@@ -38,6 +38,20 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 raw: true,
             });
 
+            const answerIdxCount = await Answer.count({
+                where : {
+                    user_id
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        category_id
+                    }
+                }
+            })
+            
+            // answer_idx +1
+            const answerIdx = answerIdxCount + 1;
             // 만약 답변 없다면, id = 1
             let question_id = 1;
             if ( latestAnswer) {
@@ -48,10 +62,13 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 question_id = 1;
             }
 
+            
+
             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
             const newQuestion = await Answer.create({
                 user_id: user.id,
                 question_id,
+                answer_idx: answerIdx,
                 public_flag: false,
                 commented_blocked_flag: false,
             });

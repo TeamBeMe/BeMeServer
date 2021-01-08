@@ -84,7 +84,7 @@ module.exports = {
             if (page == 0) {
                 page = 1;
             }
-            if (!category || !page) {
+            if (!page) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
             if (!sorting) {
@@ -95,6 +95,7 @@ module.exports = {
 
             if (sorting == "최신") {
                 answers = await explorationService.sortNewAnswers(user_id, category);
+                
             } else if (sorting == "흥미") {
                 answers = await explorationService.sortIntAnswers(user_id, category);
             } else {
