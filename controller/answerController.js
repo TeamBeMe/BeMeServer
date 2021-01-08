@@ -64,10 +64,16 @@ module.exports = {
 
         try {
 
-            const { content, answer_id, is_comment_blocked: comment_blocked_flag, is_public: public_flag } = req.body;
+            const { content, answer_id, is_public: public_flag } = req.body;
+            let comment_blocked_flag = req.body.is_comment_blocked;
             
             if (! content || ! answer_id ) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+
+            // 답변 비공개이거나 comment_blocked_flag 가 null 일경우
+            if (typeof public_flag  == 'boolean' && ! public_flag) {
+                comment_blocked_flag = true;
             }
             const new_answer = {content, answer_id, comment_blocked_flag, public_flag};
 
