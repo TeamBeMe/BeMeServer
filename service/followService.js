@@ -42,7 +42,7 @@ module.exports = {
                 where: {
                     follower_id: user_id,
                 },
-                attributes: [['follower_id', 'id']],
+                attributes: [['followed_id', 'id']],
                 raw: true,
                 
             });
