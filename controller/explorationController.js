@@ -176,5 +176,45 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
+    },
+
+    getFirstQuestion: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+            // 사용자가 답변하지 않은 게시글이 총 두개 중 두개일 때 무조건 기준은 오늘의 질문
+
+            const answers = await Answer.findAll({
+                include: [{
+                    model: Question,
+                    attributes: ['id', 'title']
+                }],
+                where: {
+                    user_id,
+                    content: {
+                        [Op.is]: null,
+                    }
+                },
+                attributes: ['id', 'created_at'],
+                raw:true,
+            });
+
+            if (answers.length > 1) { // 답변하지 않은 질문의 개수가 여러개라면 오늘의 질문 기준으로 return
+                for (answer of answers) {
+                    let answerWithFlag = await homeService.isToday(answer);
+                    console.log(answer);
+                    if (answerWithFlag.is_today == true) {
+                        return res.status(code.OK).send(util.success(code.OK, message.GET_TODAY_QUESTION_ID_SUCCESS, answerWithFlag));
+                    }
+                }
+            }
+
+            const oneAnswer = answers[0];
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_ID_SUCCESS, oneAnswer));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
     }
 }
