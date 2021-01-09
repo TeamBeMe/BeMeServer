@@ -200,10 +200,11 @@ module.exports = {
 
             if (answers.length > 1) { // 답변하지 않은 질문의 개수가 여러개라면 오늘의 질문 기준으로 return
                 for (answer of answers) {
-                    let answerWithFlag = await homeService.isToday(answer);
+                    let answerWithFlag = await explorationService.isToday(answer);
                     console.log(answer);
-                    if (answerWithFlag.is_today == true) {
-                        return res.status(code.OK).send(util.success(code.OK, message.GET_TODAY_QUESTION_ID_SUCCESS, answerWithFlag));
+                    if (answerWithFlag.today_flag == true) {
+                        return res.status(code.OK).send(util.success(code.OK, message.GET_TODAY_QUESTION_ID_SUCCESS,
+                            answerWithFlag.answer));
                     }
                 }
             }
