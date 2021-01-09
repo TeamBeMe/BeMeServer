@@ -109,6 +109,10 @@ module.exports = {
     SEARCH_ID_SUCCESS: "아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
 
+    /* 최초 답변 하러가기 */
+    GET_QUESTION_ID_SUCCESS: "답변해야 할 질문 가져오기 성공",
+    GET_TODAY_QUESTION_ID_SUCCESS: "답변해야 할 오늘 질문 가져오기 성공",
+
     /* 페이징 */
     NO_MORE_PAGE: "더이상 페이지가 없습니다",
 
