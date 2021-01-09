@@ -73,6 +73,7 @@ module.exports = {
 
     /* 다른 글 둘러보기 */
     GET_EXPLORATION_RESULT_SUCCESS: "다른 글 둘러보기 성공",
+    NO_RESULT: "탐색 결과가 없습니다",
 
     /* 스크랩 하기, 스크랩 취소하기 */
     DO_SCRAP_SUCCESS: "스크랩 성공",
