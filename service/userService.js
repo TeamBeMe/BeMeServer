@@ -254,10 +254,12 @@ module.exports = {
                     return null;
                 }
            } else if (range == 'all') { // 전체 검색일 경우 최근 검색 기록 생성
-               const recentSearch = await RecentSearch.create({
-                    user_id,
-                    searched_id: user.id,
-               })
+                const recentSearch = await RecentSearch.create({
+                        user_id,
+                        searched_id: user.id,
+                })
+                //autoIncrement:true,로 했더니 Error: Duplicate entry '0' for key 'RecentSearch.PRIMARY' 에러뜸
+                console.log("기록 저장");
            }
            // user 객체 있으면 팔로우 했는 지 확인
            const is_followed = await Follow.findOne({
