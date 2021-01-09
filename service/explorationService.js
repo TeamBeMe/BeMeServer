@@ -4,6 +4,7 @@ const message = require('../modules/responseMessage');
 const { sequelize } = require('../models/index');
 const { Op } = require('sequelize');
 const moment = require('moment');
+const { filterAnswer } = require('./profileService');
 
 const getTodayDate = async () => {
     const td = Date.now();
@@ -87,6 +88,8 @@ module.exports = {
                 });
                 if (popAnswer.length > 0) {
                     answersArr.push(popAnswer[0]);
+                } else if(popAnswer.length < 1) {
+                    return message.NO_RESULT;
                 }
             };
 
@@ -99,7 +102,7 @@ module.exports = {
 
     // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수
     sortNewAnswerByQid : async(question_id) => {
-        try {
+        try { 
             const filteredAnswers = await Answer.findAll({
                 attributes: ['id'],
                 where: {
@@ -137,11 +140,14 @@ module.exports = {
                 attributes: ['user_id', 'id', 'question_id'],
                 raw: true,
             })
+            //console.log(userAnswers);
 
+            // 사용자가 답변한 질문이 존재하지 않을 때
             if (userAnswers.length < 1) {
                 return message.NO_ANSWERED_QUESTION;
             }
             userAnswers = userAnswers.map(a => a.question_id);
+            //console.log(userAnswers);
 
             const filteredAnswers = await Answer.findAll({
                     
@@ -155,9 +161,13 @@ module.exports = {
                         [Op.or]: userAnswers,
                     },
                     public_flag: true,
-                }
+                },
             });
 
+            // 탐색 결과가 없을 때
+            if(filteredAnswers.length < 1) {
+                return message.NO_RESULT;
+            }
             
             return filteredAnswers
 
@@ -238,6 +248,11 @@ module.exports = {
                     public_flag: true,
                 }
             });
+
+            // 탐색 결과가 없을 때
+            if(filteredAnswers.length < 1) {
+                return message.NO_RESULT;
+            }
 
             return filteredAnswers
 

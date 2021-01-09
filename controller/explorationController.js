@@ -27,6 +27,9 @@ module.exports = {
                 res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
             }
             const anotherAnswers = await explorationService.getSevenAnswers(user_id, latSevenAnswer);
+            if (anotherAnswers == message.NO_RESULT) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
+            }
 
             console.log(message.GET_ANOTHER_ANSWERS_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_ANOTHER_ANSWERS_SUCCESS, anotherAnswers));
@@ -111,8 +114,10 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
 
-            if (sortNewAnswers == message.NO_ANSWERED_QUESTION || sortIntAnswers == message.NO_ANSWERED_QUESTION) {
+            if (answers == message.NO_ANSWERED_QUESTION) {
                 res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
+            } else if (answers == message.NO_RESULT) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
             }
 
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
@@ -178,6 +183,7 @@ module.exports = {
         }
     },
 
+    // 최초 답변하러 가기
     getFirstQuestion: async (req, res) => {
         try {
             const user_id = req.decoded.id;
