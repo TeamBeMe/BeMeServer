@@ -1,12 +1,12 @@
 const { User } = require("./index");
+const Sequelize = require('sequelize');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('RecentSearch', {
 
         id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             primaryKey: true,
-            allowNull: false,
             autoIncrement: true,
         },
         user_id: {
@@ -25,6 +25,6 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         freezeTableName: true,
-        timestamps: false,
+        timestamps: true,
     });
 };
