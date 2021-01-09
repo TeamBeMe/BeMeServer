@@ -87,10 +87,7 @@ module.exports = {
                 });
                 if (popAnswer.length > 0) {
                     answersArr.push(popAnswer[0]);
-                } else {
-                    answersArr.push({});
                 }
-                
             };
 
             return answersArr
