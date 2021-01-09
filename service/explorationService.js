@@ -3,6 +3,13 @@ const models = require('../models/index');
 const message = require('../modules/responseMessage');
 const { sequelize } = require('../models/index');
 const { Op } = require('sequelize');
+const moment = require('moment');
+
+const getTodayDate = async () => {
+    const td = Date.now();
+    const today = new Date(td);
+    return new Date(moment.tz(today, 'Asia/Seoul').format());
+};
 
 module.exports = {
 
@@ -240,5 +247,27 @@ module.exports = {
         } catch (error) {
             throw error;
         }
+    },
+
+    isToday : async(answer) => {
+        try {
+            const today = await getTodayDate();
+            let today_flag = false;
+            let td = today;
+            console.log(answer.created_at);
+            const diff = td.getTime()- answer.created_at.getTime();
+            const hrDiff = diff / 3600000;
+            if (hrDiff < 24) {
+                today_flag = true;
+            } else {
+                today_flag = false;
+            }
+
+            return {today_flag, answer}
+
+        } catch (error) {
+            throw error;
+        }
+
     },
 }
