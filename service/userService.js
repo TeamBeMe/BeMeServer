@@ -1,4 +1,4 @@
-const { User, Answer, Question, Follow } = require('../models');
+const { User, Answer, Question, Follow, RecentSearch } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
@@ -253,6 +253,11 @@ module.exports = {
                 if (! isFollowee) {
                     return null;
                 }
+           } else if (range == 'all') { // 전체 검색일 경우 최근 검색 기록 생성
+               const recentSearch = await RecentSearch.create({
+                    user_id,
+                    searched_id: user.id,
+               })
            }
            // user 객체 있으면 팔로우 했는 지 확인
            const is_followed = await Follow.findOne({

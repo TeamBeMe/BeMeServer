@@ -1,12 +1,13 @@
 const util = require('../modules/util');
 const message = require('../modules/responseMessage');
 const code = require('../modules/statusCode');
-const { User, Comment, Answer, Question, Follow} = require('../models');
+const { User, Comment, Answer, Question, Follow, RecentSearch} = require('../models');
 const jwt = require('../modules/jwt');
 const { userService } = require('../service');
 const {Op} = require('sequelize');
 const { formatRecentActivity } = require('../service/userService');
 const answerService = require('../service/answerService');
+const user = require('../models/user');
 
 
 
@@ -176,6 +177,48 @@ module.exports = {
             }
             const user = await userService.idSearch(query, range, user_id);
             return res.status(code.OK).send(util.success(code.OK, message.SEARCH_ID_SUCCESS, user));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+    // 검색 기록 가져오기 (전체)
+    getRecentSearch: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+
+            // 최근 검색 기록 찾기
+            let recentSearch = await RecentSearch.findAll({
+                where: {
+                    user_id,
+                },
+                attributes: ['searched_id'],
+                raw: true,
+            });
+            //console.log(recentSearch)
+
+            // 최근 검색 기록 없을 때
+            if (recentSearch.length < 1) {
+                return res.status(code.OK).send(util.success(code.OK, message.NO_RECENT_SEARCH));
+            }
+
+            // 최근 검색 기록 있을 때
+            const searchedUsers = [];
+
+            for (rs of recentSearch) {
+                let searchedUser = await User.findOne({
+                    where: {
+                        id: rs.searched_id,
+                    },
+                    attributes: ['id', 'nickname', 'profile_img'],
+                    raw: true,
+                });
+                searchedUsers.push(searchedUser);
+            }
+            
+            return res.status(code.OK).send(util.success(code.OK, message.GET_RECENT_SEARCH_SUCCESS, searchedUsers));
+
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
