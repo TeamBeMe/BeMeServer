@@ -26,7 +26,7 @@ module.exports = {
             if(latSevenAnswer == message.NO_ANSWERED_QUESTION) {
                 res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
             }
-            const anotherAnswers = await explorationService.getSevenAnswers(latSevenAnswer);
+            const anotherAnswers = await explorationService.getSevenAnswers(user_id, latSevenAnswer);
 
             console.log(message.GET_ANOTHER_ANSWERS_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_ANOTHER_ANSWERS_SUCCESS, anotherAnswers));
