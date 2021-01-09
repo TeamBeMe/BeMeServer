@@ -88,6 +88,8 @@ module.exports = {
                 });
                 if (popAnswer.length > 0) {
                     answersArr.push(popAnswer[0]);
+                } else if(popAnswer.length < 1) {
+                    return message.NO_RESULT;
                 }
             };
 
