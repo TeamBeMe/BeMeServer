@@ -116,6 +116,10 @@ module.exports = {
     /* 페이징 */
     NO_MORE_PAGE: "더이상 페이지가 없습니다",
 
+    /* 최근 검색 가져오기 */
+    GET_RECENT_SEARCH_SUCCESS: "최근 검색 가져오기 성공",
+    NO_RECENT_SEARCH: "최근 검색 기록이 없습니다",
+
     /**알림뷰 */
     GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',
 
