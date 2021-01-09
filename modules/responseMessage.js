@@ -110,6 +110,7 @@ module.exports = {
     SEARCH_ID_SUCCESS: "아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
 
+
     /* 최초 답변 하러가기 */
     GET_QUESTION_ID_SUCCESS: "답변해야 할 질문 가져오기 성공",
     GET_TODAY_QUESTION_ID_SUCCESS: "답변해야 할 오늘 질문 가져오기 성공",
@@ -120,6 +121,9 @@ module.exports = {
     /* 최근 검색 가져오기 */
     GET_RECENT_SEARCH_SUCCESS: "최근 검색 가져오기 성공",
     NO_RECENT_SEARCH: "최근 검색 기록이 없습니다",
+
+    /* 최근 검색 기록 삭제하기 */
+    DELETE_RECENT_SEARCH_SUCCESS: "최근 검색 기록 삭제 완료",
 
     /**알림뷰 */
     GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',

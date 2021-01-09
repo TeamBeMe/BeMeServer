@@ -223,6 +223,29 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
+    },
+
+    deleteRecentSearch: async (req,res) => {
+        try {
+            const user_id = req.decoded.id;
+            const searched_id = req.params.searchedId;
+            if (!searched_id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+
+            const deleteRs = await RecentSearch.destroy({
+                where: {
+                    user_id,
+                    searched_id
+                }
+            })
+
+            return res.status(code.OK).send(util.success(code.OK, message.DELETE_RECENT_SEARCH_SUCCESS));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
     }
     
 }
