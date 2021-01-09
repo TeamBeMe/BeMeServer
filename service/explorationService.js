@@ -31,6 +31,7 @@ module.exports = {
                 attributes: [],
                 raw: true,
             })
+            console.log(result);
 
             if (result.length < 1) {
                 return message.NO_ANSWERED_QUESTION;
@@ -45,14 +46,12 @@ module.exports = {
     },
 
     // 7개 각 질문의 가장 인기가 많은 답변 하나씩 가져오기
-    getSevenAnswers : async(latSevenAnswer) => {
+    getSevenAnswers : async(user_id, latSevenAnswer) => {
         try {
             let answersArr = [];
             
             for await (answer of latSevenAnswer) {
                 const question_id = answer['Question.id'];
-                
-
  
                 const popAnswer = await Answer.findAll({
                     include: [{
@@ -68,12 +67,23 @@ module.exports = {
                     where: {
                         question_id: question_id,
                         public_flag: true,
+                        content : {
+                            [Op.not]: null,
+                        },
+                        user_id: {
+                            [Op.not]: user_id,
+                        }
                     },
                     group: ['id'], // 아직 이해 x
                     order: [[sequelize.literal('comment_count'), 'DESC']],
                     raw: true,
                 });
-                answersArr.push(popAnswer[0]);
+                if (popAnswer.length > 0) {
+                    answersArr.push(popAnswer[0]);
+                } else {
+                    answersArr.push({});
+                }
+                
             };
 
             return answersArr
