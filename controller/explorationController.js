@@ -31,7 +31,6 @@ module.exports = {
                 res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
             }
 
-            console.log(message.GET_ANOTHER_ANSWERS_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_ANOTHER_ANSWERS_SUCCESS, anotherAnswers));
 
         } catch (err) {
