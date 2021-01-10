@@ -70,10 +70,12 @@ module.exports = {
     INVALID_SORTING_QUERY: "잘못된 최신 / 흥미 쿼리",
     GET_SPECIFIC_ANSWERS_SUCCESS: "한 질문에 대한 답변 모아보기 성공",
     GET_SPECIFIC_ANSWERS_FAIL: "한 질문에 대한 답변 모아보기 실패",
+    INVALID_QUESTION_ID: "존재하지 않는 question id 입니다",
 
     /* 다른 글 둘러보기 */
     GET_EXPLORATION_RESULT_SUCCESS: "다른 글 둘러보기 성공",
     NO_RESULT: "탐색 결과가 없습니다",
+    INVALID_CATEGORY_ID: "존재하지 않는 category id 입니다",
 
     /* 스크랩 하기, 스크랩 취소하기 */
     DO_SCRAP_SUCCESS: "스크랩 성공",
@@ -124,6 +126,7 @@ module.exports = {
 
     /* 최근 검색 기록 삭제하기 */
     DELETE_RECENT_SEARCH_SUCCESS: "최근 검색 기록 삭제 완료",
+    INVALID_USER_ID: "존재하지 않는 user id 입니다",
 
     /**알림뷰 */
     GET_RECENT_ACTIVITY_SUCCESS: '최근 활동 가져오기 성공',

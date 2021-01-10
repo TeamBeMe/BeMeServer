@@ -216,7 +216,6 @@ module.exports = {
             //오늘 질문인지
             const answerWithIsToday = await homeService.isToday(answer);
 
-            console.log(message.GET_QUESTION_SUCCESS);
             res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_SUCCESS, answerWithIsToday));
 
         } catch (err) {
@@ -230,19 +229,19 @@ module.exports = {
         try {
             const user_id = req.decoded.id;
             const answer_id = req.params.answerId;
-            console.log(`homeController 질문 변경할 user_id =  ${user_id}, 질문 변경할 answer_id = ${answer_id}`);
+            //console.log(`homeController 질문 변경할 user_id =  ${user_id}, 질문 변경할 answer_id = ${answer_id}`);
 
             if (!user_id || !answer_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
 
             const oneAnswer = await Answer.findByPk(answer_id);
-            console.log(`homeService 답변과 유저 존재 검사 answer 객체 = ${oneAnswer}`);
+            //console.log(`homeService 답변과 유저 존재 검사 answer 객체 = ${oneAnswer}`);
             // 존재하는 answer인지 확인
             if (! oneAnswer) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
-            console.log(`homeService 답변과 유저 존재 검사 answer 객체의 user_id = ${oneAnswer.user_id}`);
+            //console.log(`homeService 답변과 유저 존재 검사 answer 객체의 user_id = ${oneAnswer.user_id}`);
             // 불러온 answer의 유저 id와, 토큰 유저 id가 일치하는 지 확인
             if (oneAnswer.user_id != user_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
@@ -305,7 +304,6 @@ module.exports = {
             //오늘 질문인지
             const answerWithIsToday = await homeService.isToday(answer);
 
-            console.log(message.CHANGE_QUESTION_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.CHANGE_QUESTION_SUCCESS, answerWithIsToday));
 
         } catch (err) {
@@ -336,7 +334,6 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.UPDATE_PUBLICFLAG_FAIL));
             }
 
-            console.log(message.UPDATE_PUBLICFLAG_SUCCESS)
             res.status(code.OK).send(util.success(code.OK, message.UPDATE_PUBLICFLAG_SUCCESS));
 
         } catch (err) {
@@ -366,7 +363,7 @@ module.exports = {
             if (!resultDestroyNum) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.DELETE_ANSWER_FAIL));
             }
-            console.log(message.DELETE_ANSWER_SUCCESS)
+            
             res.status(code.OK).send(util.success(code.OK, message.DELETE_ANSWER_SUCCESS));
 
         } catch (err) {

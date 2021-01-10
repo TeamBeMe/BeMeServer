@@ -9,7 +9,7 @@ const recordSearch =  async (query, user_id) => {
             user_id,
             query
         });
-        console.log(created);
+        //console.log(created);
         return true;
     } catch (err) {
         throw err;

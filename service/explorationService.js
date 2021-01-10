@@ -39,7 +39,7 @@ module.exports = {
                 attributes: [],
                 raw: true,
             })
-            console.log(result);
+            //console.log(result);
 
             if (result.length < 1) {
                 return message.NO_ANSWERED_QUESTION;
@@ -276,7 +276,7 @@ module.exports = {
             const today = await getTodayDate();
             let today_flag = false;
             let td = today;
-            console.log(answer.created_at);
+            //console.log(answer.created_at);
             const diff = td.getTime()- answer.created_at.getTime();
             const hrDiff = diff / 3600000;
             if (hrDiff < 24) {
