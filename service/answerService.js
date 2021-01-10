@@ -88,6 +88,8 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                     child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
                     // 내가 볼 수 있는 댓글인지 확인
                     child.is_visible = (child.public_flag || child.is_author || answer.is_author);
+
+                    // author 정보 넣어주기
                     const user = await User.findByPk(child.user_id);
                     child.user_nickname = user.nickname;
                     child.profile_img = user.profile_img;
@@ -415,5 +417,21 @@ module.exports = {
          })
          return {page_len, answers}
     },
+    // 댓글 작성, 수정시 내가 쓴 댓글 format 해서 하나 보내주기 
+    parseComment: async (comment) => {
+        try {
+            const user = await User.findByPk(comment.user_id);
+            comment = comment.dataValues;
+            comment.user_nickname = user.nickname;
+            comment.profile_img = user.profile_img;
+            comment.createdAt = await userService.formatAnswerDate(comment.createdAt);
+            comment.updatedAt = await userService.formatAnswerDate(comment.updatedAt);
+            comment.is_author = true;
+            comment.is_visible = true;
 
+            return comment;
+        } catch (err) {
+            throw err;
+        }
+    }
 }

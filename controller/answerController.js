@@ -119,7 +119,7 @@ module.exports = {
                 // console.log(hasError);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, hasError));
             }
-            const comment = await Comment.create({
+            let comment = await Comment.create({
                 answer_id,
                 content,
                 public_flag,
@@ -127,6 +127,7 @@ module.exports = {
                 user_id
             });
             
+            comment = await answerService.parseComment(comment);
 
             return res.status(code.OK).send(util.success(code.CREATED, message.POST_COMMENT_SUCCESS, comment));
 
@@ -157,7 +158,12 @@ module.exports = {
                 }
             });
 
-            return res.status(code.OK).send(util.success(code.OK, message.MODIFY_COMMENT_SUCCESS));
+            // updated comment parsing 해서 보내주기
+            let updated_comment = await Comment.findByPk(comment_id);
+            updated_comment = await answerService.parseComment(updated_comment);
+
+
+            return res.status(code.OK).send(util.success(code.OK, message.MODIFY_COMMENT_SUCCESS, updated_comment));
             
         } catch (err) {
             console.error(err);
