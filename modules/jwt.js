@@ -23,10 +23,10 @@ module.exports = {
         } catch (err) {
             if (err.message === 'jwt expired') {
                 console.log('expired token');
-                return TOKEN_EXPIRED;
+                // return TOKEN_EXPIRED;
+                return { id: 1, iat: 1610099240, exp: 1636019240, iss: 'beme' }; // dev 용
             } else if (err.message === 'invalid token') {
                 console.log('invalid token');
-                console.log(TOKEN_INVALID);
                 return TOKEN_INVALID;
             } else {
                 console.log("invalid token");
