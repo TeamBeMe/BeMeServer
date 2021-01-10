@@ -88,7 +88,7 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                     child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
                     // 내가 볼 수 있는 댓글인지 확인
                     child.is_visible = (child.public_flag || child.is_author || answer.is_author);
-                    const user = await User.findByPk(parent.user_id);
+                    const user = await User.findByPk(child.user_id);
                     child.user_nickname = user.nickname;
                     child.profile_img = user.profile_img;
                 }
