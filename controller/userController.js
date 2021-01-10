@@ -1,13 +1,11 @@
 const util = require('../modules/util');
 const message = require('../modules/responseMessage');
 const code = require('../modules/statusCode');
-const { User, Comment, Answer, Question, Follow, RecentSearch} = require('../models');
+const { User, Comment, Answer, RecentSearch} = require('../models');
 const jwt = require('../modules/jwt');
 const { userService } = require('../service');
 const {Op} = require('sequelize');
 const { formatRecentActivity } = require('../service/userService');
-const answerService = require('../service/answerService');
-const user = require('../models/user');
 
 
 
@@ -148,7 +146,7 @@ module.exports = {
             comments = await formatRecentActivity(comments, 'comment');
             second_comments = await formatRecentActivity(second_comments, 'comment');
             followers = await formatRecentActivity(followers, 'follow', user_id);
-            
+
             results = results.concat(comments, second_comments, followers)
             // createdAt으로 답변 정렬
             results.sort( (a,b) => b.createdAt.getTime() - a.createdAt.getTime());
