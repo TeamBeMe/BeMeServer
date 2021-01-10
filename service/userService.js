@@ -262,7 +262,7 @@ module.exports = {
                     }
                 });
 
-                const recentSearch = await RecentSearch.create({
+                await RecentSearch.create({
                         user_id,
                         searched_id: user.id,
                 })

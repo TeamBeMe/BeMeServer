@@ -41,7 +41,7 @@ module.exports = {
                 profile_img : image
             });
 
-            const moreQuestion = await Answer.create({
+            await Answer.create({
                 public_flag: 0,
                 user_id: user.id,
                 question_id: 1
@@ -148,6 +148,7 @@ module.exports = {
             comments = await formatRecentActivity(comments, 'comment');
             second_comments = await formatRecentActivity(second_comments, 'comment');
             followers = await formatRecentActivity(followers, 'follow', user_id);
+            
             results = results.concat(comments, second_comments, followers)
             // createdAt으로 답변 정렬
             results.sort( (a,b) => b.createdAt.getTime() - a.createdAt.getTime());
