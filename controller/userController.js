@@ -55,8 +55,6 @@ module.exports = {
         }
     },
     signin: async (req, res) => {
-        console.log(req);
-        console.log(req.body);
         const { nickname, password } = req.body;
         if (! nickname || ! password ) {
             console.log(message.NULL_VALUE);
