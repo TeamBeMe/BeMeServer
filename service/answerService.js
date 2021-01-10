@@ -151,6 +151,12 @@ const getFormattedAnswerbyPkwithoutComment= async (answer_id, user_id) => {
             answer.is_scrapped = true;
         }
 
+        // 탐색탭에선 탐색을하는 유저의 아이디와, 탐색 결과 answer을 보내기 때문에
+        // 유저가 다를 수 밖에 없음, 따라서 탐색결과 answer을 작성한 유저 아이디로 바꿔줌
+        if (user_id != answer.user_id) {
+            user_id = answer.user_id;
+        }
+
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
             where : {
