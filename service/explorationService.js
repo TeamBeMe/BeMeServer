@@ -106,6 +106,9 @@ module.exports = {
             const filteredAnswers = await Answer.findAll({
                 attributes: ['id'],
                 where: {
+                    user_id: {
+                        [Op.not]: user_id,
+                    },
                     question_id: question_id,
                     content: {
                         [Op.not]: null,
@@ -154,6 +157,9 @@ module.exports = {
                 attributes: ['id'],
                 order: [['answer_date', 'DESC']],
                 where: {
+                    user_id: {
+                        [Op.not]: user_id,
+                    },
                     content: {
                         [Op.not]: null,
                     },
@@ -188,6 +194,9 @@ module.exports = {
                 attributes: ['id',
                 [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
                 where: {
+                    user_id: {
+                        [Op.not]: user_id,
+                    },
                     question_id: question_id,
                     content: {
                         [Op.not]: null,
@@ -239,6 +248,9 @@ module.exports = {
                 order: [[sequelize.literal('comment_count'), 'DESC']],
                 group: ['id'],
                 where: {
+                    user_id: {
+                        [Op.not]: user_id,
+                    },
                     content: {
                         [Op.not]: null,
                     },
