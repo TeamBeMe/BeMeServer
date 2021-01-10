@@ -95,7 +95,6 @@ module.exports = {
             });
     
             if (alreadyNickname) {
-                console.log(message.ALREADY_NICKNAME);
                 return message.ALREADY_NICKNAME;
             }
             return null;

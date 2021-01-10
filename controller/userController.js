@@ -14,7 +14,6 @@ module.exports = {
         const { email, nickname, password} = req.body;
         
         if (! email || ! password || ! nickname) {
-            console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
 
@@ -55,7 +54,6 @@ module.exports = {
     signin: async (req, res) => {
         const { nickname, password } = req.body;
         if (! nickname || ! password ) {
-            console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
@@ -230,6 +228,11 @@ module.exports = {
             const searched_id = req.params.searchedId;
             if (!searched_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+
+            const searchedUser = await User.findByPk(searched_id);
+            if(!searchedUser) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_USER_ID));
             }
 
             const deleteRs = await RecentSearch.destroy({

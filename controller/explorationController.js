@@ -49,11 +49,16 @@ module.exports = {
                 page = 1;
             }
             if (!question_id || !page) {
-                console.log(question_id)
+                //console.log(question_id)
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
             if (!sorting) {
                 sorting = "최신";
+            }
+
+            const question = await Question.findByPk(question_id);
+            if(!question) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_QUESTION_ID));
             }
 
             let answers;
@@ -65,9 +70,9 @@ module.exports = {
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
+
             //console.dir(answers)
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            console.dir(answers)
             const pagination = await answerService.makePagination(answers,page);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_SPECIFIC_ANSWERS_SUCCESS, pagination))
@@ -83,7 +88,6 @@ module.exports = {
         try {
             let { page, category, sorting } = req.query;
             const user_id = req.decoded.id;
-            console.log(user_id)
             if (page == 0) {
                 page = 1;
             }
@@ -96,7 +100,12 @@ module.exports = {
 
             const category_attr = {};
             if ( category ) {
-                category_attr[Op.eq]= category;
+                if(category > 0 && category < 7) {
+                    category_attr[Op.eq]= category;
+                } else {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_CATEGORY_ID));
+                }
+                
             } else {
                 category_attr[Op.not]= null;
             }
@@ -139,6 +148,12 @@ module.exports = {
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
         try {
+
+            const answer = await Answer.findByPk(answer_id);
+            if(! answer) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+
             // 이미 scrap 했는지 확인
             const alreadyScrap = await Scrap.findAll({
                 where : {
@@ -206,7 +221,7 @@ module.exports = {
             if (answers.length > 1) { // 답변하지 않은 질문의 개수가 여러개라면 오늘의 질문 기준으로 return
                 for (answer of answers) {
                     let answerWithFlag = await explorationService.isToday(answer);
-                    console.log(answer);
+                    //console.log(answer);
                     if (answerWithFlag.today_flag == true) {
                         return res.status(code.OK).send(util.success(code.OK, message.GET_TODAY_QUESTION_ID_SUCCESS,
                             answerWithFlag.answer));

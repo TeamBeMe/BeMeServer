@@ -52,12 +52,12 @@ module.exports = {
     checkExiAnswerAndUser : async(answer_id, user_id) => {
         try {
             const answer = Answer.findByPk(answer_id);
-            console.log(`homeService 답변과 유저 존재 검사 answer 객체 = ${answer}`);
+            //console.log(`homeService 답변과 유저 존재 검사 answer 객체 = ${answer}`);
             // 존재하는 answer인지 확인
             if (! answer) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
             }
-            console.log(`homeService 답변과 유저 존재 검사 answer 객체의 user_id = ${Answer.user_id}`);
+            //console.log(`homeService 답변과 유저 존재 검사 answer 객체의 user_id = ${Answer.user_id}`);
             // 불러온 answer의 유저 id와, 토큰 유저 id가 일치하는 지 확인
             if (answer.user_id != user_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
@@ -91,12 +91,12 @@ module.exports = {
             });
 
             const countQuestion = await maxQuestionId();
-            console.log(`총 question_id = ${countQuestion}`);
+            //console.log(`총 question_id = ${countQuestion}`);
             if (countQuestion == latAnswer.question_id) {
                 return false;
             }
 
-            console.log(`가장 최근 question_id = ${latAnswer.question_id}`);
+            //console.log(`가장 최근 question_id = ${latAnswer.question_id}`);
             const latQuestionId = latAnswer.question_id;
             return latQuestionId
 
@@ -111,7 +111,7 @@ module.exports = {
         try {
             const today = await getTodayDate();
             let td = today;
-            console.log(answer.created_at);
+            //console.log(answer.created_at);
             const diff = td.getTime()- answer.created_at.getTime();
             const hrDiff = diff / 3600000;
             if (hrDiff < 24) {
