@@ -104,6 +104,9 @@ module.exports = {
             // console.log(message.NULL_VALUE);
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
+        if (typeof public_flag !== 'boolean') {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+        }
         try {
 
             const user_id = req.decoded.id;
