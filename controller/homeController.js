@@ -16,7 +16,7 @@ rule.second = 7;
 // '*/7 * * * * *' '0 0 * * 0-6'
 
 // 매일 오전 12시 마다 새로운 질문
-const shedule = sch.scheduleJob('0 2 * * 0-6', async () => {
+const shedule = sch.scheduleJob('3 2 * * 0-6', async () => {
     try {
 
         const users = await User.findAll({
@@ -60,7 +60,7 @@ const shedule = sch.scheduleJob('0 2 * * 0-6', async () => {
 
             const answerIdxCount = await Answer.count({
                 where : {
-                    user_id,
+                    user_id: user.id,
                 },
                 include : {
                     model : Question,
