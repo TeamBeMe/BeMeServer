@@ -2,7 +2,6 @@ const { User, Answer, Question, Follow, RecentSearch } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
-const answer = require('../models/answer');
 
 //비밀번호 hash 시키는 함수
 const hashPassword =  async (password, salt = null) => {

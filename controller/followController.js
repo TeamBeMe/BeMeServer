@@ -1,11 +1,8 @@
 const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
-
-const { Answer, User, Comment, Question, Follow } = require('../models');
-
-const { answerService } = require('../service');
-const {userService, followService} = require('../service');
+const { User, Follow } = require('../models');
+const { answerService, followService } = require('../service');
 
 
 module.exports = {
@@ -23,6 +20,7 @@ module.exports = {
             }
             // valid 한 followed_id 인지 확인
             const followed_user = await User.findByPk(followed_id);
+
             if (! followed_user) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
             }
@@ -35,7 +33,7 @@ module.exports = {
             });
             // 이미 팔로우된 id 이면 팔로우 취소
             if (existFollow.length > 0) {
-                const follow = await Follow.destroy({
+                await Follow.destroy({
                     where : {
                         follower_id : user_id,
                         followed_id,
@@ -44,7 +42,7 @@ module.exports = {
                 return res.status(code.OK).send(util.success(code.OK, message.UN_FOLLOWING_SUCCESS))
             }
 
-            const follow = await Follow.create({
+            await Follow.create({
                 follower_id : user_id,
                 followed_id,
             });
@@ -94,8 +92,10 @@ module.exports = {
         }
     },
     getFollowAnswers: async (req, res) => {
+        
         const { category } = req.query;
         let { page } = req.query;
+
         if (! category) {
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }
