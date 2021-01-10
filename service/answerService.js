@@ -20,11 +20,10 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
             return
         }
         
-        if (user_id) {
-            answer.is_author = user_id == answer.user_id;
-        }
+        answer.is_author = user_id == answer.user_id;
         answer.public_flag = Boolean(answer.public_flag);
         answer.comment_blocked_flag = Boolean(answer.comment_blocked_flag);
+        
         // 내가 스크랩한 질문인지 확인하기
         const isScrapped = await Scrap.findOne({
             where : {
@@ -72,11 +71,13 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
          for (parent of comments) {
             parent.createdAt = await userService.formatAnswerDate(parent.createdAt);
             parent.updatedAt = await userService.formatAnswerDate(parent.updatedAt);
-            
-            if (user_id) {
-                parent.is_author = user_id == parent.user_id;
-            }
+
+            parent.is_author = user_id == parent.user_id;
             parent.is_visible = parent.is_author || answer.is_author;
+            const user = await User.findByPk(parent.user_id);
+            parent.user_nickname = user.nickname;
+            parent.profile_img = user.profile_img;
+
             if (parent.Children) {
                 parent.Children = parent.Children.map(i => i.dataValues);
                 for (child of parent.Children) {
@@ -87,6 +88,9 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
                     child.updatedAt = await userService.formatAnswerDate(child.updatedAt);
                     // 내가 볼 수 있는 댓글인지 확인
                     child.is_visible = (child.is_author || answer.is_author);
+                    const user = await User.findByPk(parent.user_id);
+                    child.user_nickname = user.nickname;
+                    child.profile_img = user.profile_img;
                 }
             }
         }
