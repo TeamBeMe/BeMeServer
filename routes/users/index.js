@@ -10,5 +10,6 @@ router.get('/activities', authUtil.checkToken, userController.getActivity);
 router.get('/search', authUtil.checkToken, userController.getIdSearch)
 router.get('/search/history', authUtil.checkToken, userController.getRecentSearch);
 router.delete('/search/:searchedId', authUtil.checkToken, userController.deleteRecentSearch);
+router.get('/', userController.nicknameCheck);
 
 module.exports = router;

@@ -23,6 +23,7 @@ module.exports = {
     ALREADY_NICKNAME: '이미 존재하는 닉네임입니다',
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
+    NOT_EXIST_NICKNAME : '존재하지 않는 닉네임 입니다',
 
     /**탐색 */
     GET_CATEGORY_SUCCESS: '카테고리 가져오기 성공',

@@ -252,6 +252,26 @@ module.exports = {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
+    },
+    // 닉네임 중복검사
+    nicknameCheck: async (req, res) => {
+        try {
+            const { nickname } = req.query;
+            if (! nickname ) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+            const user = await User.findOne({
+                where : {
+                    nickname,
+                }
+            });
+            if ( user ) {
+                return res.status(code.OK).send(util.success(code.OK, message.ALREADY_NICKNAME, { nicknameExist : true}));
+            }
+            return res.status(code.OK).send(util.success(code.OK, message.NOT_EXIST_NICKNAME, { nicknameExist : false}));
+        } catch (err) {
+            console.error(err);
+        }
     }
     
 }
