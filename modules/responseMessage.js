@@ -20,6 +20,7 @@ module.exports = {
     SIGN_IN_FAIL: "로그인 실패.",
     ALREADY_ID: "존재하는 ID 입니다.",
     ALREADY_EMAIL: "이미 존재하는 이메일 입니다.",
+    ALREADY_NICKNAME: '이미 존재하는 닉네임입니다',
     NO_EMAIL: '존재하지 않는 이메일 입니다.',
     MISS_MATCH_PW: "비밀번호가 일치하지 않습니다",
 
