@@ -2,7 +2,13 @@ const { User, Answer, Question, Follow, RecentSearch } = require('../models');
 const message = require('../modules/responseMessage');
 const crypto = require('crypto');
 const moment = require('moment');
-
+// page len 수정
+const getPageLen= (count, limit) => {
+    if (count % limit == 0) {
+        return parseInt(count / limit);
+    } 
+    return parseInt(count / limit) + 1;
+}
 //비밀번호 hash 시키는 함수
 const hashPassword =  async (password, salt = null) => {
     try {
@@ -201,7 +207,9 @@ module.exports = {
     makeActivityPagination : async (activities, page) => {
         try {
             // 페이지 총 수
-            const page_len = parseInt(activities.length / 20) + 1;
+            // const page_len = parseInt(activities.length / 20) + 1;
+            const page_len = getPageLen(activities.length, 20);
+
     
             const idx_start = 0 + (page - 1) * 20;
             const idx_end = idx_start + 19;

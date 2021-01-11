@@ -115,7 +115,7 @@ module.exports = {
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
             
             // 페이지 총 수
-            const page_len = parseInt(count / 10) + 1;
+            const page_len = answerService.getPageLen(count, 10);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_FOLLOW_ANSWERS_SUCCESS, {page_len, answers}));
 
