@@ -173,6 +173,10 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
             }
             const user = await userService.idSearch(query, range, user_id);
+            // 검색 결과가 자기 자신이면,
+            if (user.id == user_id) {
+                return res.status(code.OK).send(util.success(code.OK, message.SEARCHING_MY_SELF, {}));
+            }
             return res.status(code.OK).send(util.success(code.OK, message.SEARCH_ID_SUCCESS, user));
         } catch (err) {
             console.error(err);

@@ -111,6 +111,7 @@ module.exports = {
     /* 검색 */
     SEARCH_ID_SUCCESS: "아이디 검색 성공",
     NO_USER_NICKNAME: "검색 결과가 없습니다",
+    SEARCHING_MY_SELF: "자기 자신을 검색하였습니다",
 
 
     /* 최초 답변 하러가기 */
