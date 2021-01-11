@@ -99,7 +99,7 @@ module.exports = {
     },
 
     // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수
-    sortNewAnswerByQid : async(question_id) => {
+    sortNewAnswerByQid : async(question_id, user_id) => {
         try { 
             const filteredAnswers = await Answer.findAll({
                 attributes: ['id'],
@@ -181,7 +181,7 @@ module.exports = {
     },
 
     // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수
-    sortIntAnswerByQid : async(question_id) => {
+    sortIntAnswerByQid : async(question_id, user_id) => {
         try {
             
             const filteredAnswers = await Answer.findAll({
