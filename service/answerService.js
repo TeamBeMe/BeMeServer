@@ -2,6 +2,13 @@ const { Answer, Comment, User, Question, Category, Scrap } = require('../models'
 const message = require('../modules/responseMessage');
 const userService = require('./userService');
 const { Op } = require('sequelize');
+// page len 수정
+const getPageLen= (count, limit) => {
+    if (count % limit == 0) {
+        return parseInt(count / limit);
+    } 
+    return parseInt(count / limit) + 1;
+}
 // comment 포함하는 answer 하나 객체 내부의 datetime format
 const getFormattedAnswerwithPK= async (answer_id, user_id) => {
     try {
@@ -412,7 +419,8 @@ module.exports = {
     },
     makePagination : async (answers, page) => {
          // 페이지 총 수
-         const page_len = parseInt(answers.length / 10) + 1;
+        //  const page_len = parseInt(answers.length / 10) + 1;
+         const page_len = getPageLen(answers.length, 10);
 
          const idx_start = 0 + (page - 1) * 10;
          const idx_end = idx_start + 9;
@@ -439,5 +447,6 @@ module.exports = {
         } catch (err) {
             throw err;
         }
-    }
+    },
+    getPageLen,
 }
