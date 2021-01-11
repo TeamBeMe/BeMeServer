@@ -120,6 +120,7 @@ module.exports = {
 
     /* 페이징 */
     NO_MORE_PAGE: "더이상 페이지가 없습니다",
+    NO_INVALID_PAGE: "유효하지 않은 페이지입니다",
 
     /* 최근 검색 가져오기 */
     GET_RECENT_SEARCH_SUCCESS: "최근 검색 가져오기 성공",

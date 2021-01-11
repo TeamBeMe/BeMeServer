@@ -16,6 +16,9 @@ module.exports = {
         if (! page) {
             page = 1
         }
+        if (page == 0) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
+        }
         if (! target_user_id) {
             return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
         }

@@ -46,7 +46,7 @@ module.exports = {
             let question_id = req.params.questionId;
             const user_id = req.decoded.id;
             if (page == 0) {
-                page = 1;
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
             }
             if (!question_id || !page) {
                 //console.log(question_id)
@@ -64,9 +64,9 @@ module.exports = {
             let answers;
 
             if (sorting == "최신") {
-                answers = await explorationService.sortNewAnswerByQid(question_id, user_id);
+                answers = await explorationService.sortNewAnswerByQid(question_id);
             } else if (sorting == "흥미") {
-                answers = await explorationService.sortIntAnswerByQid(question_id, user_id);
+                answers = await explorationService.sortIntAnswerByQid(question_id);
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
@@ -89,7 +89,7 @@ module.exports = {
             let { page, category, sorting } = req.query;
             const user_id = req.decoded.id;
             if (page == 0) {
-                page = 1;
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
             }
             if (!page) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));

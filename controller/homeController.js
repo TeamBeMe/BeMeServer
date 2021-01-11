@@ -135,7 +135,7 @@ module.exports = {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
             }
             if (page == 0) {
-                page = 1;
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
             }
 
             // 페이징 결과
