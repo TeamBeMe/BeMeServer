@@ -65,12 +65,12 @@ module.exports = {
             });
 
             if (! user) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
+                return res.status(code.BAD_REQUEST).send(util.failWithData(code.BAD_REQUEST, message.NO_USER, { token : null }));
             }
 
             const isValidPassword = await userService.isValidPassword(user, password)
             if (! isValidPassword) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.MISS_MATCH_PW));
+                return res.status(code.BAD_REQUEST).send(util.failWithData(code.BAD_REQUEST, message.MISS_MATCH_PW, { token : null }));
             }
 
             const { token } = await jwt.sign(user);

@@ -10,4 +10,10 @@ module.exports = {
       success: false,
       message,
     }),
+    failWithData: (status, message, data) => ({
+      status,
+      success: false,
+      message,
+      data, 
+    }),
   };
