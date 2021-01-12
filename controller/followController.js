@@ -93,21 +93,17 @@ module.exports = {
     },
     getFollowAnswers: async (req, res) => {
         
-        const { category } = req.query;
         let { page } = req.query;
 
-        if (! category) {
-            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
-        }
-        if (category != 'follower' && category != 'followee') {
-            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
-        }
+        
         try {
             const user_id = req.decoded.id;
+            const user = await User.findByPk(user_id);
 
             if (! page) {
                 page = 1;
             }
+            const category = 'followee';
 
             let {answers, count} = await followService.getFollowAnswers(category, user_id, page);
             
@@ -117,7 +113,7 @@ module.exports = {
             // 페이지 총 수
             const page_len = answerService.getPageLen(count, 10);
 
-            return res.status(code.OK).send(util.success(code.OK, message.GET_FOLLOW_ANSWERS_SUCCESS, {page_len, answers}));
+            return res.status(code.OK).send(util.success(code.OK, message.GET_FOLLOW_ANSWERS_SUCCESS, {user_nickname: user.nickname, page_len, answers}));
 
         } catch (err) {
             console.error(err);
