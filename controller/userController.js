@@ -41,7 +41,8 @@ module.exports = {
             await Answer.create({
                 public_flag: 0,
                 user_id: user.id,
-                question_id: 1
+                question_id: 1,
+                answer_idx: 1,
             })
             
             return res.status(code.CREATED).send(util.success(code.CREATED, message.SIGN_UP_SUCCESS, {id : user.id, email : user.email, nickname : user.nickname, profile_img : user.profile_img}));

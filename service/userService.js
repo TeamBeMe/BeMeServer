@@ -116,6 +116,7 @@ module.exports = {
                 const image = file.location;
                 return image;
             }
+            console.log(file);
             return null;
         } catch (err) {
             console.error(err);

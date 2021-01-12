@@ -163,6 +163,7 @@ module.exports = {
     // 내 프로필사진 변경하기
     updateProfileImg: async (req, res) => {
         try {
+            console.log(req.file)
             const user_id = req.decoded.id;
 
             const image = await userService.getImageUrl(req.file);
@@ -174,7 +175,7 @@ module.exports = {
                 raw : true,
             });
  
-            return res.status(code.OK).send(util.success(code.OK, message.UPDATE_MY_PROFILE_IMG_SUCCESS));
+            return res.status(code.OK).send(util.success(code.OK, message.UPDATE_MY_PROFILE_IMG_SUCCESS, {user_id, image}));
 
         } catch (err) {
             console.error(err);

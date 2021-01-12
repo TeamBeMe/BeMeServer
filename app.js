@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const {sequelize} = require('./models');
+const logger = require('morgan')
 const indexRouter = require('./routes/index');
 const ansSearch = require('./models/answerSearch');
 
@@ -13,7 +14,7 @@ sequelize.sync({alter: true})
   console.error(error);
 })
 
-
+app.use(logger('dev'))
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 app.use('/', indexRouter);
@@ -26,7 +27,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.json({status: err.status, message: err})
 });
 
 
