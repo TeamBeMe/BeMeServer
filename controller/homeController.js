@@ -60,7 +60,7 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
 
             const answerIdxCount = await Answer.count({
                 where : {
-                    user_id
+                    user_id: user.id,
                 },
                 include : {
                     model : Question,
