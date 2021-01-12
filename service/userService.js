@@ -184,14 +184,15 @@ module.exports = {
                                 where : {
                                     id : data.answer_id,
                                 },
-                                attributes: []
+                                attributes: ['id'], 
+                                raw : true
                             }
                         });
                         let type = 'comment'
                         if (data.parent_id) {
                             type = 'cocomment'
                         }
-                        results.push({ type, user_id: data.user_id, question_title: question.title, user_nickname: data.User.nickname, profile_img: data.User.profile_img, createdAt: data.createdAt})
+                        results.push({ type, user_id: data.user_id, question_title: question.title, user_nickname: data.User.nickname, profile_img: data.User.profile_img, createdAt: data.createdAt, answer_id : data.answer_id})
                     }
                     break;
                 case 'follow':
