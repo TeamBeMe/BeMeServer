@@ -70,7 +70,7 @@ module.exports = {
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
-
+ 
             //console.dir(answers)
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
             const pagination = await answerService.makePagination(answers,page);
