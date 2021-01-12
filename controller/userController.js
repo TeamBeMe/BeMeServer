@@ -174,7 +174,7 @@ module.exports = {
             }
             const user = await userService.idSearch(query, range, user_id);
             // 검색 결과가 자기 자신이면,
-            if (user.id == user_id) {
+            if ( user && user.id == user_id) {
                 return res.status(code.OK).send(util.success(code.OK, message.SEARCHING_MY_SELF, {}));
             }
             return res.status(code.OK).send(util.success(code.OK, message.SEARCH_ID_SUCCESS, user));
