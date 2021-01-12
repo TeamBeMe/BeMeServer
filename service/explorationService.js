@@ -12,6 +12,85 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
+// 정리.....정리....
+// 1. is_answered 트루인 것만 보내주면 됨
+// 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
+
+const getFormattedAnswer= async (answer_id, user_id) => {
+    try {
+
+        let answer = await Answer.findOne({
+            where : {
+                id : answer_id,
+                content : {
+                    [Op.not]: null,
+                }
+            },
+            attributes: { exclude: ['createdAt', 'updatedAt']},
+            raw : true,
+        });
+        if (! answer) {
+            return
+        }
+        
+        if (user_id) {
+            answer.is_author = user_id == answer.user_id;
+        }
+        answer.public_flag = Boolean(answer.public_flag);
+        answer.comment_blocked_flag = Boolean(answer.comment_blocked_flag);
+        // 내가 스크랩한 질문인지 확인하기
+        const isScrapped = await Scrap.findOne({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if (! isScrapped) {
+            answer.is_scrapped = false;
+        } else {
+            answer.is_scrapped = true;
+        }
+
+
+        // 내가 답변한 질문인지 확인하기
+        const isAnswered = await Answer.findAll({
+            where : {
+                user_id,
+                id : answer_id,
+                content : {
+                    [Op.not]: null,
+                },
+            },
+            attributes : ['id']
+        });
+        const checkIfNull = (arr) => {
+            if (arr.length > 0) {
+                return true
+            }
+            return false
+        }
+        const is_answered = checkIfNull(isAnswered);
+
+        // user, question, category 정보 넣어주기
+        const user = await User.findByPk(answer.user_id);
+        const question = await Question.findByPk(answer.question_id);
+        const category = await Category.findByPk(question.category_id);
+        
+        answer.user_profile = user.profile_img;
+        answer.user_nickname = user.nickname;
+        answer.question_id = question.id;
+        answer.question = question.title;
+        answer.category = category.name;
+        answer.category_id = category.id;
+        
+        answer.is_answered = is_answered;
+        answer.answer_date = await userService.formatAnswerDate(answer.answer_date);
+        return answer;
+    } catch (err) {
+        throw err;
+    }
+};
+
 module.exports = {
 
     getLatSeven : async(user_id, limit) => {

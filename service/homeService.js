@@ -40,6 +40,10 @@ module.exports = {
                 raw: true,
             })
 
+            if(!result) {
+                return message.NO_QUESTIONS;
+            }
+
             //console.dir(`홈화면 엔서들 ${result}`)
             return result
 
