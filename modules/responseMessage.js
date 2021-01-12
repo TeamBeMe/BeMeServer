@@ -41,6 +41,7 @@ module.exports = {
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",
     GET_ANSWER_FAIL: "답변 불러오기 실패",
     USER_NO_ANSWERS: '유저에게 질문이 존재하지 않습니다',
+    NO_QUESTIONS: "받은 질문이 존재하지 않습니다",
     
     /* 질문 받기 */
     GET_QUESTION_SUCCESS: "질문 받아오기 성공",

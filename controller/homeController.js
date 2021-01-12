@@ -140,9 +140,12 @@ module.exports = {
 
             // 페이징 결과
             const answersByPage = await homeService.getUserAnswersByPage(user_id, page, limit);
+            if (answersByPage == message.NO_QUESTIONS) {
+                return res.status(code.OK).send(util.success(code.OK, message.NO_QUESTIONS, []));
+            }
             // 더 이상 페이지가 없을 때
             if (answersByPage.length == 0) {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_MORE_PAGE));
+                return res.status(code.OK).send(util.success(code.OK, message.NO_MORE_PAGE, []));
             }
 
             // 오늘 질문인지
