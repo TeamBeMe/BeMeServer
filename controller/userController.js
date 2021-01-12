@@ -65,7 +65,8 @@ module.exports = {
             });
 
             if (! user) {
-                return res.status(code.BAD_REQUEST).send(util.failWithData(code.BAD_REQUEST, message.NO_USER, { token : null }));
+                return res.status(code.OK).send(util.success(code.OK, message.NO_USER, {token : null}));
+                // return res.status(code.BAD_REQUEST).send(util.failWithData(code.BAD_REQUEST, message.NO_USER, { token : null }));
             }
 
             const isValidPassword = await userService.isValidPassword(user, password)
