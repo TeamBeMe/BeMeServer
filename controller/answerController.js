@@ -2,9 +2,9 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, User, Comment, Question } = require('../models');
+const { Answer, Comment } = require('../models');
 
-const { answerService } = require('../service');
+const { answerService, alarmService } = require('../service');
 const userService = require('../service/userService');
 
 module.exports = {
@@ -126,8 +126,25 @@ module.exports = {
                 parent_id,
                 user_id
             });
-            
+
+            // 댓글 파싱
             comment = await answerService.parseComment(comment);
+
+            // 게시글 user 에게 알림 보내주기
+            const answer = await Answer.findByPk(answer_id);
+            const author_id = answer.user_id;
+            // 내 게시글인지 확인
+            if (author_id != user_id) {
+                await alarmService.alarmCommented(author_id, comment.user_id, comment.content);
+                console.log('alarm')
+            }
+            
+            const parent = await Comment.findByPk(comment.parent_id);
+            // 대댓글일 경우 댓글 user 에게 알림 보내주기
+            if (comment.parent_id && parent.user_id != user_id && author_id != parent.user_id) {
+                await alarmService.alarmCommented(parent.user_id, user_id, comment.content);
+                console.log('alarm coco')
+            }
 
             return res.status(code.OK).send(util.success(code.CREATED, message.POST_COMMENT_SUCCESS, comment));
 
