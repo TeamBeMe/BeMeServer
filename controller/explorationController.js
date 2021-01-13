@@ -209,7 +209,11 @@ module.exports = {
             const answers = await Answer.findAll({
                 include: [{
                     model: Question,
-                    attributes: ['id', 'title']
+                    attributes: ['id', 'title'],
+                    include: [{
+                        model: Category,
+                        attributes: ['id', 'name']
+                    }]
                 }],
                 where: {
                     user_id,
@@ -217,7 +221,7 @@ module.exports = {
                         [Op.is]: null,
                     }
                 },
-                attributes: ['id', 'created_at'],
+                attributes: ['id', 'answer_idx', 'created_at'],
                 raw:true,
             });
 
