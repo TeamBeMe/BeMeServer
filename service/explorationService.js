@@ -12,7 +12,6 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
-// page len 수정
 const getPageLen = (count, limit) => {
     if (count % limit == 0) {
         return parseInt(count / limit);
@@ -55,12 +54,12 @@ const getFormattedAnswer = async (answer_id, user_id) => {
             answer.is_scrapped = true;
         }
 
-
+        console.log(answer.question_id);
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
             where : {
                 user_id,
-                id : answer_id,
+                question_id : answer.question_id,
                 content : {
                     [Op.not]: null,
                 },
@@ -109,6 +108,7 @@ module.exports = {
             const result = []
             for (answer of answers) {
                 result.push(await getFormattedAnswer(answer.id, user_id))
+                console.log("포맷팅");
             }
             return result;
         } catch (err) {
