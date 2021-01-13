@@ -1,10 +1,10 @@
-const { Answer, Question, Comment, Category, User }  = require('../models/');
+const { Answer, Question, Comment, Category, User, Scrap }  = require('../models/');
 const models = require('../models/index');
 const message = require('../modules/responseMessage');
 const { sequelize } = require('../models/index');
 const { Op } = require('sequelize');
 const moment = require('moment');
-const { filterAnswer } = require('./profileService');
+const userService = require('./userService');
 
 const getTodayDate = async () => {
     const td = Date.now();
@@ -12,11 +12,15 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
-// 정리.....정리....
-// 1. is_answered 트루인 것만 보내주면 됨
-// 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
+// page len 수정
+const getPageLen = (count, limit) => {
+    if (count % limit == 0) {
+        return parseInt(count / limit);
+    } 
+    return parseInt(count / limit) + 1;
+};
 
-const getFormattedAnswer= async (answer_id, user_id) => {
+const getFormattedAnswer = async (answer_id, user_id) => {
     try {
 
         let answer = await Answer.findOne({
@@ -91,7 +95,46 @@ const getFormattedAnswer= async (answer_id, user_id) => {
     }
 };
 
+// 1. is_answered 트루인 것만 보내주면 됨, user_nickname 추가
+// 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
+// 2-1. 함수 네개 다 getFormattedAnswer
+
+
 module.exports = {
+
+    getPageLen,
+
+    getFormattedAnswers: async (answers, user_id) => {
+        try {
+            const result = []
+            for (answer of answers) {
+                result.push(await getFormattedAnswer(answer.id, user_id))
+            }
+            return result;
+        } catch (err) {
+            throw err;
+        }
+    },
+
+    makePaginationWithNickname : async (answers, page, user_id) => {
+        // 페이지 총 수
+       //  const page_len = parseInt(answers.length / 10) + 1;
+        const page_len = getPageLen(answers.length, 10);
+
+        const idx_start = 0 + (page - 1) * 10;
+        const idx_end = idx_start + 9;
+
+        // 페이지네이션
+        answers = answers.filter((item, idx) => {
+            return (idx >= idx_start && idx <= idx_end);
+        })
+
+        // 유저 닉네임
+        const user = await User.findByPk(user_id);
+        const user_nickname = user.nickname;
+
+        return {user_nickname, page_len, answers}
+   },
 
     getLatSeven : async(user_id, limit) => {
         try {
