@@ -70,7 +70,7 @@ module.exports = {
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
- 
+            
             //console.dir(answers)
             //answer = 내가 답한 답변들의 질문 id를 통한 최신, 흥미 소팅 결과 (다른 사람들의 answer id들)
             answers = await explorationService.getFormattedAnswers(answers, user_id);

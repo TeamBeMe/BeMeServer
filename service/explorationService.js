@@ -1,4 +1,4 @@
-const { Answer, Question, Comment, Category, User, Scrap }  = require('../models/');
+const { Answer, Question, Comment, Category, User, Scrap, Follow }  = require('../models/');
 const models = require('../models/index');
 const message = require('../modules/responseMessage');
 const { sequelize } = require('../models/index');
@@ -12,7 +12,6 @@ const getTodayDate = async () => {
     return new Date(moment.tz(today, 'Asia/Seoul').format());
 };
 
-// page len 수정
 const getPageLen = (count, limit) => {
     if (count % limit == 0) {
         return parseInt(count / limit);
@@ -94,10 +93,6 @@ const getFormattedAnswer = async (answer_id, user_id) => {
         throw err;
     }
 };
-
-// 1. is_answered 트루인 것만 보내주면 됨, user_nickname 추가
-// 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
-// 2-1. 함수 네개 다 getFormattedAnswer
 
 
 module.exports = {
@@ -220,9 +215,13 @@ module.exports = {
         }
     },
 
+    // 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
+    // 2-1. 함수 네개 다 getFormattedAnswer
+
     // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수
     sortNewAnswerByQid : async(question_id, user_id) => {
         try { 
+
             const filteredAnswers = await Answer.findAll({
                 attributes: ['id'],
                 where: {
@@ -305,10 +304,7 @@ module.exports = {
     // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수
     sortIntAnswerByQid : async(question_id, user_id) => {
         try {
-            
-            // 내가 팔로잉 하는 사람들 목록 find all user
-            // 내가 답하지 않은 질문
-            // for 문으로 내가 팔로잉 하는 사람들의 userid 를 바탕으로 find all answer 뽑아옴
+
             const filteredAnswers = await Answer.findAll({
                 include: [{
                     model: Comment,
@@ -340,7 +336,7 @@ module.exports = {
     // 전체 배열을 흥미순으로 sorting 하는 함수
     sortIntAnswers : async(user_id, category_attr) => {
         try {
-
+            // 내가 지금까지 답한 답변들의 question id get
             let userAnswers = await Answer.findAll({
                 include:[{
                     model: Question,
@@ -361,38 +357,73 @@ module.exports = {
                 return message.NO_ANSWERED_QUESTION;
             }
             userAnswers = userAnswers.map(a => a.question_id);
-            
-            const filteredAnswers = await Answer.findAll({
-                include: [{
-                    model: Comment,
-                    attributes: []
-                }],
-                attributes: ['id',
-                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
-                //sequelize.fn('count')],
-                order: [[sequelize.literal('comment_count'), 'DESC']],
-                group: ['id'],
-                where: {
-                    user_id: {
-                        [Op.not]: user_id,
-                    },
-                    content: {
-                        [Op.not]: null,
-                    },
-                    question_id: {
-                        [Op.or]: userAnswers,
-                    },
-                    public_flag: true,
-                }
+
+            // 내가 팔로잉 하는 사람들 목록 find all user
+            let followees = await Follow.findAll({
+                where : {
+                    follower_id : user_id,
+                },
+                attributes: [['followed_id', 'id']],
+                raw : true,
             });
+            followees = followees.map(a => a.id);
+            //Error: WHERE parameter "id" has invalid "undefined" value
+
+            // for 문으로 내가 팔로잉 하는 사람들의 스크랩한  userid 를 바탕으로 find all answer 뽑아옴
+            let followeesAnswers = [];
+            for (folowee of followees) {
+                const oneFolloweesAnswers = await Answer.findAll({
+                    where: {
+                        user_id: {
+                            [Op.or]: followeeId
+                        },
+                        question_id: {
+                            [Op.or]: userAnswers,
+                        },
+                        content: {
+                            [Op.not]: null,
+                        },
+                        public_flag: true,
+                    },
+                    attributes: ['id'],
+
+                });
+
+                followeesAnswers.push(oneFolloweesAnswers);
+            }
+            
+            
+            // const filteredAnswers = await Answer.findAll({
+            //     include: [{
+            //         model: Comment,
+            //         attributes: []
+            //     }],
+            //     attributes: ['id',
+            //     [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+            //     //sequelize.fn('count')],
+            //     order: [[sequelize.literal('comment_count'), 'DESC']],
+            //     group: ['id'],
+            //     where: {
+            //         user_id: {
+            //             [Op.not]: user_id,
+            //         },
+            //         content: {
+            //             [Op.not]: null,
+            //         },
+            //         question_id: {
+            //             [Op.or]: userAnswers,
+            //         },
+            //         public_flag: true,
+            //     }
+            // });
             
 
             // 탐색 결과가 없을 때
-            if(filteredAnswers.length < 1) {
+            if(followeesAnswers.length < 1) {
                 return message.NO_RESULT;
             }
 
-            return filteredAnswers
+            return followeesAnswers
 
         } catch (error) {
             throw error;
