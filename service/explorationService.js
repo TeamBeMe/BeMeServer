@@ -54,7 +54,7 @@ const getFormattedAnswer = async (answer_id, user_id) => {
             answer.is_scrapped = true;
         }
 
-        console.log(answer.question_id);
+        //console.log(answer.question_id);
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
             where : {
