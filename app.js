@@ -4,7 +4,11 @@ const app = express();
 const {sequelize} = require('./models');
 const logger = require('morgan')
 const indexRouter = require('./routes/index');
-const ansSearch = require('./models/answerSearch');
+const admin = require('firebase-admin');
+let serAccount = require('./config/beme-firebase.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serAccount)
+})
 
 sequelize.sync({alter: true})
 .then(() => {

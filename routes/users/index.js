@@ -11,5 +11,6 @@ router.get('/search', authUtil.checkToken, userController.getIdSearch)
 router.get('/search/history', authUtil.checkToken, userController.getRecentSearch);
 router.delete('/search/:searchedId', authUtil.checkToken, userController.deleteRecentSearch);
 router.get('/', userController.nicknameCheck);
+router.post('/fb-token', authUtil.checkToken, userController.postToken);
 
 module.exports = router;
