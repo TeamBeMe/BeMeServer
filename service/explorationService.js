@@ -359,71 +359,71 @@ module.exports = {
             userAnswers = userAnswers.map(a => a.question_id);
 
             // 내가 팔로잉 하는 사람들 목록 find all user
-            let followees = await Follow.findAll({
-                where : {
-                    follower_id : user_id,
-                },
-                attributes: [['followed_id', 'id']],
-                raw : true,
-            });
-            followees = followees.map(a => a.id);
+            // let followees = await Follow.findAll({
+            //     where : {
+            //         follower_id : user_id,
+            //     },
+            //     attributes: [['followed_id', 'id']],
+            //     raw : true,
+            // });
+            // followees = followees.map(a => a.id);
             //Error: WHERE parameter "id" has invalid "undefined" value
 
             // for 문으로 내가 팔로잉 하는 사람들의 스크랩한  userid 를 바탕으로 find all answer 뽑아옴
-            let followeesAnswers = [];
-            for (folowee of followees) {
-                const oneFolloweesAnswers = await Answer.findAll({
-                    where: {
-                        user_id: {
-                            [Op.or]: followeeId
-                        },
-                        question_id: {
-                            [Op.or]: userAnswers,
-                        },
-                        content: {
-                            [Op.not]: null,
-                        },
-                        public_flag: true,
+            // let followeesAnswers = [];
+            // for (folowee of followees) {
+            //     const oneFolloweesAnswers = await Answer.findAll({
+            //         where: {
+            //             user_id: {
+            //                 [Op.or]: followeeId
+            //             },
+            //             question_id: {
+            //                 [Op.or]: userAnswers,
+            //             },
+            //             content: {
+            //                 [Op.not]: null,
+            //             },
+            //             public_flag: true,
+            //         },
+            //         attributes: ['id'],
+
+            //     });
+
+            //     followeesAnswers.push(oneFolloweesAnswers);
+            // }
+            
+            
+            const filteredAnswers = await Answer.findAll({
+                include: [{
+                    model: Comment,
+                    attributes: []
+                }],
+                attributes: ['id',
+                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                //sequelize.fn('count')],
+                order: [[sequelize.literal('comment_count'), 'DESC']],
+                group: ['id'],
+                where: {
+                    user_id: {
+                        [Op.not]: user_id,
                     },
-                    attributes: ['id'],
-
-                });
-
-                followeesAnswers.push(oneFolloweesAnswers);
-            }
-            
-            
-            // const filteredAnswers = await Answer.findAll({
-            //     include: [{
-            //         model: Comment,
-            //         attributes: []
-            //     }],
-            //     attributes: ['id',
-            //     [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
-            //     //sequelize.fn('count')],
-            //     order: [[sequelize.literal('comment_count'), 'DESC']],
-            //     group: ['id'],
-            //     where: {
-            //         user_id: {
-            //             [Op.not]: user_id,
-            //         },
-            //         content: {
-            //             [Op.not]: null,
-            //         },
-            //         question_id: {
-            //             [Op.or]: userAnswers,
-            //         },
-            //         public_flag: true,
-            //     }
-            // });
+                    content: {
+                        [Op.not]: null,
+                    },
+                    question_id: {
+                        [Op.or]: userAnswers,
+                    },
+                    public_flag: true,
+                }
+            });
             
 
             // 탐색 결과가 없을 때
-            if(followeesAnswers.length < 1) {
+            if(filteredAnswers.length < 1) {
                 return message.NO_RESULT;
             }
 
-            return followeesAnswers
+            return filteredAnswers
 
         } catch (error) {
             throw error;
