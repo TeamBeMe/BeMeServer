@@ -131,7 +131,7 @@ module.exports = {
             }
 
             answers = await explorationService.getFormattedAnswers(answers, user_id);
-            console.log(answers)
+            //console.log(answers)
             const pagination = await explorationService.makePaginationWithNickname(answers,page, user_id);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, pagination))
