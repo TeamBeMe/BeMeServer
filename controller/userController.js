@@ -6,6 +6,7 @@ const jwt = require('../modules/jwt');
 const { userService } = require('../service');
 const {Op} = require('sequelize');
 const { formatRecentActivity } = require('../service/userService');
+const admin = require('firebase-admin');
 
 
 
@@ -298,6 +299,39 @@ module.exports = {
             });
     
             return res.status(code.OK).send(util.success(code.OK, message.POST_TOKEN_SUCCESS));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    // 푸시 알람
+    sendPush: async (req, res) => {
+        try {
+            const user_id = req.decoded.id;
+            const user = await User.findByPk(user_id);
+            const fb_token = user.fb_token;
+
+            const message = {
+                notification: {
+                    title: '비미 테스트 메시지 발송',
+                    body: '데이터가 잘 갔다면 소리를 질러주세요'
+                },
+                token: fb_token,
+            }
+
+            admin
+                .messaging()
+                .send(message)
+                .then((response) => {
+                    console.log('Succesfully sent message: ', response)
+                    return res.status(code.OK).send(util.success(code.OK, message.SEND_PUSH_MESSAGE_SUCCESS ));
+                })
+                .catch((err) => {
+                    console.error(err);
+                    return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+                })
+            
+
         } catch (err) {
             console.error(err);
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));

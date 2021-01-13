@@ -12,5 +12,7 @@ router.get('/search/history', authUtil.checkToken, userController.getRecentSearc
 router.delete('/search/:searchedId', authUtil.checkToken, userController.deleteRecentSearch);
 router.get('/', userController.nicknameCheck);
 router.post('/fb-token', authUtil.checkToken, userController.postToken);
+// 푸시 알람 테스트 코드
+router.post('/push-send', authUtil.checkToken, userController.sendPush);
 
 module.exports = router;
