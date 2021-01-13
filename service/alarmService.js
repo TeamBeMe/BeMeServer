@@ -4,10 +4,10 @@ const { User } = require('../models');
 const sendMessage = async (user_id, title, body) => {
         const user = await User.findByPk(user_id);
         const fb_token = user.fb_token;
-
         if (! fb_token) {
             return
         }
+
 
         const message = {
             notification: {
