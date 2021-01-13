@@ -30,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
         continued_visit: { // 연속출석 count
             type: DataTypes.INTEGER,
             allowNull: true,
+        },
+        fb_token : {
+            type: DataTypes.TEXT(),
+            allowNull: true,
         }
     }, {
         freezeTableName: true,
