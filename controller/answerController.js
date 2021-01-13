@@ -197,12 +197,15 @@ module.exports = {
         try {
             // comment id 정보 확인
             const comment = await Comment.findByPk(comment_id);
+            const answer = await Answer.findByPk(comment.answer_id);
+            const answer_author = answer.user_id;
+
             if (! comment ) {
                 // console.log(message.INVALID_COMMENT_ID);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_COMMENT_ID));
             }
 
-            if (comment.user_id !== req.decoded.id) {
+            if (answer_author != req.decoded.id && comment.user_id !== req.decoded.id) {
                 // console.log(message.USER_UNAUTHORIZED);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
