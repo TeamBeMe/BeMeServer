@@ -2,7 +2,7 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 const { User, Follow } = require('../models');
-const { answerService, followService } = require('../service');
+const { answerService, followService, alarmService} = require('../service');
 
 
 module.exports = {
@@ -46,6 +46,7 @@ module.exports = {
                 follower_id : user_id,
                 followed_id,
             });
+            await alarmService.alarmFollowed(followed_id, user_id);
 
             return res.status(code.OK).send(util.success(code.OK, message.FOLLOWING_SUCCESS));
 
