@@ -60,7 +60,7 @@ const getFormattedAnswer = async (answer_id, user_id) => {
         const isAnswered = await Answer.findAll({
             where : {
                 user_id,
-                id : answer_id,
+                question_id : answer.question_id,
                 content : {
                     [Op.not]: null,
                 },
