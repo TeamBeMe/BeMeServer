@@ -3,5 +3,6 @@ module.exports = {
     homeService: require('./homeService'),
     userService : require('./userService'),
     followService : require('./followService'),
-    profileService : require('./profileService')
+    profileService : require('./profileService'),
+    alarmService: require('./alarmService')
 }

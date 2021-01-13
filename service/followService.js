@@ -86,7 +86,6 @@ module.exports = {
             offset: (page - 1) * 10,
         })
         return {answers, count};
-
-    }
+    },
 
 }
