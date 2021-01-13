@@ -306,6 +306,9 @@ module.exports = {
     sortIntAnswerByQid : async(question_id, user_id) => {
         try {
             
+            // 내가 팔로잉 하는 사람들 목록 find all user
+            // 내가 답하지 않은 질문
+            // for 문으로 내가 팔로잉 하는 사람들의 userid 를 바탕으로 find all answer 뽑아옴
             const filteredAnswers = await Answer.findAll({
                 include: [{
                     model: Comment,
@@ -313,6 +316,8 @@ module.exports = {
                 }],
                 attributes: ['id',
                 [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                order: [[sequelize.literal('comment_count'), 'DESC']],
+                group: ['id'],
                 where: {
                     user_id: {
                         [Op.not]: user_id,
@@ -322,8 +327,7 @@ module.exports = {
                         [Op.not]: null,
                     },
                     public_flag: true,
-                },
-                order: [[sequelize.literal('comment_count'), 'DESC']]
+                }
             });
 
             return filteredAnswers
@@ -365,6 +369,7 @@ module.exports = {
                 }],
                 attributes: ['id',
                 [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                //sequelize.fn('count')],
                 order: [[sequelize.literal('comment_count'), 'DESC']],
                 group: ['id'],
                 where: {
@@ -380,6 +385,7 @@ module.exports = {
                     public_flag: true,
                 }
             });
+            
 
             // 탐색 결과가 없을 때
             if(filteredAnswers.length < 1) {

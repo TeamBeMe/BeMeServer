@@ -85,7 +85,7 @@ module.exports = {
         }
     },
 
-    // 다른 글 둘러보기 (카테고리 o)
+    // 다른 글 둘러보기
     getExpAnswers: async (req, res) => {
         try {
             let { page, category, sorting } = req.query;
