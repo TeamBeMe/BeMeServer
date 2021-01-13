@@ -12,6 +12,7 @@ module.exports = {
     /* User */
     USER_UNAUTHORIZED : '해당 유저에게 권한이 없습니다',
     NO_USER: "존재하지않는 유저 id 입니다.",
+    POST_TOKEN_SUCCESS: '토큰 등록하기 성공',
   
     /* 회원가입 */
     SIGN_UP_SUCCESS: "회원 가입 성공.",

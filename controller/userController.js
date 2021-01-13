@@ -272,7 +272,35 @@ module.exports = {
             return res.status(code.OK).send(util.success(code.OK, message.NOT_EXIST_NICKNAME, { nicknameExist : false}));
         } catch (err) {
             console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+    //파이어베이스 토큰 등록
+    postToken: async (req, res) => {
+     
+        try {
+            const user_id = req.decoded.id;
+            const fb_token = req.body.token;
+
+            if (! fb_token) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+
+            const user = await User.findByPk(user_id);
+            if ( ! user) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_USER));
+            }
+            
+            await User.update({fb_token}, {
+                where : {
+                    id : user_id,
+                }
+            });
+    
+            return res.status(code.OK).send(util.success(code.OK, message.POST_TOKEN_SUCCESS));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     }
-    
 }
