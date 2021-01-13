@@ -39,7 +39,7 @@ module.exports = {
         }
     },
 
-    // 특정 question에 해당하는 answer들 (카테고리 x)
+    // 특정 question에 해당하는 answer들 (카테고리 o)
     getSpecificAnswers: async (req, res) => {
         try {
             let { page, sorting } = req.query;
@@ -72,8 +72,10 @@ module.exports = {
             }
  
             //console.dir(answers)
-            answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            const pagination = await answerService.makePagination(answers,page);
+            //answer = 내가 답한 답변들의 질문 id를 통한 최신, 흥미 소팅 결과 (다른 사람들의 answer id들)
+            answers = await explorationService.getFormattedAnswers(answers, user_id);
+            
+            const pagination = await explorationService.makePaginationWithNickname(answers,page, user_id);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_SPECIFIC_ANSWERS_SUCCESS, pagination))
 
@@ -121,15 +123,16 @@ module.exports = {
             } else {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
             }
-
+            
             if (answers == message.NO_ANSWERED_QUESTION) {
                 res.status(code.OK).send(util.success(code.OK, message.NO_ANSWERED_QUESTION));
             } else if (answers == message.NO_RESULT) {
                 res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
             }
 
-            answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            const pagination = await answerService.makePagination(answers,page);
+            answers = await explorationService.getFormattedAnswers(answers, user_id);
+            console.log(answers)
+            const pagination = await explorationService.makePaginationWithNickname(answers,page, user_id);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, pagination))
 
