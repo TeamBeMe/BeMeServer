@@ -280,7 +280,7 @@ module.exports = {
      
         try {
             const user_id = req.decoded.id;
-            const fb_token = req.body.token;
+            const fb_token = req.body.fb_token;
 
             if (! fb_token) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
