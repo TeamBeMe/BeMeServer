@@ -47,13 +47,16 @@ module.exports = {
                 
             });
         }
+        if (users.length == 0) {
+            return {answers: [], count: 0}
+        }
         users = users.map(i => i.id);
 
         // users 가 쓴 답변 불러오기
         const answers = await Answer.findAll({
             where : {
                 user_id : {
-                    [Op.or] : users,
+                    [Op.or] : [users],
                 },
                 public_flag: true,
                 content: {
