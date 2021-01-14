@@ -442,5 +442,53 @@ module.exports = {
             throw err;
         }
     },
-    getPageLen,
+    getPageLen,getFormattedAnswerbyPkwithoutComment,
+    // 유저에게 이미 존재하는 질문인지 확인
+    existQuestion: async (user_id, question_id) => {
+        try {
+            const question = await Question.findByPk(question_id);
+            const answerExist = await Answer.findOne({
+                where : {
+                    user_id,
+                    question_id
+                }
+            })
+            if (answerExist) {
+                return answerExist;
+            }
+            return null;
+
+        } catch (err) {
+            throw err;
+        }
+    },
+    formattednullAnswer: async (answer_id, user_id) => {
+        try {
+    
+            let answer = await Answer.findOne({
+                where : {
+                    id : answer_id,
+                },
+                attributes: ['id', 'answer_idx', 'createdAt', 'user_id', 'question_id'],
+                raw : true,
+            });
+            if (! answer) {
+                return
+            }
+            
+            // user, question, category 정보 넣어주기
+            const question = await Question.findByPk(answer.question_id);
+            const category = await Category.findByPk(question.category_id);
+            
+            answer.question_id = question.id;
+            answer.question = question.title;
+            answer.category = category.name;
+            answer.category_id = category.id;
+            
+            answer.createdAt = await userService.formatDateWithDot(answer.createdAt);
+            return answer;
+        } catch (err) {
+            throw err;
+        }
+    }
 }
