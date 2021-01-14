@@ -1,4 +1,8 @@
-# BeMeServer
+# BeMeServer📓
+
+<img src="https://user-images.githubusercontent.com/59338503/104634538-1896cb80-56e4-11eb-8d4d-c1801458dab2.png" alt="BeMe_logo" style="zoom:20%;" />
+
+
 
 
 
@@ -29,19 +33,19 @@
 
 - express : 웹, 서버 개발 프레임워크
 
-- firebase-admin:
+- firebase-admin: fcm 사용을 위한 파이어베이스 모듈
 
 - jsonwebtoken : JWT(Json Web Token) 생성 및 인증
 
 - moment: utc 시간을 한국 시간대로 변경
 
-- morgan:
+- morgan: 로그 기록 도구
 
 - multer : 파일 업로드 도구
 
 - multer-s3 : AWS S3 파일 업로드 도구
 
-- mysql2:
+- mysql2: mysql2 모듈
 
 - node-schedule: 매일 같은 시간대에 질문 업로드를 위한 도구
 
@@ -55,7 +59,7 @@
 
 
 ## 서버 아키텍쳐
-![Untitled Diagram](https://user-images.githubusercontent.com/59338503/103678223-9e20ca00-4fc6-11eb-9d37-f67b7a75d45d.png)
+<img width="830" alt="스크린샷 2021-01-15 오전 3 03 27" src="https://user-images.githubusercontent.com/59338503/104632951-c5237e00-56e1-11eb-8de0-2d851395a2b7.png">
 
 
 
