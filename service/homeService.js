@@ -114,15 +114,24 @@ module.exports = {
     isToday : async(answer) => {
         try {
             const today = await getTodayDate();
-            let td = today;
+            //let td = today;
             //console.log(answer.created_at);
-            const diff = td.getTime()- answer.created_at.getTime();
-            const hrDiff = diff / 3600000;
-            if (hrDiff < 24) {
-                answer.is_today = true;
-            } else {
-                answer.is_today = false;
-            }
+            //const diff = td.getTime()- answer.created_at.getTime();
+            const createTime = answer.created_at;
+            if (today.getDate() === createTime.getDate() &&
+                today.getMonth() === createTime.getMonth() &&
+                today.getFullYear() === createTime.getFullYear()) {
+                    answer.is_today = true;
+                } else {
+                    answer.is_today = false;
+                }
+
+            // const hrDiff = diff / 3600000;
+            // if (hrDiff < 24) {
+            //     answer.is_today = true;
+            // } else {
+            //     answer.is_today = false;
+            // }
 
             return answer
 
