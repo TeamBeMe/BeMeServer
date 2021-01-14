@@ -288,6 +288,16 @@ module.exports = {
        } catch (err) {
            throw err;
        }
+   },
+   // 날짜 객체 포맷
+   formatDateWithDot: async (date) => {
+        try {
+            return (moment.tz(date, 'Asia/Seoul').format('YYYY. M. D'));
+
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
    }
 
 }

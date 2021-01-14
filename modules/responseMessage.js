@@ -38,6 +38,8 @@ module.exports = {
     UPDATE_ANSWER_FAIL: "답변 수정 실패",
     ALREADY_POSTED_ANSWER : '이미 답변이 등록된 질문입니다',
     USER_NO_ANSWERS: '유저가 작성한 답변이 존재하지 않습니다',
+    CREATE_ANSWER_SUCCESS: '답변 생성 성공',
+    GET_CREATED_ANSWER_SUCCESS: '답변 가져오기 성공',
 
     /* 답변 불러오기 */
     GET_ANSWER_SUCCESS: "답변 불러오기 성공",

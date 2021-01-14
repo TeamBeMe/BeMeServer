@@ -2,10 +2,11 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, Comment } = require('../models');
+const { Answer, Comment, Question } = require('../models');
 
 const { answerService, alarmService } = require('../service');
 const userService = require('../service/userService');
+const answerSearch = require('../models/answerSearch');
 
 module.exports = {
 
@@ -250,4 +251,57 @@ module.exports = {
         }
 
     },
+    // 질문 생성하기
+    createAnswer: async (req, res) => {
+        try {
+
+            
+            const { question_id } = req.body;
+            if (! question_id) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+            }
+            const user_id = req.decoded.id;
+            
+            const question = await Question.findByPk(question_id);
+            // 이미 존재하는 질문인지 확인
+            const existQuestion = await answerService.existQuestion(user_id, question_id);
+            
+            if (existQuestion) {
+                const formatted = await answerService.formattednullAnswer(existQuestion.id, user_id);
+                return res.status(code.OK).send(util.success(code.OK, message.GET_CREATED_ANSWER_SUCCESS, formatted));
+            }
+            const answerIdxCount = await Answer.count({
+                where : {
+                    user_id,
+                },
+                include : {
+                    model : Question,
+                    where : {
+                        category_id: question.category_id,
+                    }
+                }
+            })
+            
+            // answer_idx +1
+            const answerIdx = answerIdxCount + 1;
+
+            
+
+            // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
+            const newQuestion = await Answer.create({
+                user_id,
+                question_id,
+                answer_idx: answerIdx,
+                public_flag: false,
+                commented_blocked_flag: false,
+                is_routine_question: false,
+            });
+            const formatted = await answerService.formattednullAnswer(newQuestion.id, user_id);
+
+            return res.status(code.OK).send(util.success(code.OK, message.CREATE_ANSWER_SUCCESS, formatted));
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    }
 }

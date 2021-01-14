@@ -18,4 +18,7 @@ router.delete('/comments/:comment_id', authUtil.checkToken, answerController.del
 // 상세 페이지 가져오기
 router.get('/detail/:answer_id', authUtil.checkToken, answerController.getDetailAnswer);
 
+// 질문 생성하기
+router.post('/question', authUtil.checkToken, answerController.createAnswer);
+
 module.exports = router;
