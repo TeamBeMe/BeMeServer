@@ -1,5 +1,7 @@
 const admin = require('firebase-admin');
-const { User } = require('../models');
+const { User, Answer, Question} = require('../models');
+const { Op } = require('sequelize');
+const user = require('../models/user');
 
 const sendMessage = async (user_id, title, body) => {
         const user = await User.findByPk(user_id);
@@ -55,11 +57,30 @@ module.exports = {
             }
         },
         // 매일 밤 10시 알람
-        alarmRoutine: async (user_id, question) => {
+        alarmRoutine: async () => {
             try {
-                await sendMessage(user_id, question, "");
+                console.log('routine message')
+                const users = await User.findAll({
+                    where : {
+                        fb_token: {[Op.not]: null}
+                    }, 
+                    attributes : ['id', 'fb_token'],
+                    raw : true,
+                });
+                for (usr of users) {
+                    const latestRoutineQuestion = await Answer.findOne({
+                        where : {
+                            user_id: usr.id,
+                            is_routine_question: true,
+                        },
+                        raw: true,
+                        include : Question,
+                        order : [['createdAt', 'DESC']]
+                    });
+                    await sendMessage(usr.id, latestRoutineQuestion['Question.title'], '');
+                }
             } catch (err) {
-
+                console.error(err)
             }
         }
         

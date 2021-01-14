@@ -3,11 +3,20 @@ const message = require('../modules/responseMessage');
 const code = require('../modules/statusCode');
 const { User, Comment, Answer, RecentSearch} = require('../models');
 const jwt = require('../modules/jwt');
-const { userService } = require('../service');
+const { userService, alarmService } = require('../service');
 const {Op} = require('sequelize');
 const { formatRecentActivity } = require('../service/userService');
 const admin = require('firebase-admin');
+const sch = require('node-schedule');
 
+// 매일 밤 10시마다 알람 보내주기
+const schedule = sch.scheduleJob('0 22 * * 0-6', async () => {
+    try {
+        await alarmService.alarmRoutine();
+    } catch (err) {
+        console.error(err);
+    }
+})
 
 
 module.exports = {
@@ -304,7 +313,7 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
-    // 푸시 알람
+    // 푸시 알람 테스트 메시지
     sendPush: async (req, res) => {
         try {
             const user_id = req.decoded.id;

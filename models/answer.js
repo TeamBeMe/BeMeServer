@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         answer_idx: { // 
             type: DataTypes.INTEGER,
             allowNull: true,
+        },
+        is_routine_question: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
         }
     }, {
         freezeTableName: true,
