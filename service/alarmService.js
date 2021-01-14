@@ -47,9 +47,9 @@ module.exports = {
         // 댓글, 대댓글 달렸을 때 알림 받기
         alarmCommented: async (user_id, commenter_id, comment) => {
             try {
-                const title = `"${comment}"`;
+                const message = `"${comment}"`;
                 const commenter = await User.findByPk(commenter_id);
-                const message = `${commenter.nickname}님이 댓글을 남겼습니다`;
+                const title = `${commenter.nickname}님의 댓글`;
                 await sendMessage(user_id, title, message);
 
             } catch (err) {
@@ -59,7 +59,7 @@ module.exports = {
         // 매일 밤 10시 알람
         alarmRoutine: async () => {
             try {
-                console.log('routine message')
+                const title = '오늘의 질문'
                 const users = await User.findAll({
                     where : {
                         fb_token: {[Op.not]: null}
@@ -77,7 +77,7 @@ module.exports = {
                         include : Question,
                         order : [['createdAt', 'DESC']]
                     });
-                    await sendMessage(usr.id, latestRoutineQuestion['Question.title'], '');
+                    await sendMessage(usr.id, title, latestRoutineQuestion['Question.title']);
                 }
             } catch (err) {
                 console.error(err)
