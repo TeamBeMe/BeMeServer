@@ -1,6 +1,6 @@
 # BeMeServer📓
 
-<img src="https://user-images.githubusercontent.com/59338503/104634538-1896cb80-56e4-11eb-8d4d-c1801458dab2.png" alt="BeMe_logo" style="zoom:20%;" />
+<img src="https://user-images.githubusercontent.com/59338503/104634538-1896cb80-56e4-11eb-8d4d-c1801458dab2.png" alt="BeMe_logo" style="zoom:10%;" />
 
 
 
