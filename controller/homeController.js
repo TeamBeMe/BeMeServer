@@ -82,6 +82,7 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 answer_idx: answerIdx,
                 public_flag: false,
                 commented_blocked_flag: false,
+                is_routine_question: true,
             });
             
             

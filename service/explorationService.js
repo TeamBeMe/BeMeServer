@@ -156,7 +156,7 @@ module.exports = {
                 attributes: [],
                 raw: true,
             })
-            //console.log(result);
+            console.log(result);
 
             if (result.length < 1) {
                 return message.NO_ANSWERED_QUESTION;
