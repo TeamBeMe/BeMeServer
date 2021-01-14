@@ -148,9 +148,11 @@ module.exports = {
             if (! query) {
                 query = "";
             }
+            await profileService.manageUnpublicScrap(user_id);
+            
             let { count, answers} = await profileService.getScrapByQuery(query, user_id, category, public, page);
             answers = await answerService.getFormattedAnswersWithoutComment(answers, user_id);
-            // answers = await profileService.filterAnswer(answers,category, public);
+
 
             const page_len = answerService.getPageLen(count, 10);
 
