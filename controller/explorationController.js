@@ -16,6 +16,7 @@ module.exports = {
             const user_id = req.decoded.id;
             const page = 1; // 가장 최근 7개 답변
             const limit = 7;
+            console.log(user_id);
 
             if (!user_id) {
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
