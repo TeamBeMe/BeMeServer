@@ -1,4 +1,4 @@
-const { Answer, Comment, User, Question, AnswerSearch } = require('../models');
+const { Answer, Comment, User, Question, AnswerSearch, Scrap } = require('../models');
 const answerService= require('./answerService');
 const { Op } = require('sequelize');
 
@@ -52,6 +52,42 @@ module.exports={
                 raw : true,
             });
             return answers.length;
+        } catch (err) {
+            throw err;
+        }
+    },
+    // 유저가 스크랩한 글 중 unpublic 글 지우기
+    manageUnpublicScrap: async (user_id) => {
+        try {
+            let answers = await Answer.findAll({
+                where : {
+                    public_flag: false,
+                    user_id: {[Op.not]: user_id}
+                },
+                include : {
+                    model: User,
+                    as : 'Scrapper',
+                    where : {
+                        id : user_id,
+                    },
+                    attributes: [],
+                },
+                attributes: ['id'],
+                raw: true,
+            });
+            answers = answers.map(i => i.id);
+
+            if (answers.length == 0) {
+                return
+            }
+            // 지우기
+            const deletedCount = await Scrap.destroy({
+                where : {
+                    user_id,
+                    answer_id: {[Op.or]: answers}
+                },
+                raw: true,
+            });
         } catch (err) {
             throw err;
         }
