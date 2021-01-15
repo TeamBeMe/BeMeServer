@@ -116,8 +116,8 @@ module.exports = {
             const today = await getTodayDate();
             const createTime = new Date(moment.tz(answer.created_at, 'Asia/Seoul').format());
             answer.created_at = createTime;
-            console.log(today);
-            console.log(createTime);
+            //console.log(today);
+            //console.log(createTime);
             //let td = today;
             //const diff = td.getTime()- answer.created_at.getTime();
             //answer.created_at = moment.tz(answer.created_at, 'Asia/Seoul').format();
