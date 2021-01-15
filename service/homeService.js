@@ -4,7 +4,7 @@ const moment = require('moment');
 const getTodayDate = async () => {
     const td = Date.now();
     const today = new Date(td);
-    return new Date(moment.tz(today, 'Asia/Seoul').format());
+    return moment.tz(today, 'Asia/Seoul').format('YYYY. M. D');
 };
 
 const maxQuestionId = async () => {
@@ -111,31 +111,20 @@ module.exports = {
 
     },
 
-    isToday : async(answer) => {
+    isTodayWithFormat : async(answer) => {
         try {
             const today = await getTodayDate();
-            const createTime = new Date(moment.tz(answer.created_at, 'Asia/Seoul').format());
-            answer.created_at = createTime;
-            //console.log(today);
-            //console.log(createTime); 
-            //let td = today;
-            //const diff = td.getTime()- answer.created_at.getTime();
-            //answer.created_at = moment.tz(answer.created_at, 'Asia/Seoul').format();
-            if (today.getDate() === createTime.getDate() &&
-                today.getMonth() === createTime.getMonth() &&
-                today.getFullYear() === createTime.getFullYear()) {
-                    answer.is_today = true;
-                } else {
-                    answer.is_today = false;
-                }
+            const cTimeFormat = moment.tz(answer.created_at, 'Asia/Seoul').format('YYYY. M. D');
 
-            // const hrDiff = diff / 3600000;
-            // if (hrDiff < 24) {
-            //     answer.is_today = true;
-            // } else {
-            //     answer.is_today = false;
-            // }
+            answer.created_at = moment.tz(answer.created_at, 'Asia/Seoul').format();
+            answer.answer_date = moment.tz(answer.created_at, 'Asia/Seoul').format();
 
+            if (today === cTimeFormat) {
+                answer.is_today = true;
+            } else {
+                answer.is_today = false;
+            }
+ 
             return answer
 
         } catch (error) {
