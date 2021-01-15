@@ -114,10 +114,13 @@ module.exports = {
     isToday : async(answer) => {
         try {
             const today = await getTodayDate();
+            const createTime = new Date(moment.tz(answer.created_at, 'Asia/Seoul').format());
+            answer.created_at = createTime;
+            console.log(today);
+            console.log(createTime);
             //let td = today;
-            //console.log(answer.created_at);
             //const diff = td.getTime()- answer.created_at.getTime();
-            const createTime = answer.created_at;
+            //answer.created_at = moment.tz(answer.created_at, 'Asia/Seoul').format();
             if (today.getDate() === createTime.getDate() &&
                 today.getMonth() === createTime.getMonth() &&
                 today.getFullYear() === createTime.getFullYear()) {

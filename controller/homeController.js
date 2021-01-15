@@ -51,10 +51,10 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
             if ( latestAnswer) {
                 question_id = latestAnswer.question_id + 1;
             } 
-             // 마지막 질문까지 모두 답변했다면 다시 1부터
-            if (question_id > maxQuestionId) {
-                question_id = 1;
-            }
+            //  // 마지막 질문까지 모두 답변했다면 다시 1부터
+            // if (question_id > maxQuestionId) {
+            //     question_id = 1;
+            // }
 
             const question = await Question.findByPk(question_id);
 
