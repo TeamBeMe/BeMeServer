@@ -84,15 +84,15 @@ module.exports = {
 
         try {
 
-            const alreadyEmail = await User.findOne({
-                where : {
-                    email
-                }
-            });
+            // const alreadyEmail = await User.findOne({
+            //     where : {
+            //         email
+            //     }
+            // });
     
-            if (alreadyEmail) {
-                return message.ALREADY_EMAIL;
-            }
+            // if (alreadyEmail) {
+            //     return message.ALREADY_EMAIL;
+            // }
     
             const alreadyNickname = await User.findOne({
                 where : {
@@ -116,7 +116,6 @@ module.exports = {
                 const image = file.location;
                 return image;
             }
-            console.log(file);
             return null;
         } catch (err) {
             console.error(err);
