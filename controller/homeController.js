@@ -151,7 +151,7 @@ module.exports = {
 
             // 오늘 질문인지
             for (answer of answersByPage) {
-                const answerWithIsToday = await homeService.isToday(answer);
+                const answerWithIsToday = await homeService.isTodayWithFormat(answer);
             }
             res.status(code.OK).send(util.success(code.OK, message.GET_ANSWER_SUCCESS, answersByPage));
 
