@@ -218,7 +218,7 @@ module.exports = {
             })
 
             //오늘 질문인지
-            const answerWithIsToday = await homeService.isToday(answer);
+            const answerWithIsToday = await homeService.isTodayWithFormat(answer);
 
             res.status(code.OK).send(util.success(code.OK, message.GET_QUESTION_SUCCESS, answerWithIsToday));
 
@@ -306,7 +306,7 @@ module.exports = {
             })
 
             //오늘 질문인지
-            const answerWithIsToday = await homeService.isToday(answer);
+            const answerWithIsToday = await homeService.isTodayWithFormat(answer);
 
             res.status(code.OK).send(util.success(code.OK, message.CHANGE_QUESTION_SUCCESS, answerWithIsToday));
 
