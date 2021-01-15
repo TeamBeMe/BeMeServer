@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
         email: { // 이메일
             type: DataTypes.STRING(30),
             allowNull: false,
-            unique:'email'
         },
         password: { // 비밀번호
             type: DataTypes.STRING(200),

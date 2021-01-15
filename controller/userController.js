@@ -45,7 +45,8 @@ module.exports = {
                 password : hashedPassword,
                 nickname,
                 salt,
-                profile_img : image
+                profile_img : image,
+                continued_visit: 0
             });
 
             await Answer.create({

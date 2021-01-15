@@ -116,6 +116,7 @@ module.exports = {
             const today = await getTodayDate();
             const cTimeFormat = moment.tz(answer.created_at, 'Asia/Seoul').format('YYYY. M. D');
 
+
             answer.created_at = moment.tz(answer.created_at, 'Asia/Seoul').format();
             answer.answer_date = moment.tz(answer.created_at, 'Asia/Seoul').format();
 
