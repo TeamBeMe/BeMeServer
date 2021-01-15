@@ -122,7 +122,7 @@ module.exports = {
                 answers = await explorationService.sortIntAnswers(user_id, category_attr);
 
             } else {
-                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY));
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_SORTING_QUERY, answers));
             }
             
             if (answers == message.NO_ANSWERED_QUESTION) {

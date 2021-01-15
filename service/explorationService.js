@@ -393,14 +393,13 @@ module.exports = {
             // }
             
             
-            const filteredAnswers = await Answer.findAll({
+            let filteredAnswers = await Answer.findAll({
                 include: [{
                     model: Comment,
                     attributes: []
                 }],
                 attributes: ['id',
                 [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
-                //sequelize.fn('count')],
                 order: [[sequelize.literal('comment_count'), 'DESC']],
                 group: ['id'],
                 where: {
@@ -414,14 +413,26 @@ module.exports = {
                         [Op.or]: userAnswers,
                     },
                     public_flag: true,
-                }
+                },
+                raw: true
             });
-            
+            // scrap 수 추가
+            for (answer of filteredAnswers) {
+                answer.scrap_count = await Scrap.count({
+                    where: {
+                        answer_id: answer.id
+                    }
+                })
+
+                answer.count = answer.scrap_count * 2 + answer.comment_count;
+            }
 
             // 탐색 결과가 없을 때
             if(filteredAnswers.length < 1) {
                 return message.NO_RESULT;
             }
+            filteredAnswers.sort( (a,b) => b.count - a.count);
+            // console.log(filteredAnswers)
 
             return filteredAnswers
 
