@@ -432,7 +432,7 @@ module.exports = {
                 return message.NO_RESULT;
             }
             filteredAnswers.sort( (a,b) => b.count - a.count);
-            console.log(filteredAnswers)
+            // console.log(filteredAnswers)
 
             return filteredAnswers
 
