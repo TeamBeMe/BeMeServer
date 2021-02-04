@@ -7,5 +7,6 @@ router.use('/follow', require('./follow'));
 router.use('/users', require('./users'));
 router.use('/exploration', require('./exploration'));
 router.use('/profiles', require('./profiles'));
+router.get('/health');
 
 module.exports = router;
