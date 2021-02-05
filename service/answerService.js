@@ -490,5 +490,46 @@ module.exports = {
         } catch (err) {
             throw err;
         }
+    },
+
+    deleteByTwoCase: async (comment) => {
+        try {
+            const comment_id = comment.id
+
+            // parent_id 존재하는 지 확인
+            if (comment.parent_id) { // 대댓인 경우
+                const deleted_count = await Comment.destroy({
+                    where : {
+                        id : comment_id,
+                    }
+                });
+                
+            } else { // parent_id == null 인 경우 (대댓이 아닌 경우)
+                // 자신을 parent로 가지는 child들 찾아서 map
+                let childComment = await Comment.findAll({
+                    where: {
+                        parent_id: comment_id
+                    },
+                    attributes: ['id']
+                })
+                childComment = childComment.map(a => a.id);
+                childComment.push(parseInt(comment_id))
+                console.log(childComment)
+                // 자신을 parent로 삼는 객체들까지 delete
+                const deleted_count = await Comment.destroy({
+                    where : {
+                        id : {
+                            [Op.or]: childComment,
+                        },
+                    }
+                });
+
+            }
+
+            return null;
+
+        } catch (err) {
+            throw err;
+        }
     }
 }
