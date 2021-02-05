@@ -7,6 +7,7 @@ const { Answer, Comment, Question } = require('../models');
 const { answerService, alarmService } = require('../service');
 const userService = require('../service/userService');
 const answerSearch = require('../models/answerSearch');
+const { Op } = require('sequelize');
 
 module.exports = {
 
@@ -210,12 +211,9 @@ module.exports = {
                 // console.log(message.USER_UNAUTHORIZED);
                 return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.USER_UNAUTHORIZED));
             }
-            
-            const deleted_count = await Comment.destroy({
-                where : {
-                    id : comment_id,
-                }
-            });
+
+            delete_comment = await answerService.deleteByTwoCase(comment);
+
             return res.status(code.OK).send(util.success(code.OK, message.DELETE_COMMENT_SUCCESS));
 
         } catch (err) {
