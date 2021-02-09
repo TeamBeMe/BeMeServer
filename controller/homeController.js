@@ -16,7 +16,7 @@ rule.second = 7;
 // '*/7 * * * * *' '0 0 * * 0-6'
 
 // 매일 오전 12시 마다 새로운 질문
-const shedule = sch.scheduleJob('0 7 * * 0-6', async () => {
+const shedule = sch.scheduleJob('13 0 * * 0-6', async () => {
     try {
 
         const users = await User.findAll({
@@ -80,7 +80,7 @@ const shedule = sch.scheduleJob('0 7 * * 0-6', async () => {
                 user_id: user.id,
                 question_id,
                 answer_idx: answerIdx,
-                public_flag: false,
+                public_flag: true,
                 commented_blocked_flag: false,
                 is_routine_question: true,
             });
