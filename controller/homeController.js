@@ -25,12 +25,19 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
             order : ['id'],
         });
 
-        // database question_id 최댓값
-        const dbMaxQid = await Question.max('id');
+        // question_id 최댓값
+        const maxQuestionId = await Question.max('id');
 
         for (user of users) {
-            // user question_id 최댓값
-            const maxQid = await Answer.findOne({
+            const latestAnswer = await Answer.findOne({
+                include: [{
+                    model: Question,
+                    include: [{
+                        model: Category,
+                        attributes: ['id'],
+                    }],
+                    attributes:[],
+                }],
                 where: {
                     user_id: user.id,
                 },
@@ -38,58 +45,19 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 order: [['question_id', 'DESC']],
                 raw: true,
             });
-            const userMaxQid = maxQid.question_id;
-            //user 최근답변 question_id
-            const latQid = await Answer.findOne({ 
-                where: {
-                    user_id: user.id,
-                },
-                attributes: ['answer_date', 'question_id'],
-                order: [['answer_date', 'DESC']],
-                raw: true,
-            });
-            const userLatQid = latQid.question_id;
-            //user 총 답변 개수
-            const userAnsCount = await Answer.count({
-                where : {
-                    user_id: user.id,
-                }
-            })
 
-            let newQid = 1
-            
-            if (userAnsCount == userMaxQid && userMaxQid == dbMaxQid) {
-                // 디비막질문과 유저막질문이 같고, 답변 개수도 같다면, 퀘아 = 1 (완벽한 한바퀴를 돌았을 때)
-                newQid = 1
-            } else if (userMaxQid < dbMaxQid) {
-                // -디비막질문이 유저막질문보다 크고-, 답변 개수가 유저막질문보다 클 때 (한바퀴 이상 돌고 있는데, 디비에 질문 추가 되었을 때)
-                newQid = userMaxQid + 1
-
-            } else if (userAnsCount < userMaxQid && userMaxQid == dbMaxQid) {
-                // 디비막질문이 유저막질문이 같고, 답변 개수가 유저막질문보다 작을 때 (완벽한 한바퀴를 돌지 않았을 때)
-                const userAns = await Answer.findAll({
-                    where: {
-                        user_id: user.id,
-                    },
-                    attributes: ['question_id'],
-                    order: ['question_id'],
-                })
-                let bId = 0
-                for (ans of userAns) {
-                    let id = ans.question_id;
-                    if (id - bId > 1) {
-                        newQid = bId + 1
-                        break
-                    }
-                    bId = id;
-                }
-            } else {
-                newQid += 1
+            // 만약 답변 없다면, id = 1
+            let question_id = 1;
+            if ( latestAnswer) {
+                question_id = latestAnswer.question_id + 1;
+            } 
+             // 마지막 질문까지 모두 답변했다면 다시 1부터
+            if (question_id > maxQuestionId) {
+                continue
             }
-                                                                                         
-            const newQuestion = await Question.findByPk(newQid);
 
-            // answerIdx값 계산
+            const question = await Question.findByPk(question_id);
+
             const answerIdxCount = await Answer.count({
                 where : {
                     user_id: user.id,
@@ -97,23 +65,58 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 include : {
                     model : Question,
                     where : {
-                        category_id: newQuestion.category_id,
+                        category_id: question.category_id,
                     }
                 }
             })
+            
+            // answer_idx +1
             const answerIdx = answerIdxCount + 1;
+
+            
 
             // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
             const newQuestion = await Answer.create({
                 user_id: user.id,
-                question_id: newQid,
+                question_id,
                 answer_idx: answerIdx,
-                public_flag: true,
+                public_flag: false,
                 commented_blocked_flag: false,
                 is_routine_question: true,
             });
+            
+            
         }
-        //console.log('새로운 질문이 생성되었습니다');
+        console.log('새로운 질문이 생성되었습니다');
+        // for (let i = 1; i <= userCount; i++) { 
+        //     // 가장 최근 답변
+        //     const latAnswer = await Answer.findOne({
+        //         where: {
+        //             user_id: i
+        //         },
+        //         attributes: ['user_id','question_id'],
+        //         order: [['question_id', 'DESC']]
+        //     });
+
+        //     // 만약 답변 없다면, id = 0
+        //     if (! latAnswer) {
+        //         latAnswer.question_id = 0;
+        //     }
+ 
+        //     // 마지막 질문까지 모두 답변했다면 다시 1부터
+        //     const latQuestionId = latAnswer.question_id;
+        //     const maxQuestionId = await Question.max('id');
+        //     if (latQuestionId == maxQuestionId) {
+        //         latQuestionId = 0;
+        //     }
+
+        //     // 가장 최근 답변의 질문 id를 통해 그 다음 질문 생성하기
+        //     const moreQuestion = await Answer.create({
+        //         public_flag: 0,
+        //         user_id: i,
+        //         question_id: (latQuestionId + 1)
+        //     })  
+        // }
     } catch (err) {
         console.log(err);
     }
