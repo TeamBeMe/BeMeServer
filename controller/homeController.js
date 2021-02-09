@@ -44,7 +44,7 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                 where: {
                     user_id: user.id,
                 },
-                attributes: ['answer_date'],
+                attributes: ['answer_date', 'question_id'],
                 order: [['answer_date', 'DESC']],
                 raw: true,
             });
@@ -67,7 +67,7 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
 
             } else if (userAnsCount < userMaxQid && userMaxQid == dbMaxQid) {
                 // 디비막질문이 유저막질문이 같고, 답변 개수가 유저막질문보다 작을 때 (완벽한 한바퀴를 돌지 않았을 때)
-                const userAnsId = await Answer.findAll({
+                const userAns = await Answer.findAll({
                     where: {
                         user_id: user.id,
                     },
@@ -75,11 +75,13 @@ const shedule = sch.scheduleJob('0 0 * * 0-6', async () => {
                     order: ['question_id'],
                 })
                 let bId = 0
-                for (id of userAnsId) {
+                for (ans of userAns) {
+                    let id = ans.question_id;
                     if (id - bId > 1) {
                         newQid = bId + 1
                         break
                     }
+                    bId = id;
                 }
             } else {
                 newQid += 1
