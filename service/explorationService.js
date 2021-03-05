@@ -264,9 +264,12 @@ module.exports = {
             })
             //console.log(userAnswers);
 
-            // 사용자가 답변한 질문이 존재하지 않을 때
+            // // 사용자가 답변한 질문이 존재하지 않을 때
+            // if (userAnswers.length < 1) {
+            //     return message.NO_ANSWERED_QUESTION;
+            // }
             if (userAnswers.length < 1) {
-                return message.NO_ANSWERED_QUESTION;
+                return [];
             }
             userAnswers = userAnswers.map(a => a.question_id);
             //console.log(userAnswers);
@@ -353,8 +356,11 @@ module.exports = {
                 raw: true,
             })
 
+            // if (userAnswers.length < 1) {
+            //     return message.NO_ANSWERED_QUESTION;
+            // }
             if (userAnswers.length < 1) {
-                return message.NO_ANSWERED_QUESTION;
+                return [];
             }
             userAnswers = userAnswers.map(a => a.question_id);
 
