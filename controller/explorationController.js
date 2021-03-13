@@ -10,7 +10,7 @@ const { Op } = require('sequelize');
 const { sortNewAnswers, sortIntAnswers } = require('../service/explorationService');
 
 module.exports = {
-    // '나와 다른 생각들' 대표 7개
+    // '나와 다른 생각들' 대표 7개 (곧 삭제될 예정)
     getAnotherAnswers: async (req, res) => { 
         try {
             const user_id = req.decoded.id;
@@ -40,7 +40,7 @@ module.exports = {
         }
     },
 
-    // 특정 question에 해당하는 answer들 (카테고리 o)
+    // 특정 question에 해당하는 answer들 (나중에 삭제 예정)
     getSpecificAnswers: async (req, res) => {
         try {
             let { page, sorting } = req.query;
@@ -86,7 +86,39 @@ module.exports = {
         }
     },
 
-    // 다른 글 둘러보기
+        // 특정 question에 해당하는 answer들 (흥미최신 sorting 쿼리 없는 조건 [NEW])
+        getSpecificAnswersWithoutLen: async (req, res) => {
+            try {
+                let { page } = req.query;
+                let question_id = req.params.questionId;
+                const user_nickname = req.decoded.id;
+                
+                // 오류처리
+                if (page == 0) {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
+                }
+                if (!question_id || !page) {
+                    //console.log(question_id)
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+                }
+    
+                const question = await Question.findByPk(question_id);
+                if(!question) {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_QUESTION_ID));
+                }
+    
+                let answers = await explorationService.sortNewAnswerByQidWithPagination(question_id, user_nickname, page)
+                answers = await explorationService.getFormattedAnswers(answers, user_nickname);
+    
+                return res.status(code.OK).send(util.success(code.OK, message.GET_SPECIFIC_ANSWERS_SUCCESS, {user_nickname, answers}))
+    
+            } catch (err) {
+                console.error(err);
+                return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+            }
+        },
+
+    // 다른 글 둘러보기 (나중에 삭제 예정)
     getExpAnswers: async (req, res) => {
         try {
             let { page, category, sorting } = req.query;
@@ -140,6 +172,50 @@ module.exports = {
             const pagination = await explorationService.makePaginationWithNickname(answers,page, user_id);
 
             return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, pagination))
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+    // 다른 글 둘러보기 (흥미최신 sorting 쿼리 없는 조건 [NEW])
+    getExpAnswersWithoutLen: async (req, res) => {
+        try {
+            let { page, category } = req.query;
+            const user_nickname = req.decoded.id;
+
+            // page 오류 처리
+            if (page == 0) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
+            }
+            if (!page) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+
+            // 카테고리
+            const category_attr = {};
+            if ( category ) {
+                if(category > 0 && category < 7) {
+                    category_attr[Op.eq]= category;
+                } else {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_CATEGORY_ID));
+                }
+                
+            } else {
+                category_attr[Op.not]= null;
+            }
+
+            // 데베에서 가져오기
+            let answers = await explorationService.sortNewAnswersWithPagination(user_nickname, category_attr, page)
+            if (answers == message.NO_RESULT) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
+            }
+
+            // 답변 포맷팅
+            answers = await explorationService.getFormattedAnswers(answers, user_nickname);
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, {user_nickname, answers}))
 
         } catch (err) {
             console.error(err);

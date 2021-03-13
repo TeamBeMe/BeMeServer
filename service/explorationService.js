@@ -111,7 +111,23 @@ module.exports = {
         }
     },
 
-    makePaginationWithNickname : async (answers, page, user_id) => {
+//     makeReturnFormat : async (answers, user_id) => { // page_len 없는 pagination
+
+        
+
+//         // 페이지네이션
+//         answers = answers.filter((item, idx) => {
+//             return (idx >= idx_start && idx <= idx_end);
+//         })
+
+//         // 유저 닉네임
+//         const user = await User.findByPk(user_id);
+//         const user_nickname = user.nickname;
+
+//         return {user_nickname, answers}
+//    },
+
+    makePaginationWithNickname : async (answers, page, user_id) => { // page_len 존재하는 pagination
         // 페이지 총 수
        //  const page_len = parseInt(answers.length / 10) + 1;
         const page_len = getPageLen(answers.length, 10);
@@ -218,7 +234,37 @@ module.exports = {
     // 2. 크게 다른글 둘러보기 최신, 흥미 / 한 질문에 대한 최신, 흥미
     // 2-1. 함수 네개 다 getFormattedAnswer
 
-    // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수
+    // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수 (without page_len)
+    sortNewAnswerByQidWithPagination : async(question_id, user_nickname, page) => {
+        try { 
+
+            const idx_start = 0 + (page - 1) * 10;
+            const idx_end = idx_start + 9;
+
+            const filteredAnswers = await Answer.findAll({
+                offset: idx_start,
+                limit: 10, 
+                attributes: ['id'],
+                where: {
+                    user_id: {
+                        [Op.not]: user_nickname,
+                    },
+                    question_id: question_id,
+                    content: {
+                        [Op.not]: null,
+                    },
+                    public_flag: true,
+                },
+                order: [['answer_date', 'DESC']]
+            });
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // 특정 질문의 답변 배열을 최신순으로 sorting 하는 함수 (곧 삭제 예정)
     sortNewAnswerByQid : async(question_id, user_id) => {
         try { 
 
@@ -243,7 +289,83 @@ module.exports = {
         }
     },
 
-    // 전체 배열을 최신순으로 sorting 하는 함수
+    // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수 (곧 삭제 예정)
+    sortIntAnswerByQid : async(question_id, user_id) => {
+        try {
+
+            const filteredAnswers = await Answer.findAll({
+                include: [{
+                    model: Comment,
+                    attributes: []
+                }],
+                attributes: ['id',
+                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
+                order: [[sequelize.literal('comment_count'), 'DESC']],
+                group: ['id'],
+                where: {
+                    user_id: {
+                        [Op.not]: user_id,
+                    },
+                    question_id: question_id,
+                    content: {
+                        [Op.not]: null,
+                    },
+                    public_flag: true,
+                }
+            });
+
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // 전체 배열을 최신순으로 sorting 하는 함수 (without page_len)
+    sortNewAnswersWithPagination : async(user_nickname, category_attr, page) => {
+        try {
+
+            const idx_start = 0 + (page - 1) * 10;
+            const idx_end = idx_start + 9;
+
+            const filteredAnswers = await Answer.findAll({
+
+                offset: idx_start,
+                limit: 10,  
+                attributes: ['id'],
+                order: [['answer_date', 'DESC']],
+                include:[{
+                    model: Question,
+                    attributes: [],
+                }],  
+                where: {
+                    user_id: {
+                        [Op.not]: user_nickname,
+                    },
+                    content: {
+                        [Op.not]: null,
+                    },
+                    public_flag: true,
+                    '$Question.category_id$': category_attr,
+                },
+            });
+
+            // route에 새 api 넣은 다음 통신 되는지 확인하기
+            // 똑같은 방식으로 sortNewAnswerByQid 코드도 수정
+
+            // 탐색 결과가 없을 때
+            if(filteredAnswers.length < 1) {
+                return message.NO_RESULT;
+            }
+            
+            return filteredAnswers
+
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    // 다른글 둘러보기 - 전체 배열을 최신순으로 sorting 하는 함수 (곧 삭제 예정)
     sortNewAnswers : async(user_id, category_attr) => {
         try {
             
@@ -304,39 +426,7 @@ module.exports = {
         }
     },
 
-    // 특정 질문의 답변 배열을 흥미순으로 sorting 하는 함수
-    sortIntAnswerByQid : async(question_id, user_id) => {
-        try {
-
-            const filteredAnswers = await Answer.findAll({
-                include: [{
-                    model: Comment,
-                    attributes: []
-                }],
-                attributes: ['id',
-                [sequelize.fn('count', sequelize.col('Comments.content')), 'comment_count']],
-                order: [[sequelize.literal('comment_count'), 'DESC']],
-                group: ['id'],
-                where: {
-                    user_id: {
-                        [Op.not]: user_id,
-                    },
-                    question_id: question_id,
-                    content: {
-                        [Op.not]: null,
-                    },
-                    public_flag: true,
-                }
-            });
-
-            return filteredAnswers
-
-        } catch (error) {
-            throw error;
-        }
-    },
-
-    // 전체 배열을 흥미순으로 sorting 하는 함수
+    // 다른글 둘러보기 - 전체 배열을 흥미순으로 sorting 하는 함수 (곧 삭제 예정)
     sortIntAnswers : async(user_id, category_attr) => {
         try {
             // 내가 지금까지 답한 답변들의 question id get
@@ -363,40 +453,6 @@ module.exports = {
                 return [];
             }
             userAnswers = userAnswers.map(a => a.question_id);
-
-            // 내가 팔로잉 하는 사람들 목록 find all user
-            // let followees = await Follow.findAll({
-            //     where : {
-            //         follower_id : user_id,
-            //     },
-            //     attributes: [['followed_id', 'id']],
-            //     raw : true,
-            // });
-            // followees = followees.map(a => a.id);
-            //Error: WHERE parameter "id" has invalid "undefined" value
-
-            // for 문으로 내가 팔로잉 하는 사람들의 스크랩한  userid 를 바탕으로 find all answer 뽑아옴
-            // let followeesAnswers = [];
-            // for (folowee of followees) {
-            //     const oneFolloweesAnswers = await Answer.findAll({
-            //         where: {
-            //             user_id: {
-            //                 [Op.or]: followeeId
-            //             },
-            //             question_id: {
-            //                 [Op.or]: userAnswers,
-            //             },
-            //             content: {
-            //                 [Op.not]: null,
-            //             },
-            //             public_flag: true,
-            //         },
-            //         attributes: ['id'],
-
-            //     });
-
-            //     followeesAnswers.push(oneFolloweesAnswers);
-            // }
             
             
             let filteredAnswers = await Answer.findAll({
