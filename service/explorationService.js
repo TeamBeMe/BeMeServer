@@ -246,9 +246,6 @@ module.exports = {
                 limit: 10, 
                 attributes: ['id'],
                 where: {
-                    user_id: {
-                        [Op.not]: user_nickname,
-                    },
                     question_id: question_id,
                     content: {
                         [Op.not]: null,
@@ -339,9 +336,6 @@ module.exports = {
                     attributes: [],
                 }],  
                 where: {
-                    user_id: {
-                        [Op.not]: user_nickname,
-                    },
                     content: {
                         [Op.not]: null,
                     },
