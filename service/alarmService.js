@@ -28,10 +28,12 @@ const sendMessage = async (user_id, title, body) => {
             },
             apns: {
                 payload: {
-                    notification: {
-                            title,
-                            body
-                        }
+                        aps: {
+                            notification: {
+                                title,
+                                body
+                            }
+                        } 
                 }
                 
             },
