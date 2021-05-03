@@ -32,6 +32,10 @@ const sendMessage = async (user_id, title, body) => {
                             notification: {
                                 title,
                                 body
+                            },
+                            data: {
+                                title,
+                                body
                             }
                         } 
                 }
