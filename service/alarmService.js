@@ -11,29 +11,32 @@ const sendMessage = async (user_id, title, body) => {
         }
 
 
-        const message = {
-            notification: {
-                title,
-                body
-            },
-            token: fb_token,
-        }
-
         // const message = {
-        //     android: {
-        //         data: {
-        //             title,
-        //             body
-        //         }
-        //     },
-        //     apns: {
-        //         notification: {
-        //             title,
-        //             body
-        //         }
+        //     notification: {
+        //         title,
+        //         body
         //     },
         //     token: fb_token,
         // }
+
+        const message = {
+            android: {
+                data: {
+                    title,
+                    body
+                }
+            },
+            apns: {
+                payload: {
+                    notification: {
+                            title,
+                            body
+                        }
+                }
+                
+            },
+            token: fb_token,
+            }
 
         admin
             .messaging()
