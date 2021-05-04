@@ -64,7 +64,8 @@ module.exports = {
                 where : {
                     followed_id : user_id,
                 },
-                attributes : [['follower_id', 'id']],
+                attributes : [['follower_id', 'id', 'created_at']],
+                order :[['created_at', 'DESC']],
                 raw : true,
             });
             // 내가 팔로우한 사람들 불러오기
@@ -72,7 +73,8 @@ module.exports = {
                 where : {
                     follower_id : user_id,
                 },
-                attributes: [['followed_id', 'id']],
+                attributes: [['followed_id', 'id', 'created_at']],
+                order :[['created_at', 'DESC']],
                 raw : true,
             });
 
