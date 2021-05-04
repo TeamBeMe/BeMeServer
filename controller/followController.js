@@ -64,7 +64,7 @@ module.exports = {
                 where : {
                     followed_id : user_id,
                 },
-                attributes : [['follower_id', 'id', 'created_at']],
+                attributes : [['follower_id', 'id']],
                 //order :[['created_at', 'DESC']],
                 raw : true,
             });
@@ -73,7 +73,7 @@ module.exports = {
                 where : {
                     follower_id : user_id,
                 },
-                attributes: [['followed_id', 'id', 'created_at']],
+                attributes: [['followed_id', 'id']],
                 //order :[['created_at', 'DESC']],
                 raw : true,
             });
