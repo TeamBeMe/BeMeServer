@@ -336,12 +336,15 @@ module.exports = {
                     attributes: [],
                 }],  
                 where: {
-                    content: {
-                        [Op.not]: null,
-                        //[Op.gte]: 5
-                    },
+                    content: {[Op.not]: null},
                     public_flag: true,
                     '$Question.category_id$': category_attr,
+                    [Op.and] : [
+                        sequelize.where(sequelize.fn('char_length', sequelize.col('content')), {
+                            [Op.gte]: 5
+                          })
+                    ]
+                        
                 },
             });
 
