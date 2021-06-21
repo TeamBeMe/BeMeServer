@@ -86,37 +86,37 @@ module.exports = {
         }
     },
 
-        // 특정 question에 해당하는 answer들 (흥미최신 sorting 쿼리 없는 조건 [NEW])
-        getSpecificAnswersWithoutLen: async (req, res) => {
-            try {
-                let { page } = req.query;
-                let question_id = req.params.questionId;
-                const user_nickname = req.decoded.id;
-                
-                // 오류처리
-                if (page == 0) {
-                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
-                }
-                if (!question_id || !page) {
-                    //console.log(question_id)
-                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
-                }
-    
-                const question = await Question.findByPk(question_id);
-                if(!question) {
-                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_QUESTION_ID));
-                }
-    
-                let answers = await explorationService.sortNewAnswerByQidWithPagination(question_id, user_nickname, page)
-                answers = await explorationService.getFormattedAnswers(answers, user_nickname);
-    
-                return res.status(code.OK).send(util.success(code.OK, message.GET_SPECIFIC_ANSWERS_SUCCESS, {user_nickname, answers}))
-    
-            } catch (err) {
-                console.error(err);
-                return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+    // 특정 question에 해당하는 answer들 (흥미최신 sorting 쿼리 없는 조건 [NEW])
+    getSpecificAnswersWithoutLen: async (req, res) => {
+        try {
+            let { page } = req.query;
+            let question_id = req.params.questionId;
+            const user_nickname = req.decoded.id;
+            
+            // 오류처리
+            if (page == 0) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
             }
-        },
+            if (!question_id || !page) {
+                //console.log(question_id)
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+
+            const question = await Question.findByPk(question_id);
+            if(!question) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_QUESTION_ID));
+            }
+
+            let answers = await explorationService.sortNewAnswerByQidWithPagination(question_id, user_nickname, page)
+            answers = await explorationService.getFormattedAnswers(answers, user_nickname);
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_SPECIFIC_ANSWERS_SUCCESS, {user_nickname, answers}))
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
 
     // 다른 글 둘러보기 (나중에 삭제 예정)
     getExpAnswers: async (req, res) => {
