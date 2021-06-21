@@ -338,6 +338,7 @@ module.exports = {
                 where: {
                     content: {
                         [Op.not]: null,
+                        [Op.gte]: 5
                     },
                     public_flag: true,
                     '$Question.category_id$': category_attr,
