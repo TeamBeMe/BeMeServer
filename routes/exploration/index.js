@@ -11,6 +11,7 @@ router.get('/all', authUtil.checkToken, exController.getExpAnswersWithoutLen);
 router.get('/:questionId', authUtil.checkToken, exController.getSpecificAnswers);
 router.get('/all/:questionId', authUtil.checkToken, exController.getSpecificAnswersWithoutLen);
 router.put('/:answerId', authUtil.checkToken, exController.doOrCancelScrap);
+router.put('/like/:answerId', authUtil.checkToken, exController.likeOrCancel);
 
 
 module.exports = router;

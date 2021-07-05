@@ -88,6 +88,10 @@ module.exports = {
     DO_SCRAP_SUCCESS: "스크랩 성공",
     UNDO_SCRAP_SUCCESS: "스크랩 취소 성공",
 
+    /* */
+    LIKE_SUCCESS : "좋아요 성공",
+    LIKE_CANCEL_SUCCESS : "좋아요 취소 성공",
+
     /* 댓글 */
     POST_COMMENT_SUCCESS: "댓글 생성하기 성공",
     POST_COMMENT_BLOCKED : "댓글이 허용되지 않은 답변입니다",
