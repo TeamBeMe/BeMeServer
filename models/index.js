@@ -61,6 +61,10 @@ db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower', foreignKey :
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched', foreignKey: 'searched_id'});
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher', foreignKey : 'user_id' });
 
+/* User : Certification => like */
+db.User.belongsToMany(db.Answer, { through: 'Like', as: 'Liked', foreignKey: 'user_id' });
+db.Answer.belongsToMany(db.User, { through: 'Like', as: 'Liker', foreignKey: 'answer_id'});
+
 db.User.hasMany(db.AnswerSearch, {foreignKey: 'user_id'});
 db.AnswerSearch.belongsTo(db.User, {foreignKey: 'user_id'});
 

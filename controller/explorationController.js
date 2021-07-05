@@ -269,6 +269,56 @@ module.exports = {
             return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
         }
     },
+
+    // 좋아요, 좋아요 취소
+    likeOrCancel : async (req, res) => {
+
+        const answer_id = req.params.answerId;
+        const user_id = req.decoded.id;
+
+        if (! answer_id) {
+            return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NULL_VALUE));
+        }
+        try {
+
+            const answer = await Answer.findByPk(answer_id);
+            if(! answer) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_ANSWER_ID));
+            }
+
+            // 좋아요 유무 확인
+            const isLiked = await Like.findAll({
+                where : {
+                    answer_id,
+                    user_id,
+                }
+            });
+
+            // 이미 좋아요 했을 시 좋아요 취소
+            if (isLiked.length > 0) {
+                const like = await Like.destroy({
+                    where : {
+                        user_id,
+                        answer_id
+                    }
+                });
+                return res.status(code.OK).send(util.success(code.OK, message.LIKE_CANCEL_SUCCESS));
+            }
+
+            // 좋아요 안했을 시 좋아요 생성
+            const like = await Like.create({
+                user_id,
+                answer_id
+            });
+            return res.status(code.OK).send(util.success(code.OK, message.LIKE_SUCCESS));
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+
     // 카테고리 리스트 가져오기
     getCategories: async (req, res) => {
         try {
