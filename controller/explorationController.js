@@ -2,7 +2,7 @@ const util = require('../modules/util');
 const code = require('../modules/statusCode');
 const message = require('../modules/responseMessage');
 
-const { Answer, User, Comment, Question, Scrap, Category } = require('../models');
+const { Answer, User, Comment, Question, Scrap, Category, Like } = require('../models');
 const { homeService, userService } = require('../service');
 const explorationService = require('../service/explorationService');
 const answerService = require('../service/answerService');
@@ -223,7 +223,51 @@ module.exports = {
         }
     },
 
-    // 스크랩 하기 & 스크랩 취소하기
+    // 다른 글 둘러보기 (흥미최신 sorting 쿼리 없는 조건 [NEW]) - 좋아요 기능 추가
+    getExpAnswersWithoutLen: async (req, res) => {
+        try {
+            let { page, category } = req.query;
+            const user_nickname = req.decoded.id;
+ 
+            // page 오류 처리
+            if (page == 0) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.NO_INVALID_PAGE))
+            }
+            if (!page) {
+                return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.OUT_OF_VALUE));
+            }
+
+            // 카테고리
+            const category_attr = {};
+            if ( category ) {
+                if(category > 0 && category < 7) {
+                    category_attr[Op.eq]= category;
+                } else {
+                    return res.status(code.BAD_REQUEST).send(util.fail(code.BAD_REQUEST, message.INVALID_CATEGORY_ID));
+                }
+                
+            } else {
+                category_attr[Op.not]= null;
+            }
+
+            // 데베에서 가져오기
+            let answers = await explorationService.sortNewAnswersWithPagination(user_nickname, category_attr, page)
+            if (answers == message.NO_RESULT) {
+                res.status(code.OK).send(util.success(code.OK, message.NO_RESULT));
+            }
+
+            // 답변 포맷팅
+            answers = await explorationService.getFormattedAnswers(answers, user_nickname);
+
+            return res.status(code.OK).send(util.success(code.OK, message.GET_EXPLORATION_RESULT_SUCCESS, {user_nickname, answers}))
+
+        } catch (err) {
+            console.error(err);
+            return res.status(code.INTERNAL_SERVER_ERROR).send(util.fail(code.INTERNAL_SERVER_ERROR, message.INTERNAL_SERVER_ERROR));
+        }
+    },
+
+    // 스크랩 하기 & 스크랩 취소하기 -> 스크랩 했는지 안했는지 유무 안알려주고 생성 삭제만
     doOrCancelScrap: async (req, res) => {
         const answer_id = req.params.answerId;
         const user_id = req.decoded.id;

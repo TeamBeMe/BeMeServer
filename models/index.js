@@ -17,6 +17,7 @@ db.Answer = require('./answer')(sequelize, Sequelize);
 db.Category = require('./category')(sequelize, Sequelize);
 db.Question = require('./question')(sequelize, Sequelize);
 db.Scrap = require('./scrap')(sequelize, Sequelize);
+db.Like = require('./like')(sequelize, Sequelize);
 db.Comment = require('./comment')(sequelize, Sequelize);
 db.Block = require('./block')(sequelize, Sequelize);
 db.Follow = require('./follow')(sequelize, Sequelize);
@@ -48,6 +49,9 @@ db.Comment.belongsTo(db.Comment, { as : 'Parent', foreignKey : 'parent_id'});
 db.User.belongsToMany(db.Answer, { through: 'Scrap', as: 'Scrapped', foreignKey: 'user_id' });
 db.Answer.belongsToMany(db.User, { through: 'Scrap', as: 'Scrapper', foreignKey: 'answer_id'});
 
+/* User : Answer => like */
+db.User.belongsToMany(db.Answer, { through: 'Like', as: 'Liked', foreignKey: 'user_id' });
+db.Answer.belongsToMany(db.User, { through: 'Like', as: 'Liker', foreignKey: 'answer_id'});
 
 /* User : User => block */
 db.User.belongsToMany(db.User, { through: 'Block', as: 'Blocked', foreignKey : 'blocked_id'});
@@ -61,9 +65,6 @@ db.User.belongsToMany(db.User, { through: 'Follow', as: 'Follower', foreignKey :
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searched', foreignKey: 'searched_id'});
 db.User.belongsToMany(db.User, { through: 'RecentSearch', as: 'Searcher', foreignKey : 'user_id' });
 
-/* User : Certification => like */
-db.User.belongsToMany(db.Answer, { through: 'Like', as: 'Liked', foreignKey: 'user_id' });
-db.Answer.belongsToMany(db.User, { through: 'Like', as: 'Liker', foreignKey: 'answer_id'});
 
 db.User.hasMany(db.AnswerSearch, {foreignKey: 'user_id'});
 db.AnswerSearch.belongsTo(db.User, {foreignKey: 'user_id'});

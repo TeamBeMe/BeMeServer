@@ -1,5 +1,4 @@
-const Answer = require('./answer')
-const User = require('./user')
+const { User, Answer } = require('./index');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Like', {
