@@ -43,6 +43,28 @@ const getFormattedAnswerwithPK= async (answer_id, user_id) => {
         } else {
             answer.is_scrapped = true;
         }
+        // 내가 좋아요한 질문인지 확인하기
+        const isLiked = await Like.findOne({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if(! isLiked) {
+            answer.is_liked = false;
+        } else {
+            answer.is_liked = true;
+        }
+        // 좋아요 개수
+        const likeCount = await Like.count({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if(likeCount == 0) {
+            answer.like_count = likeCount;
+        }
 
         // 내가 답변한 질문인지 확인하기
         const isAnswered = await Answer.findAll({
@@ -155,6 +177,28 @@ const getFormattedAnswerbyPkwithoutComment= async (answer_id, user_id) => {
             answer.is_scrapped = false;
         } else {
             answer.is_scrapped = true;
+        }
+        // 내가 좋아요한 질문인지 확인하기
+        const isLiked = await Like.findOne({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if(! isLiked) {
+            answer.is_liked = false;
+        } else {
+            answer.is_liked = true;
+        }
+        // 좋아요 개수
+        const likeCount = await Like.count({
+            where : {
+                user_id,
+                answer_id,
+            }
+        });
+        if(likeCount == 0) {
+            answer.like_count = likeCount;
         }
 
 
